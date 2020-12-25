@@ -31,7 +31,7 @@ jobs:
           script: |
             cd Connect-Us
             git reset --hard
-            git pull
+            git pull https://asapjayp:${{ secrets.PAT }}@github.com/asapjayp/Connect-Us.git
             docker-compose down
             docker-compose build
             docker-compose up -d

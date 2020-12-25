@@ -12,6 +12,8 @@ using ConnectUs.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.HttpOverrides;
+using System.Net;
 
 namespace ConnectUs
 {
@@ -27,6 +29,7 @@ namespace ConnectUs
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+        
             services.AddDbContext<ApplicationDbContext>(
                     options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
@@ -39,6 +42,10 @@ namespace ConnectUs
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseForwardedHeaders(new ForwardedHeadersOptions
+            {
+                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+            });
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

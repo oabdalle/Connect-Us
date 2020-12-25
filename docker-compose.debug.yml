@@ -1,15 +1,22 @@
  # Please refer https://aka.ms/HTTPSinContainer on how to setup an https developer certificate for your ASP .NET Core service.
 version: "3.9"
 services:
-    web:
-        image: connectus
+    app:
         build:
             context: .
-            dockerfile: ConnectUs/Dockerfile
+            dockerfile: ./ConnectUs/docker/app/Dockerfile
         ports:
-            - "8000:80"
+            - "5000"
         depends_on:
+            - reverseproxy
             - db
+
+    reverseproxy:
+        build:
+            context: ./ConnectUs/docker/nginx
+            dockerfile: Dockerfile
+        ports:
+            - "80:80"
     db:
         image: "mcr.microsoft.com/mssql/server"
         environment:

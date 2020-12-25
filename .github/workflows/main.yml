@@ -22,7 +22,7 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       - uses: actions/checkout@v2
-      - name: executing remote ssh commands using password
+      - name: executing remote ssh commands using password2
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}

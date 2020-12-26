@@ -3,7 +3,6 @@ COPY . /app
 WORKDIR /app/ConnectUs
 RUN dotnet tool install --global dotnet-ef
 ENV PATH="${PATH}:/root/.dotnet/tools"
-RUN dotnet ef migrations add CreateIdentitySchema
 RUN dotnet publish "ConnectUs.csproj" --configuration Release
 RUN chmod +x docker/app/entrypoint.sh
 CMD /bin/bash docker/app/entrypoint.sh

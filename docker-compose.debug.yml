@@ -6,23 +6,5 @@ services:
             context: .
             dockerfile: ./ConnectUs/docker/app/Dockerfile
         ports:
-            - "5000"
-        depends_on:
-            - reverseproxy
-            - db
-
-    reverseproxy:
-        build:
-            context: ./ConnectUs/docker/nginx
-            dockerfile: Dockerfile
-        ports:
-            - "80:80"
-    db:
-        image: "mcr.microsoft.com/mssql/server"
-        environment:
-            SA_PASSWORD: "u1t0at3FlQi60nt6j6BJTc"
-            ACCEPT_EULA: "Y"
-        ports:
-            - "1433:1433"      
-
+            - "5000:5000"
 

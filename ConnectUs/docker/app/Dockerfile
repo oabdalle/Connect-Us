@@ -6,5 +6,4 @@ ENV PATH="${PATH}:/root/.dotnet/tools"
 RUN dotnet publish "ConnectUs.csproj" --configuration Release
 RUN chmod +x docker/app/entrypoint.sh
 CMD /bin/bash docker/app/entrypoint.sh
-EXPOSE 5000/tcp
 

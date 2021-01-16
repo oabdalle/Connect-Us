@@ -12,6 +12,7 @@ namespace ConnectUs.Pages
     {
         private readonly ILogger<IndexModel> _logger;
 
+        public string Hello { get; set; }
         public IndexModel(ILogger<IndexModel> logger)
         {
             _logger = logger;
@@ -19,7 +20,7 @@ namespace ConnectUs.Pages
 
         public void OnGet()
         {
-
+            Hello="HELLOOddsssO" +1;
         }
     }
 }

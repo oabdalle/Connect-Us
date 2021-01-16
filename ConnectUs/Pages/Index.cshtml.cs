@@ -20,7 +20,7 @@ namespace ConnectUs.Pages
 
         public void OnGet()
         {
-            Hello="HELLOOddsssO" +1;
+            Hello="HELLOOddsssOw";
         }
     }
 }

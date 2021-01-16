@@ -10,8 +10,12 @@ Run Commands:
 To run after building containers completed:
     docker-compose -f docker-compose.debug.yml up -d
 
-To add a migration:
-    docker exec -it connect-us_app_1 dotnet ef migrations add MyTestMigration
+To stop containers:
+    docker-compose stop
 
-To apply the migration to database:
-    docker exec -it connect-us_app_1 dotnet ef database update
+- Dealing with migrations -
+ To add a migration (note - left and right of && stop and start app container if running): 
+    docker stop connect-us_app_1 && docker run -v ${PWD}:/app --rm --entrypoint /bin/bash connect-us_app -c 'dotnet ef migrations add MyTest' && docker start connect-us_app_1
+
+To apply the migration to database (note - ensure db container has started):
+    docker run --rm --entrypoint /bin/bash connect-us_app -c 'dotnet ef database update'

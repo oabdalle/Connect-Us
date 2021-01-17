@@ -26,6 +26,15 @@ services:
             SA_PASSWORD: "u1t0at3FlQi60nt6j6BJTc"
             ACCEPT_EULA: "Y"
         ports:
-            - "1433:1433"      
-
+            - "1433:1433"  
+    node:
+        build:
+            context: .
+            dockerfile: ./ConnectUs/docker/node/dev.Dockerfile
+        volumes:
+            - node_modules:/src/ConnectUs/node_modules
+            - ./ConnectUs/wwwroot:/src/ConnectUs/wwwroot      
+volumes:
+  node_modules:
+    driver: "local"
 

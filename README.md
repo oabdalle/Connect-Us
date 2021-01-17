@@ -7,7 +7,7 @@ Run Commands:
     docker-compose -f docker-compose.debug.yml build && docker-compose -f docker-compose.debug.yml up -d
     docker run --rm --entrypoint /bin/bash connect-us_app -c 'dotnet ef database update'
 
-To run after building containers completed:
+To run after first start:
     docker-compose -f docker-compose.debug.yml up -d
 
 To stop containers:

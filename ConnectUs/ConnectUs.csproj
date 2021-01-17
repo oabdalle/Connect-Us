@@ -4,7 +4,7 @@
     <TargetFramework>net5.0</TargetFramework>
     <UserSecretsId>aspnet-ConnectUs-026F32FF-C1E1-46FC-B60D-198691A52FB2</UserSecretsId>
   </PropertyGroup>
-
+  
   <ItemGroup>
     <None Update="app.db" CopyToOutputDirectory="PreserveNewest" ExcludeFromSingleFile="true" />
   </ItemGroup>

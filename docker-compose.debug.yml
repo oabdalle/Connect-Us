@@ -1,7 +1,6 @@
  # Please refer https://aka.ms/HTTPSinContainer on how to setup an https developer certificate for your ASP .NET Core service.
 version: "3.9"
 services:
-
     reverseproxy:
         build:
             context: ./ConnectUs/docker/nginx
@@ -30,7 +29,7 @@ services:
     node:
         build:
             context: .
-            dockerfile: ./ConnectUs/docker/node/dev.Dockerfile
+            dockerfile: ./ConnectUs/docker/node/Dockerfile
         volumes:
             - node_modules:/src/ConnectUs/node_modules
             - ./ConnectUs/wwwroot:/src/ConnectUs/wwwroot      

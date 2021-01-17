@@ -20,3 +20,5 @@ To stop containers:
 To apply the migration to database (note - ensure db container has started):
     docker run --rm --entrypoint /bin/bash connect-us_app -c 'dotnet ef database update'
 
+To compile SASS after running containers:
+    docker start connect-us_node_1

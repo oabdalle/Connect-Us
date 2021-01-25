@@ -11,6 +11,9 @@ namespace ConnectUs.Data
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
+            Database.SetCommandTimeout(1000);
+
         }
+    
     }
 }

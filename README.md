@@ -5,7 +5,7 @@ To run on a development environment:
     $ docker-compose -f docker-compose.debug.yml up -d
     
 ### After containers have been created, apply migrations
-    $ docker run --rm --entrypoint /bin/bash connect-us_app -c 'dotnet ef database update`
+    $ docker run --rm --entrypoint /bin/bash connect-us_app -c 'dotnet ef database update'
 
 ### To stop containers
      $ docker-compose stop

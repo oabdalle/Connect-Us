@@ -5,9 +5,9 @@ RUN dotnet tool install --global dotnet-ef
 ENV PATH="${PATH}:/root/.dotnet/tools"
 RUN dotnet publish "ConnectUs.csproj" --configuration Release
 ENV DOTNET_USE_POLLING_FILE_WATCHER 1
-RUN apt-get update && apt-get install dos2unix
-RUN dos2unix docker/app/dev-entrypoint.sh
+RUN apt-get update && apt-get install -y dos2unix && apt-get -y install bash
 RUN chmod +x docker/app/dev-entrypoint.sh
+RUN dos2unix docker/app/dev-entrypoint.sh
 ENTRYPOINT ["sh", "docker/app/dev-entrypoint.sh"]
 
 

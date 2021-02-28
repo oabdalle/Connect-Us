@@ -8,6 +8,6 @@ ENV DOTNET_USE_POLLING_FILE_WATCHER 1
 RUN apt-get update && apt-get install dos2unix
 RUN chmod +x docker/app/dev-entrypoint.sh
 RUN dos2unix docker/app/dev-entrypoint.sh
-ENTRYPOINT ["sh", "docker/app/dev-entrypoint.sh"]
+ENTRYPOINT ["/bin/bash", "docker/app/dev-entrypoint.sh"]
 
 

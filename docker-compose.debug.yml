@@ -19,6 +19,8 @@ services:
             - db
         volumes:
             - .:/app
+        extra_hosts:
+            - "host.docker.internal:host-gateway"
     db:
         image: "mcr.microsoft.com/mssql/server:2017-CU8-ubuntu"
         environment:

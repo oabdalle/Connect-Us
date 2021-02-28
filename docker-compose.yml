@@ -12,20 +12,22 @@ services:
     app:
         build:
             context: .
-            dockerfile: ./ConnectUs/docker/app/Dockerfile
+            dockerfile: ./ConnectUs/docker/app/dev.Dockerfile
         ports:
             - "5000:5000"
         depends_on:
             - db
+        volumes:
+            - .:/app
     db:
-        image: "mcr.microsoft.com/mssql/server"
+        image: "mcr.microsoft.com/mssql/server:2017-CU8-ubuntu"
         environment:
             SA_PASSWORD: "u1t0at3FlQi60nt6j6BJTc"
             ACCEPT_EULA: "Y"
         ports:
-            - "1433:1433"   
+            - "1433:1433" 
         volumes:
-            - mysqldata   
+            - mysqldata
     node:
         build:
             context: .
@@ -37,5 +39,6 @@ volumes:
   node_modules:
     driver: "local"
   mysqldata:
-      driver: "local"
+    driver: "local"
+
 

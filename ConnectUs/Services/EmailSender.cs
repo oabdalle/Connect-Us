@@ -17,7 +17,7 @@ namespace ConnectUs.Services
 
         public Task SendEmailAsync(string email, string subject, string message)
         {
-            return Execute("", subject, message, email);
+            return Execute("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", subject, message, email);
         }
 
         public async Task Execute(string apiKey, string subject, string message, string email)

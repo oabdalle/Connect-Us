@@ -20,12 +20,14 @@ services:
         volumes:
             - .:/app
     db:
-        image: "mcr.microsoft.com/mssql/server"
+        image: "mcr.microsoft.com/mssql/server:2017-CU8-ubuntu"
         environment:
             SA_PASSWORD: "u1t0at3FlQi60nt6j6BJTc"
             ACCEPT_EULA: "Y"
         ports:
-            - "1433:1433"  
+            - "1433:1433" 
+        volumes:
+            - mysqldata
     node:
         build:
             context: .
@@ -36,4 +38,7 @@ services:
 volumes:
   node_modules:
     driver: "local"
+  mysqldata:
+    driver: "local"
+
 

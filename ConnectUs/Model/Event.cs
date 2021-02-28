@@ -23,9 +23,6 @@ namespace ConnectUs.Model
     
     [Required]
     public string Category { get; set; }
-
-    [Required]
-    public string CategoryTest { get; set; }
    
     [Required]
     public string Description { get; set; }

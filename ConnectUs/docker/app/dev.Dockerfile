@@ -6,8 +6,8 @@ ENV PATH="${PATH}:/root/.dotnet/tools"
 RUN dotnet publish "ConnectUs.csproj" --configuration Release
 ENV DOTNET_USE_POLLING_FILE_WATCHER 1
 RUN chmod +x docker/app/dev-entrypoint.sh
-RUN apk add dos2unix
+RUN apk add dos2unix && apk add --no-cache bash
 RUN dos2unix docker/app/dev-entrypoint.sh
-ENTRYPOINT ["sh", "docker/app/dev-entrypoint.sh"]
+ENTRYPOINT ["/bin/bash", "docker/app/dev-entrypoint.sh"]
 
 

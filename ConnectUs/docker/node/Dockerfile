@@ -2,5 +2,7 @@ FROM node:lts AS node
 COPY . /src
 WORKDIR /src/ConnectUs
 RUN npm install
+RUN apt-get update && apt-get install dos2unix
+RUN dos2unix docker/node/entrypoint.sh
 RUN chmod +x docker/node/entrypoint.sh
-CMD /bin/bash docker/node/entrypoint.sh
+ENTRYPOINT ["sh", "docker/node/entrypoint.sh"]

@@ -1,4 +1,6 @@
-#!/bin/sh
+#!/bin/bash
+
+set -e
 
 run_cmd="dotnet watch run --server.urls http://*:5000"
 

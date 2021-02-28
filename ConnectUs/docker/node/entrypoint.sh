@@ -1,6 +1,5 @@
-#!/bin/bash
+#!/bin/sh
 
-set -e
 run_cmd="npm run build"
 
 >&2 echo "Dependencies Installed. Compiling SASS."

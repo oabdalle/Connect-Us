@@ -4,14 +4,8 @@ To run on a development environment:
 ### On First Start 
     $ docker-compose -f docker-compose.debug.yml build
     
-### After First Start
+### After First Start 
     $ docker-compose -f docker-compose.debug.yml up -d
-
-### To stop containers
-     $ docker-compose stop
-
-### To remove containers
-     $ docker-compose down
 
 ### To compile SASS after running containers
     $ docker start connect-us_node_1
@@ -22,3 +16,8 @@ To run on a development environment:
 ###### To apply the migration to database:
     $ docker-compose stop && docker-compose -f docker-compose.debug.yml up -d
 
+### To stop containers
+     $ docker-compose stop
+
+### To remove containers
+     $ docker-compose down

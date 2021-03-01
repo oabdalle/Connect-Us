@@ -12,20 +12,18 @@ services:
     app:
         build:
             context: .
-            dockerfile: ./ConnectUs/docker/app/dev.Dockerfile
+            dockerfile: ./ConnectUs/docker/app/Dockerfile
         ports:
             - "5000:5000"
         depends_on:
             - db
         volumes:
             - .:/app
-        extra_hosts:
-            - "host.docker.internal:host-gateway"
     db:
-        image: "mcr.microsoft.com/mssql/server:2017-CU8-ubuntu"
+        image: "mcr.microsoft.com/azure-sql-edge"
         environment:
-            SA_PASSWORD: "u1t0at3FlQi60nt6j6BJTc"
-            ACCEPT_EULA: "Y"
+            MSSQL_SA_PASSWORD: u1t0at3FlQi60nt6j6BJTc
+            ACCEPT_EULA: Y
         ports:
             - "1433:1433" 
         volumes:

@@ -1,6 +1,6 @@
 #!/bin/bash
-set -e
 
+set -e
 run_cmd="dotnet watch run --server.urls http://*:5000"
 
 until dotnet ef database update; do

@@ -22,10 +22,10 @@ To run on a development environment:
     $ docker-compose build
     
 ### After First Start
-    $ docker-compose up -d
+    $ docker-compose up 
 
 ### To add a Database Migration (note - replace MyTest with useful migration name)
-    $ docker-compose stop && docker run -v ${PWD}:/app --rm --entrypoint /bin/sh connect-us_app -c 'dotnet ef migrations add MyTest' && docker-compose up -d
+    $ docker-compose stop && docker run -v ${PWD}:/app --rm --entrypoint /bin/sh connect-us_app -c 'dotnet ef migrations add MyTest' && docker-compose up
 
 
 
@@ -34,8 +34,8 @@ To run on staging environment:
     $ docker-compose -f docker-compose.staging.yml build
     
 ### After First Start 
-    $ docker-compose -f docker-compose.staging.yml up -d
+    $ docker-compose -f docker-compose.staging.yml up 
 
 ### To add a Database Migration
-    $ docker-compose stop && docker run -v ${PWD}:/app --rm --entrypoint /bin/sh connect-us_app -c 'dotnet ef migrations add MyTest' && docker-compose -f docker-compose.staging.yml up -d
+    $ docker-compose stop && docker run -v ${PWD}:/app --rm --entrypoint /bin/sh connect-us_app -c 'dotnet ef migrations add MyTest' && docker-compose -f docker-compose.staging.yml up
 

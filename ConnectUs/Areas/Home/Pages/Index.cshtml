@@ -8,3 +8,23 @@
     <h1 class="display-4">Welcodmesssss my model @Model.Hello</h1>
     <p>Learn addbout <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
 </div>
+
+<div class="col-12 border p-3 mt-3">
+  @if(Model.Events.Count()>0){
+    @foreach (var item in Model.Events)
+    {
+    <div class="col-5">
+  
+        @Html.DisplayFor(m=>item.Name)
+    
+        @Html.DisplayFor(m=>item.EventDate)
+
+       
+        @Html.DisplayFor(m=>item.Category)
+    
+    </div>
+    }
+  }else{
+      <p>No Events available.</p>
+      }
+</div>

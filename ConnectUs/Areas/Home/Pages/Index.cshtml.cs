@@ -5,6 +5,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using ConnectUs.Model;
+using Microsoft.EntityFrameworkCore;
+
 
 namespace ConnectUs.Areas.Home.Pages
 {
@@ -12,14 +15,21 @@ namespace ConnectUs.Areas.Home.Pages
     {
         private readonly ILogger<IndexModel> _logger;
 
+        private readonly ApplicationDbContext _db;
+        
+        public IEnumerable<Event> Events { get; set; }
+
         public string Hello { get; set; }
-        public IndexModel(ILogger<IndexModel> logger)
+        public IndexModel(ILogger<IndexModel> logger, ApplicationDbContext db)
         {
             _logger = logger;
+            _db = db;
         }
 
-        public void OnGet()
+        public async Task OnGet()
         {
+
+            Events = await _db.Event.ToListAsync();
             Hello="HELLOOddsssOw";
         }
     }

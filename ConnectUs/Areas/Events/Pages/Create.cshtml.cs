@@ -30,9 +30,7 @@ namespace ConnectUs.Areas.Events.Pages
 
         public async Task OnGet()
         {
-           Categories = await _db.Category.ToListAsync();
-           CategoriesDropDownList = new SelectList(Categories, "CategoryId", "CategoryName");
-        
+           await InitCategories();
 
         }
 
@@ -48,9 +46,16 @@ namespace ConnectUs.Areas.Events.Pages
             }
             else
             {
+                await InitCategories();
                 return Page();
             }
 
+        }
+
+        public async Task InitCategories(){
+
+           Categories = await _db.Category.ToListAsync();
+           CategoriesDropDownList = new SelectList(Categories, "CategoryId", "CategoryName");
         }
     }
 }

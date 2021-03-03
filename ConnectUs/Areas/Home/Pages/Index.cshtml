@@ -5,15 +5,18 @@
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welcodmesssss my model @Model.Hello</h1>
-    <p>Learn addbout <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+  <a asp-area="Events" asp-page="/Create" class="col-4 btn btn-info text-white">Create New Event</a>
 </div>
 
-<div class="col-12 border p-3 mt-3">
+<div class="col-12 p-3 mt-5">
+
+<div class="row">
+
   @if(Model.Events.Count()>0){
     @foreach (var item in Model.Events)
     {
-    <div class="col-5">
+    
+    <div class="col-3 p-5 m-3 border">
   
         @Html.DisplayFor(m=>item.Name)
     
@@ -27,4 +30,5 @@
   }else{
       <p>No Events available.</p>
       }
+</div>
 </div>

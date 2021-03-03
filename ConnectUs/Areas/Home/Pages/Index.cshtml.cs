@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using ConnectUs.Model;
 using Microsoft.EntityFrameworkCore;
-
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace ConnectUs.Areas.Home.Pages
 {
@@ -19,7 +19,7 @@ namespace ConnectUs.Areas.Home.Pages
         
         public IEnumerable<Event> Events { get; set; }
 
-        public string Hello { get; set; }
+  
         public IndexModel(ILogger<IndexModel> logger, ApplicationDbContext db)
         {
             _logger = logger;
@@ -30,7 +30,7 @@ namespace ConnectUs.Areas.Home.Pages
         {
 
             Events = await _db.Event.ToListAsync();
-            Hello="HELLOOddsssOw";
+           
         }
     }
 }

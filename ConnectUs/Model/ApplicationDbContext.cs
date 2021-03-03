@@ -16,5 +16,6 @@ namespace ConnectUs.Model
         }
         public DbSet<Event> Event { get; set; }
         public DbSet<EventImage> EventImage { get; set; }
+        public DbSet<Category> Category { get; set; }
     }
 }

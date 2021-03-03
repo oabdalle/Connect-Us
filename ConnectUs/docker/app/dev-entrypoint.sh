@@ -4,7 +4,7 @@ set -e
 run_cmd="dotnet watch run --server.urls http://*:5000"
 
 until dotnet build && dotnet ef database update; do
->&2 echo "SQL Server is stssartidng1 up"
+>&2 echo "SQL Server is starting up"
 sleep 1
 done
 

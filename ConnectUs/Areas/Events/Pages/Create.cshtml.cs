@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using ConnectUs.Model;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 
 namespace ConnectUs.Areas.Events.Pages
 {
@@ -18,7 +19,9 @@ namespace ConnectUs.Areas.Events.Pages
         [BindProperty] //this assumes then onPost you will be getting this event here that the user modified so no need for onPost(Event eventObj)
         public Event Event { get; set; }
 
-    
+        public IEnumerable<Category> Categories { get; set; }
+
+        public SelectList CategoriesDropDownList { get; set; }
         public CreateModel(ILogger<CreateModel> logger, ApplicationDbContext db)
         {
             _logger = logger;
@@ -27,7 +30,9 @@ namespace ConnectUs.Areas.Events.Pages
 
         public async Task OnGet()
         {
-       
+           Categories = await _db.Category.ToListAsync();
+           CategoriesDropDownList = new SelectList(Categories, "CategoryId", "CategoryName");
+        
 
         }
 

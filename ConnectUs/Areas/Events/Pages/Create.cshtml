@@ -35,9 +35,10 @@
         </label>
       </div>
       <div class="col-6">
-        <input asp-for="Event.Category" class="form-control"/>
-      </div>
- 
+        <select class="form-control text-center" sp-for="Event.Category" asp-items="Model.CategoriesDropDownList">
+        <option value=""></option>
+        </select>
+        </div>
       <span asp-validation-for="Event.Category" class="text-danger"></span>
     </div>
 

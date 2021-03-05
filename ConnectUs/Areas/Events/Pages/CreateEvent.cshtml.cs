@@ -25,18 +25,9 @@ namespace ConnectUs.Areas.Events.Pages
         [BindProperty] //this assumes then onPost you will be getting this event here that the user modified so no need for onPost(Event eventObj)
         public Event Event { get; set; }
 
-
-        public EventImage EventImage {get; set;}
-
         public IEnumerable<Category> Categories { get; set; }
 
         public SelectList CategoriesDropDownList { get; set; }
-
-
-        [Required]
-        [BindProperty] 
-        [Display(Name = "Event Image")]
-        public IFormFile Image { get; set; }
 
         public CreateEventModel(ILogger<CreateEventModel> logger, ApplicationDbContext db, IWebHostEnvironment env)
         {
@@ -49,77 +40,63 @@ namespace ConnectUs.Areas.Events.Pages
         {
            await InitCategories();
 
-
         }
-
 
         public async Task<IActionResult> OnPost() //we use <IActionResult> to direct to new page
         { 
+            Event.EventGallery = new List<EventImage>();
+
+            if(Event.GalleryFiles != null){
+                foreach (var file in Event.GalleryFiles){
+                {
+                    using (var ms = new MemoryStream())
+                    {
+                        await file.CopyToAsync(ms);
+                        var fileBytes = ms.ToArray();
+                        string s = Convert.ToBase64String(fileBytes);
+                        Event.EventGallery.Add(new EventImage()
+                        {
+                            Content = s,
+                            Event = Event
+                        });
+                    }
+                
+                }
+                }
+            }else{
+                await InitCategories();
+                return Page();
+            }
 
             if (ModelState.IsValid)
-            {  
+            {   
                 await _db.Event.AddAsync(Event);
+                foreach (EventImage img in Event.EventGallery){
+                    await _db.EventImage.AddAsync(img);
+                }
                 await _db.SaveChangesAsync();
                 return RedirectToPage("/Index", new { area = "Home" });
-
             }
             else
-            {
+            {     
+                var errors = ModelState.Select(x => x.Value.Errors)
+                                    .Where(y=>y.Count>0)
+                                    .ToList();
                 await InitCategories();
                 return Page();
             }
 
         }
-    public async Task<IActionResult> OnPostUpload(IFormFile file)
-    {
-
-        var FileDic = "EventImages";
-        var my= _env;
-        ViewData["MyString"] = file.FileName;
-
-        string FilePath = Path.Combine(_env.WebRootPath, FileDic);
-
-        if (!Directory.Exists(FilePath))
-
-            Directory.CreateDirectory(FilePath);
-
-        var fileName = file.FileName;
-
-        var filePath = Path.Combine(FilePath, fileName);
-
-        using (FileStream fs = System.IO.File.Create(filePath))
-
-        {
-
-            file.CopyTo(fs);
-
+    
+        public IActionResult OnPostUpload(IFormFile file){
+            return Page();
         }
-
-        return Page();
-
-    }
-
-
-
-        public IActionResult OnPostAddImage(string obj)
-            {
-
-
-             return new JsonResult(obj);
-
-            }
 
         public async Task InitCategories(){
 
            Categories = await _db.Category.ToListAsync();
            CategoriesDropDownList = new SelectList(Categories, "CategoryId", "CategoryName");
         }
-        private byte[] GetByteArrayFromImage(IFormFile file){
-          using (var target = new MemoryStream())
-           {
-           file.CopyTo(target);
-           return target.ToArray();
-           }
-        }
+
     }
 }

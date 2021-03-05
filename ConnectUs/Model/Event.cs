@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Http;
 namespace ConnectUs.Model
 {
   public class Event
@@ -19,16 +20,23 @@ namespace ConnectUs.Model
     [DataType(DataType.Date)]
     [Display(Name = "Event Date")]
     public DateTime EventDate { get; set; }
-
-    
-    [Required]
-    public string Category { get; set; }
    
     [Required]
     public string Description { get; set; }
-
+    
     [Required]
-    public int HostID { get; set; }
+    [ForeignKey("Category")]    
+    public int CategoryId { get; set; }
+    
+    public Category Category { get; set; }
+
+   [Display(Name = "Choose the gallery images of your book")]
+   [Required]
+   [NotMapped]
+    public IFormFileCollection GalleryFiles { get; set; }
+
+    [NotMapped]
+    public List<EventImage> EventGallery { get; set; }
 
 
   }

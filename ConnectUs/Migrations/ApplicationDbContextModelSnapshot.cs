@@ -42,9 +42,8 @@ namespace ConnectUs.Migrations
                         .HasColumnType("int")
                         .UseIdentityColumn();
 
-                    b.Property<string>("Category")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -52,9 +51,6 @@ namespace ConnectUs.Migrations
 
                     b.Property<DateTime>("EventDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<int>("HostID")
-                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -72,11 +68,11 @@ namespace ConnectUs.Migrations
                         .HasColumnType("int")
                         .UseIdentityColumn();
 
-                    b.Property<int?>("EventId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Path")
+                    b.Property<string>("Content")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("EventId")
+                        .HasColumnType("int");
 
                     b.HasKey("ImageId");
 
@@ -287,9 +283,13 @@ namespace ConnectUs.Migrations
 
             modelBuilder.Entity("ConnectUs.Model.EventImage", b =>
                 {
-                    b.HasOne("ConnectUs.Model.Event", null)
-                        .WithMany("ImagePath")
-                        .HasForeignKey("EventId");
+                    b.HasOne("ConnectUs.Model.Event", "Event")
+                        .WithMany()
+                        .HasForeignKey("EventId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Event");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -341,11 +341,6 @@ namespace ConnectUs.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("ConnectUs.Model.Event", b =>
-                {
-                    b.Navigation("ImagePath");
                 });
 #pragma warning restore 612, 618
         }

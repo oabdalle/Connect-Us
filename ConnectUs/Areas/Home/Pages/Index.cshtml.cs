@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 using ConnectUs.Model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc.Rendering;
-
+using System.Diagnostics;
 namespace ConnectUs.Areas.Home.Pages
 {
     public class IndexModel : PageModel
@@ -27,10 +27,10 @@ namespace ConnectUs.Areas.Home.Pages
         }
 
         public async Task OnGet()
-        {
-
+        { 
+            
             Events = await _db.Event.ToListAsync();
-           
         }
+        
     }
 }

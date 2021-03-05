@@ -15,9 +15,11 @@
   @if(Model.Events.Count()>0){
     @foreach (var item in Model.Events)
     {
-    
-    <div class="col-3 p-5 m-3 border">
-  
+     
+    <div class="col-3 p-5 m-3 border" asp-area="Home" asp-page="/Privacy">
+    <a asp-area="Events" asp-page="/EventDescription">
+    <img src="~\images\Melopsittacus_undulatus_-Atlanta_Zoo,_Georgia,_USA-8a-2c.jpg" />
+    </a>
         @Html.DisplayFor(m=>item.Name)
     
         @Html.DisplayFor(m=>item.EventDate)
@@ -32,3 +34,6 @@
       }
 </div>
 </div>
+@section Scripts{
+    <script src="~/js/VenueFilter.js"></script>
+}

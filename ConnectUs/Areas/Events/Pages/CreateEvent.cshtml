@@ -1,0 +1,135 @@
+@page
+@model CreateEventModel
+@{
+    ViewData["Title"] = "Create an Event";
+}
+<h1>@ViewData["Title"]</h1>
+@Html.AntiForgeryToken()
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.7.6/dropzone.min.css" integrity="sha512-jU/7UFiaW5UBGODEopEqnbIAHOI8fO6T99m7Tsmqs2gkdujByJfkCbbfPSN4Wlqlb9TGnsuC0YgUgWkRBK7B9A==" crossorigin="anonymous" />
+<form method="post">
+   <div class="text-danger" asp-validation-summary="ModelOnly"></div>
+    <div class="form-group row">
+      <div class="col-3">
+        <label asp-for="Event.Name">
+        </label>
+      </div>
+      <div class="col-6">
+        <input asp-for="Event.Name" class="form-control"/>
+      </div>
+      <span asp-validation-for="Event.Name" class="text-danger"></span>
+    </div>
+
+    <div class="form-group row">
+      <div class="col-3">
+        <label asp-for="Event.EventDate">
+        </label>
+      </div>
+      <div class="col-6">
+        <input type="date" asp-for="Event.EventDate" class="form-control"/>
+      </div>
+      <span asp-validation-for="Event.EventDate" class="text-danger"></span>
+    </div>
+
+    <div class="form-group row">
+      <div class="col-3">
+        <label asp-for="Event.Category">
+        </label>
+      </div>
+      <div class="col-6">
+        <select class="form-control text-center" asp-for="Event.Category" asp-items="Model.CategoriesDropDownList">
+        <option value=""></option>
+        </select>
+        </div>
+      <span asp-validation-for="Event.Category" class="text-danger"></span>
+    </div>
+
+    <div class="form-group row">
+      <div class="col-3">
+        <label asp-for="Event.Description">
+        </label>
+      </div>
+      <div class="col-6">
+        <input asp-for="Event.Description" class="form-control"/>
+      </div>
+      <span asp-validation-for="Event.Description" class="text-danger"></span>
+    </div>
+
+    <div class="form-group row">
+      <div class="col-3">
+        <label asp-for="Event.Description">
+        </label>
+      </div>
+
+    </div>
+
+    <div class="form-group row">
+      <div class="offset-3 col-3">
+        <input type="submit" value="Create" class="btn btn-primary w-100"/>
+      </div>
+      <div class="col-3">  
+       <a asp-area="Home" asp-page="Index" class="btn btn-secondary w-100">Back to Events</a>
+      </div>
+    </div>
+</form>
+ <div class="col-md-6" id="dropzone">
+
+                <form method="post" asp-page-handler="upload" class="dropzone" id="uploader">
+
+                  <button type="button" class="dz-button">Drop files here or click to upload.</button><br>
+
+                </form>
+
+            </div>
+<form enctype="multipart/form-data" method="post">
+  <div class="form-group row">
+      <div class="col-3">
+            <label asp-for="Image"></label>
+       </div>
+      <div class="col-6">  
+            <input id="imageChosen" asp-for="Image" type="file" multiple>
+        </div>
+    </div>
+    <input hidden id="imageUpload" asp-page-handler="Upload" type="submit">
+</form>
+<h2>@ViewData["MyString"]</h2>
+@* this is client side validation not server side (we have done both) *@
+@section Scripts{
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.7.6/min/dropzone.min.js" integrity="sha512-KgeSi6qqjyihUcmxFn9Cwf8dehAB8FFZyl+2ijFEPyWu4ZM8ZOQ80c2so59rIdkkgsVsuTnlffjfgkiwDThewQ==" crossorigin="anonymous"></script>
+  <partial name="_ValidationScriptsPartial"/> 
+
+    <script>
+  
+    $("form #imageChosen").change(function () {
+         var reader = new FileReader();
+        console.log(this.files);
+        var imgbase64 = reader.readAsDataURL(this.files[0]);
+        reader.onload = function () {
+            console.log(reader.result);
+        };
+        reader.onerror = function (error) {
+            console.log('Error: ', error);
+        };
+        console.log(imgbase64);
+        $.ajax({
+            type: "POST",
+            url: '@Url.Page("CreateEvent", "AddImage")',
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("XSRF-TOKEN",$('input:hidden[name="__RequestVerificationToken"]').val());
+            },
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            data: {obj: imgbase64},
+            success: function (response) {
+                console.log(response)
+                alert("Hello: " + response);
+            },
+            failure: function (response) {
+                alert("fail: " + response);
+            },
+            error: function (response) {
+                alert("error: " + response);
+            }
+        });
+    });
+  </script>
+}  

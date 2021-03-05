@@ -18,7 +18,7 @@
                     "connect-us_app_1"
                 ],
                 "quoteArgs": false,
-                "debuggerPath": "/vsdbg/vsdbg"
+                "debuggerPath": "/root/vsdbg/vsdbg"
             }
         }
     ]

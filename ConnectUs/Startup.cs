@@ -16,7 +16,9 @@ using Microsoft.AspNetCore.HttpOverrides;
 using System.Net;
 using ConnectUs.Services;
 using Microsoft.AspNetCore.Identity.UI.Services;
-
+using Microsoft.AspNetCore.Routing;
+using Microsoft.AspNetCore.Routing.Internal;
+using Microsoft.AspNetCore.Mvc.ApplicationModels;
 
 namespace ConnectUs
 {
@@ -68,7 +70,11 @@ namespace ConnectUs
             services.AddRazorPages().AddRazorRuntimeCompilation()
                 .AddRazorPagesOptions(options => {
                         options.RootDirectory = "/Areas/Home/Pages/";
+                        options.Conventions.Add(new PageRouteTransformerConvention(new SlugifyParameterTransformer()));
                     });
+             services.AddMvc();
+             services.AddAntiforgery(o => o.HeaderName = "XSRF-TOKEN");
+        }
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

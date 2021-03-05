@@ -30,8 +30,6 @@ namespace ConnectUs.Model
     [Required]
     public int HostID { get; set; }
 
-    [Required]
-    public List<EventImage> ImagePath { get;set; }
 
   }
 

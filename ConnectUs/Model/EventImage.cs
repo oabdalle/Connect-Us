@@ -13,8 +13,12 @@ namespace ConnectUs.Model
     [Key]
     public int ImageId {get;set;}
 
-    public string Path {get;set;}
+    [MaxLength]
+    [Display(Name = "Event Image")]
+    public byte[] Content{ get; set; }
 
+
+    public int EventId { get; set; }
   }
 
 }

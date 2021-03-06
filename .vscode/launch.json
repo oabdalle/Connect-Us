@@ -7,10 +7,10 @@
             "request": "attach",
             "processId": "${command:pickRemoteProcess}",
             "sourceFileMap": {
-                "/app": "${workspaceRoot}"
+                "/app/ConnectUs": "${workspaceRoot}/ConnectUs"
             },
             "pipeTransport": {
-                "pipeCwd": "${workspaceRoot}",
+                "pipeCwd": "${workspaceRoot}/ConnectUs",
                 "pipeProgram": "docker",
                 "pipeArgs": [
                     "exec",

@@ -1,3 +1,3 @@
-function logger(){
-    console.log("Hello, world!");
+function logger(num){
+    console.log(num);
 }

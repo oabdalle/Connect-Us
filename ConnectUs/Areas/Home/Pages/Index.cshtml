@@ -22,7 +22,7 @@
     {
      
     <div class="col-3 p-5 m-3 border" asp-area="Home" asp-page="/Privacy">
-    <a asp-area="Events" asp-page="/EventDescription">
+    <a asp-area="Events" asp-page="/EventDescription" asp-route-id="@item.EventId">
     <img src="~\images\Melopsittacus_undulatus_-Atlanta_Zoo,_Georgia,_USA-8a-2c.jpg" />
     </a>
         @Html.DisplayFor(m=>item.Name)
@@ -39,6 +39,3 @@
       }
 </div>
 </div>
-@section Scripts{
-    <script src="~/js/VenueFilter.js"></script>
-}

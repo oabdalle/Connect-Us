@@ -5,4 +5,23 @@
 }
 
 <h1>@ViewData["Title"]</h1>
-<p>whine on mse</p>
+
+<div>
+    <div>
+        <p>@Model.eventEntry.Name</p>
+    </div>
+    <div>
+        <p>@Model.eventEntry.EventDate</p>
+    </div> 
+    <div>
+        <p>@Model.eventEntry.Category</p>
+    </div> 
+    <div>
+        <p>@Model.eventEntry.Description</p>
+    </div>  
+
+    <button asp-page-handler="Delete" asp-route-id="@Model.eventEntry.EventId" onclick="logger('@Model.eventEntry.EventId')" class="btn btn-danger btn-sm">Remove</button>
+    @section Scripts{
+    <script src="~/js/VenueFilter.js"></script>
+}
+</div>

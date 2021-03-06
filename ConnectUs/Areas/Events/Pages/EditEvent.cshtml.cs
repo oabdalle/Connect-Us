@@ -1,0 +1,52 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Logging;
+using ConnectUs.Model;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http;
+using System.IO;
+using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Hosting;
+
+namespace ConnectUs.Areas.Events.Pages
+{
+       public class EditEvent : PageModel
+    {
+         private readonly ApplicationDbContext _db;
+        public EditEvent(ApplicationDbContext db){
+            _db = db;
+        } 
+        [BindProperty]
+        public Event eventEntry {get; set;}
+        [BindProperty]
+        public Category categoryEntry {get; set;}
+
+        public async Task OnGet(int id)
+        {
+            eventEntry  = await _db.Event.FindAsync(id);
+            if(eventEntry is not null)
+            categoryEntry = await _db.Category.FindAsync(eventEntry.CategoryId);
+        }
+        public async Task<IActionResult> OnPost()
+        {
+            if(ModelState.IsValid)
+            {
+                var eventToUpdate = await _db.Event.FindAsync(eventEntry.EventId);
+                var categoryToUpdate =  await _db.Category.FindAsync(eventEntry.CategoryId);
+                eventToUpdate.Name = eventEntry.Name;
+                eventToUpdate.EventDate = eventEntry.EventDate;
+                eventToUpdate.Description = eventEntry.Description;
+                categoryToUpdate.CategoryName = categoryEntry.CategoryName;
+                 
+                await _db.SaveChangesAsync();
+                return RedirectToPage("/Index",  new { area = "Home" });
+            }
+            return RedirectToPage();
+        }
+    }
+}

@@ -1,0 +1,57 @@
+@page
+@model EditEvent
+@{
+    ViewData["Title"] = "Edit Event";
+}
+
+<h1>@ViewData["Title"]</h1>
+<form method="post" id ="editEventInfo">
+    <div>
+        <input type="hidden" asp-for="eventEntry.EventId">
+        <input type="hidden" asp-for="eventEntry.CategoryId">
+        <div class="text-danger" asp-validation-summary="ModelOnly"></div>
+        <div>
+            <div>
+                <label asp-for="eventEntry.Name"></label>
+            </div>
+            <div>
+                <input asp-for="eventEntry.Name"></input>
+            </div>
+            <span asp-validation-for="eventEntry.Name" class="text-danger"></span>
+        </div>
+        <div>
+            <div>
+                <label asp-for="eventEntry.EventDate"></label>
+            </div>
+            <div>
+                <input asp-for="eventEntry.EventDate"></input>
+            </div>
+            <span asp-validation-for="eventEntry.EventDate" class="text-danger"></span>
+        </div>
+        <div>
+            <div>
+                <label asp-for="categoryEntry.CategoryName"></label>
+            </div>
+            <div>
+                <input asp-for="categoryEntry.CategoryName"></input>
+            </div>
+            <span asp-validation-for="categoryEntry.CategoryName" class="text-danger"></span>
+        </div>
+         <div>
+            <div>
+                <label asp-for="eventEntry.Description"></label>
+            </div>
+            <div>
+                <input asp-for="eventEntry.Description"></input>
+            </div>
+            <span asp-validation-for="eventEntry.Description" class="text-danger"></span>
+        </div>
+        <input type="submit" value="Update" class="btn btn-primary form-control"></button>
+        <a asp-area="Events" asp-page="/EventDescription" asp-route-id="@Model.eventEntry.EventId"class="btn btn-info text-white">Cancel</a>
+        
+    </div>
+</form>
+@section Scripts{
+    <script src="~/js/VenueFilter.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+}

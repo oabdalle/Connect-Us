@@ -1,3 +1,4 @@
-function logger(num){
-    console.log(num);
+function logger(){
+    $('#eventInfo').toggle();
+    $('#editEventInfo').toggle();
 }

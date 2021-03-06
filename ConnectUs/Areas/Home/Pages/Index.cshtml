@@ -23,7 +23,7 @@
      
     <div class="col-3 p-5 m-3 border" asp-area="Home" asp-page="/Privacy">
     <a asp-area="Events" asp-page="/EventDescription" asp-route-id="@item.EventId">
-    <img src="~\images\Melopsittacus_undulatus_-Atlanta_Zoo,_Georgia,_USA-8a-2c.jpg" />
+    <img src="data:image/png;base64, @item.EventGallery[0].Content"/>
     </a>
         @Html.DisplayFor(m=>item.Name)
     

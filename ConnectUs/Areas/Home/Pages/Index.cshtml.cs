@@ -18,8 +18,7 @@ namespace ConnectUs.Areas.Home.Pages
         private readonly ApplicationDbContext _db;
         
         public IEnumerable<Event> Events { get; set; }
-
-  
+        
         public IndexModel(ILogger<IndexModel> logger, ApplicationDbContext db)
         {
             _logger = logger;
@@ -28,8 +27,12 @@ namespace ConnectUs.Areas.Home.Pages
 
         public async Task OnGet()
         { 
-            
             Events = await _db.Event.ToListAsync();
+            List<Event> EventList = new List<Event>(Events);
+            for(int i = 0; i < Events.Count(); i++){
+                var imgHolder = await _db.EventImage.Where(x => x.EventId == (EventList[i].EventId)).ToListAsync();
+                EventList[i].EventGallery = imgHolder;
+            }
         }
         
     }

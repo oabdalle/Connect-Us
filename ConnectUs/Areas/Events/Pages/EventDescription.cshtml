@@ -5,23 +5,27 @@
 }
 
 <h1>@ViewData["Title"]</h1>
-
-<div>
+<form method="post" id ="eventInfo">
     <div>
-        <p>@Model.eventEntry.Name</p>
+        <div>
+            <label>@Model.eventEntry.Name</label>
+        </div>
+        <div>
+            <label>@Model.eventEntry.EventDate</label>
+        </div> 
+        <div>
+            <label>@Model.categoryEntry.CategoryName</label>
+        </div> 
+        <div>
+            <label>@Model.eventEntry.Description</label>
+        </div>  
+
+        <button asp-page-handler="Delete" asp-route-id="@Model.eventEntry.EventId" onclick="return confirm('Are you sure')" class="btn btn-danger btn-sm">Remove</button>
+        <a asp-area="Events" asp-page="/EditEvent" asp-route-id="@Model.eventEntry.EventId" class="btn btn-sm">Edit</a>
+        <a asp-area="Home" asp-page="/Index" class="btn btn-sm">Return</a>
     </div>
-    <div>
-        <p>@Model.eventEntry.EventDate</p>
-    </div> 
-    <div>
-        <p>@Model.eventEntry.Category</p>
-    </div> 
-    <div>
-        <p>@Model.eventEntry.Description</p>
-    </div>  
-
-    <button asp-page-handler="Delete" asp-route-id="@Model.eventEntry.EventId" onclick="logger('@Model.eventEntry.EventId')" class="btn btn-danger btn-sm">Remove</button>
-    @section Scripts{
+</form>
+@section Scripts{
     <script src="~/js/VenueFilter.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 }
-</div>

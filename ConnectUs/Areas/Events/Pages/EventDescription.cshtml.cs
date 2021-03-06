@@ -23,19 +23,26 @@ namespace ConnectUs.Areas.Events.Pages
         } 
         [BindProperty]
         public Event eventEntry {get; set;}
+        [BindProperty]
+        public Category categoryEntry {get; set;}
+
         public async Task OnGet(int id)
         {
             eventEntry  = await _db.Event.FindAsync(id);
+            if(eventEntry is not null)
+            categoryEntry = await _db.Category.FindAsync(eventEntry.CategoryId);
         }
         public async Task<IActionResult> OnPostDelete(int id)
         {
             var eventToDelete = await _db.Event.FindAsync(id);
+            //List<EventImage> eventImages = new List<EventImage>();
             if(eventToDelete == null){
                 return NotFound();
             }
+            _db.EventImage.RemoveRange(_db.EventImage.Where(x => x.EventId == eventToDelete.EventId));
             _db.Event.Remove(eventToDelete);
             await _db.SaveChangesAsync();
-            return RedirectToPage("CreateEvent");
+            return RedirectToPage("/Index",  new { area = "Home" });
         }
     }
 }

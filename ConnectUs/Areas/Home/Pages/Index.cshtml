@@ -17,23 +17,28 @@
 
 <div class="row">
 
-  @if(Model.Events.Count()>0){
-    @foreach (var item in Model.Events)
-    {
-     
-    <div class="col-3 p-5 m-3 border" asp-area="Home" asp-page="/Privacy">
-    <a asp-area="Events" asp-page="/EventDescription" asp-route-id="@item.EventId">
-    <img src="data:image/png;base64, @item.EventGallery[0].Content"/>
-    </a>
-        @Html.DisplayFor(m=>item.Name)
-    
-        @Html.DisplayFor(m=>item.EventDate)
 
-       
-        @Html.DisplayFor(m=>item.Category)
-    
-    </div>
-    }
+  @if(Model.Events.Count()>0){
+     @if(Model.Events.Count()>0){
+      @foreach (var item in Model.Events)
+      {
+      
+      <div class="col-3 p-5 m-3 border">
+      <a asp-area="Events" asp-page="/EventDescription" asp-route-id="@item.EventId">
+      <img src="data:image/png;base64, @item.EventGallery[0].Content"/>
+      </a>
+          @Html.DisplayFor(m=>item.Name)
+      
+          @Html.DisplayFor(m=>item.EventDate)
+
+        
+          @Html.DisplayFor(m=>item.Category)
+      
+      </div>
+      }
+    }else{
+      <p>No Categories available.</p>
+      }
   }else{
       <p>No Events available.</p>
       }

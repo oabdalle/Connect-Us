@@ -42,7 +42,29 @@ namespace ConnectUs.Areas.Events.Pages
                 eventToUpdate.EventDate = eventEntry.EventDate;
                 eventToUpdate.Description = eventEntry.Description;
                 categoryToUpdate.CategoryName = categoryEntry.CategoryName;
-                 
+                eventToUpdate.EventGallery = new List<EventImage>();
+
+                if(eventEntry.GalleryFiles != null){
+                    foreach (var file in eventEntry.GalleryFiles){
+                    {
+                        using (var ms = new MemoryStream())
+                        {
+                            await file.CopyToAsync(ms);
+                            var fileBytes = ms.ToArray();
+                            string s = Convert.ToBase64String(fileBytes);
+                            eventToUpdate.EventGallery.Add(new EventImage()
+                            {
+                                Content = s,
+                                Event = eventToUpdate
+                            });
+                        }
+                    
+                    }
+                    }
+                }
+                foreach (EventImage img in eventToUpdate.EventGallery){
+                    await _db.EventImage.AddAsync(img);
+                }
                 await _db.SaveChangesAsync();
                 return RedirectToPage("/Index",  new { area = "Home" });
             }

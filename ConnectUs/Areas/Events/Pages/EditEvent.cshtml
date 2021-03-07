@@ -3,9 +3,11 @@
 @{
     ViewData["Title"] = "Edit Event";
 }
+@Html.AntiForgeryToken()
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.7.6/dropzone.min.css" integrity="sha512-jU/7UFiaW5UBGODEopEqnbIAHOI8fO6T99m7Tsmqs2gkdujByJfkCbbfPSN4Wlqlb9TGnsuC0YgUgWkRBK7B9A==" crossorigin="anonymous" />
 
 <h1>@ViewData["Title"]</h1>
-<form method="post" id ="editEventInfo">
+<form enctype = "multipart/form-data" method="post" id ="editEventInfo">
     <div>
         <input type="hidden" asp-for="eventEntry.EventId">
         <input type="hidden" asp-for="eventEntry.CategoryId">
@@ -46,12 +48,105 @@
             </div>
             <span asp-validation-for="eventEntry.Description" class="text-danger"></span>
         </div>
-        <input type="submit" value="Update" class="btn btn-primary form-control"></button>
+        <div class="form-group row">
+            <div class="col-3">
+                <label asp-for="eventEntry.GalleryFiles">
+                </label>
+            </div>
+            <div class="col-9">
+                <div id="dZUpload" class="border border-primary dropzone dz-clickable rounded">
+                    <div class="dz-message">Drop files here or click to upload and rearrange.
+                            <br>
+                
+                </div>
+        
+      </div>
+        <input hidden type="file" id="imgs" asp-for="eventEntry.GalleryFiles" multiple/>
+        <span asp-validation-for="eventEntry.GalleryFiles" class="text-danger"></span>
+    </div>
+        <input id="setup-event" value="Update" class="btn btn-primary w-100"/>
+        <input hidden type="submit" id="post-event" />
         <a asp-area="Events" asp-page="/EventDescription" asp-route-id="@Model.eventEntry.EventId"class="btn btn-info text-white">Cancel</a>
         
     </div>
 </form>
+@* this is client side validation not server side (we have done both) *@
 @section Scripts{
-    <script src="~/js/VenueFilter.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.7.6/min/dropzone.min.js" integrity="sha512-KgeSi6qqjyihUcmxFn9Cwf8dehAB8FFZyl+2ijFEPyWu4ZM8ZOQ80c2so59rIdkkgsVsuTnlffjfgkiwDThewQ==" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
+  <partial name="_ValidationScriptsPartial"/> 
+
+    <script>
+
+  Dropzone.autoDiscover = false;
+  $(document).ready(function () {
+  
+     $("#dZUpload").sortable({
+        items:'.dz-preview',
+        cursor: 'move',
+        opacity: 0.5,
+        containment: '#dZUpload',
+        distance: 20,
+        tolerance: 'pointer'
+    });
+    $("#dZUpload").dropzone({
+        autoProcessQueue: false,
+        url: '@Url.Page("EditEvent", "Upload")',
+        addRemoveLinks: true,
+      init: function() {
+
+        dzClosure = this;
+        document.getElementById("setup-event").addEventListener("click", async function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            if(await UpdateFiles(dzClosure.files)){
+                 console.log("ending with click")
+          
+                $('#post-event').click();
+            }
+            
+        });
+      },
+        success: function (file, response) {
+        },
+        error: function (file, response) {
+        }
+    });
+});
+    async function UpdateFiles(dzFiles){
+        console.log("here")
+        newQueue = [];
+        var queue = dzFiles;
+        console.log(queue)
+        await $('#dZUpload .dz-preview .dz-filename [data-dz-name]').each(async function (count, el) {           
+            var name = el.innerHTML;
+            await queue.forEach(function(file) {
+                if (file.name === name) {
+                    newQueue.push(file);
+                }
+            });
+        });
+        dzFiles = newQueue;
+        console.log(dzFiles)
+    
+        let list = new DataTransfer();
+        for (var i = 0; i < dzFiles.length; i++) {
+            list.items.add(dzFiles[i])
+        }
+        console.log(list);
+        let myFileList = list.files;
+        console.log(myFileList)
+        console.log(document.getElementById('imgs'));
+        
+        document.getElementById('imgs').files=myFileList; 
+          console.log("input before click");
+        console.log(document.getElementById('imgs'));
+           console.log(document.getElementById('imgs').files);
+         console.log("starting to click");
+        return true;
+    }
+
+    
+
+  </script>
+}  

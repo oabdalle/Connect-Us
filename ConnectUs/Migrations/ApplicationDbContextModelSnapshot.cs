@@ -58,6 +58,8 @@ namespace ConnectUs.Migrations
 
                     b.HasKey("EventId");
 
+                    b.HasIndex("CategoryId");
+
                     b.ToTable("Event");
                 });
 
@@ -70,6 +72,9 @@ namespace ConnectUs.Migrations
 
                     b.Property<string>("Content")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("Cover")
+                        .HasColumnType("bit");
 
                     b.Property<int>("EventId")
                         .HasColumnType("int");
@@ -279,6 +284,17 @@ namespace ConnectUs.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens");
+                });
+
+            modelBuilder.Entity("ConnectUs.Model.Event", b =>
+                {
+                    b.HasOne("ConnectUs.Model.Category", "Category")
+                        .WithMany()
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Category");
                 });
 
             modelBuilder.Entity("ConnectUs.Model.EventImage", b =>

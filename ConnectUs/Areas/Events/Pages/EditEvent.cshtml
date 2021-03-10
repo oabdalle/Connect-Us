@@ -7,6 +7,17 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.7.6/dropzone.min.css" integrity="sha512-jU/7UFiaW5UBGODEopEqnbIAHOI8fO6T99m7Tsmqs2gkdujByJfkCbbfPSN4Wlqlb9TGnsuC0YgUgWkRBK7B9A==" crossorigin="anonymous" />
 
 <h1>@ViewData["Title"]</h1>
+ @if(Model.eventsImages.Count()>0){
+    @foreach (var item in Model.eventsImages)
+    {
+    <div class="col-3 p-5 m-3 border">
+    <img src="data:image/png;base64, @item.Content"/>
+    </div>
+    @if(Model.eventsImages.Count()>1){
+    <button onclick="deleteImage(@item.ImageId)">Remove</button>   
+    }
+    }
+  }
 <form enctype = "multipart/form-data" method="post" id ="editEventInfo">
     <div>
         <input type="hidden" asp-for="eventEntry.EventId">
@@ -48,7 +59,8 @@
             </div>
             <span asp-validation-for="eventEntry.Description" class="text-danger"></span>
         </div>
-        <div class="form-group row">
+        
+        <div class="form-group row" id="addImages" style="display: none;">
             <div class="col-3">
                 <label asp-for="eventEntry.GalleryFiles">
                 </label>
@@ -57,19 +69,22 @@
                 <div id="dZUpload" class="border border-primary dropzone dz-clickable rounded">
                     <div class="dz-message">Drop files here or click to upload and rearrange.
                             <br>
-                
-                </div>
-        
-      </div>
-        <input hidden type="file" id="imgs" asp-for="eventEntry.GalleryFiles" multiple/>
-        <span asp-validation-for="eventEntry.GalleryFiles" class="text-danger"></span>
-    </div>
+                    </div>
+
+                 </div>
+
+            <input hidden type="file" id="imgs" asp-for="eventEntry.GalleryFiles" multiple/>
+            <span asp-validation-for="eventEntry.GalleryFiles" class="text-danger"></span>
+            </div>
+        </div>
         <input id="setup-event" value="Update" class="btn btn-primary w-100"/>
         <input hidden type="submit" id="post-event" />
         <a asp-area="Events" asp-page="/EventDescription" asp-route-id="@Model.eventEntry.EventId"class="btn btn-info text-white">Cancel</a>
         
     </div>
 </form>
+<button id="showDropzone" onclick="showDropzoneInForm()">Add</button>
+<button id="hideDropzone"style="display: none;" onclick="showDropzoneInForm()">No Images</button>
 @* this is client side validation not server side (we have done both) *@
 @section Scripts{
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.7.6/min/dropzone.min.js" integrity="sha512-KgeSi6qqjyihUcmxFn9Cwf8dehAB8FFZyl+2ijFEPyWu4ZM8ZOQ80c2so59rIdkkgsVsuTnlffjfgkiwDThewQ==" crossorigin="anonymous"></script>
@@ -77,10 +92,35 @@
   <partial name="_ValidationScriptsPartial"/> 
 
     <script>
-
+ function showDropzoneInForm(){
+        $("#addImages").toggle();
+        $("#showDropzone").toggle();
+        $("#hideDropzone").toggle();
+    }
+ function deleteImage(imgId){
+    console.log(imgId)
+    $.ajax({
+            type: "POST",
+            url: '@Url.Page("EditEvent", "RemoveImage")',            
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("XSRF-TOKEN",$('input:hidden[name="__RequestVerificationToken"]').val());
+            },
+            data: {Item1: imgId},
+            success: function () {
+            location.reload();
+            },
+            failure: function () {
+                alert("fail: ");
+            },
+            error: function () {
+                alert("error: ");
+            }
+        });
+    }
   Dropzone.autoDiscover = false;
   $(document).ready(function () {
-  
+    console.log("His11!");
+   
      $("#dZUpload").sortable({
         items:'.dz-preview',
         cursor: 'move',
@@ -145,8 +185,6 @@
          console.log("starting to click");
         return true;
     }
-
-    
-
+   
   </script>
 }  

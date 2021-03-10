@@ -12,12 +12,17 @@ using Microsoft.AspNetCore.Http;
 using System.IO;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Hosting;
+using Newtonsoft.Json;
 
 namespace ConnectUs.Areas.Events.Pages
 {
-       public class EditEvent : PageModel
+    public class PostData
     {
-         private readonly ApplicationDbContext _db;
+        public string Result {get; set;}
+    }
+    public class EditEvent : PageModel
+    {
+        private readonly ApplicationDbContext _db;
         public EditEvent(ApplicationDbContext db){
             _db = db;
         } 
@@ -25,13 +30,25 @@ namespace ConnectUs.Areas.Events.Pages
         public Event eventEntry {get; set;}
         [BindProperty]
         public Category categoryEntry {get; set;}
+        [BindProperty]
+        public List<EventImage> eventsImages {get; set;}
+
 
         public async Task OnGet(int id)
         {
             eventEntry  = await _db.Event.FindAsync(id);
-            if(eventEntry is not null)
+            eventsImages = await _db.EventImage.Where(x => x.EventId == id).ToListAsync();
+            if(eventEntry is not null){
             categoryEntry = await _db.Category.FindAsync(eventEntry.CategoryId);
+            }
+        } 
+
+        public async Task OnPostRemoveImage(int Item1){
+            var imageToDelete = await _db.EventImage.FindAsync(Item1);
+            _db.EventImage.Remove(imageToDelete);
+            await _db.SaveChangesAsync();
         }
+
         public async Task<IActionResult> OnPost()
         {
             if(ModelState.IsValid)

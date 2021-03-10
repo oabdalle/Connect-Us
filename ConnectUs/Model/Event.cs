@@ -30,8 +30,9 @@ namespace ConnectUs.Model
     
     public Category Category { get; set; }
 
-   [Display(Name = "Choose the gallery images of your book")]
+   [Display(Name = "Gallery Images")]
    [NotMapped]
+   [Required]
     public IFormFileCollection GalleryFiles { get; set; }
 
     [NotMapped]

@@ -25,7 +25,7 @@ To run on a development environment:
     $ docker-compose up 
 
 ### To add a Database Migration (note - replace MyTest with useful migration name)
-    $ docker-compose stop && docker run -v ${PWD}:/app --rm --entrypoint /bin/sh connect-us_app -c 'dotnet ef migrations add MyTest' && docker-compose up
+    $ docker-compose stop -and docker run -v ${PWD}:/app --rm --entrypoint /bin/sh connect-us_app -c 'dotnet ef migrations add MyTest' -and docker-compose up
 
 
 

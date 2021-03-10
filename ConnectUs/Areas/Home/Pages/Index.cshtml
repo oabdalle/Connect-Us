@@ -13,29 +13,34 @@
   </div>
 </div>
 
-<div class="col-12 p-3 mt-5">
-
-<div class="row">
-
+<div class="w-100 my-5">
   @if(Model.Events.Count()>0){
-    @foreach (var item in Model.Events)
-    {
-     
-    <div class="col-3 p-5 m-3 border" asp-area="Home" asp-page="/Privacy">
-    <a asp-area="Events" asp-page="/EventDescription" asp-route-id="@item.EventId">
-    <img src="data:image/png;base64, @item.EventGallery[0].Content"/>
-    </a>
-        @Html.DisplayFor(m=>item.Name)
-    
-        @Html.DisplayFor(m=>item.EventDate)
+     @if(Model.Categories.Count()>0){
+      @foreach (var category in Model.Categories){
+        <h1 class="text-center">@Html.DisplayFor(c=>category.CategoryName)</h1>
+        <div class="row d-flex justify-content-center py-5">
+         
+          @foreach (var item in Model.Events.Where(x => x.CategoryId == (category.CategoryId)))
+          {     
+            <div class="col-xl-2 col-lg-3 col-md-4 col-sm-12 p-5 m-3 border">
+              <a asp-area="Events" asp-page="/EventDescription" asp-route-id="@item.EventId">
+              <img style="width: 100px; height: 100px;" src="data:image/png;base64, @item.EventGallery[0].Content"/>
+              </a>
+                  @Html.DisplayFor(m=>item.Name)
+              
+                  @Html.DisplayFor(m=>item.EventDate)
 
-       
-        @Html.DisplayFor(m=>item.Category)
-    
-    </div>
+                
+                  @Html.DisplayFor(m=>item.Category)
+              
+            </div>
+          }
+        </div>
+      }
+    }else{
+        <p>No Categories available.</p>
     }
   }else{
       <p>No Events available.</p>
-      }
-</div>
+  }
 </div>

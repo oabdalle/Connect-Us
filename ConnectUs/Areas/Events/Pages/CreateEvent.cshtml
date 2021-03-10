@@ -93,7 +93,7 @@
 
   Dropzone.autoDiscover = false;
   $(document).ready(function () {
-  
+      console.log("hello222");
      $("#dZUpload").sortable({
         items:'.dz-preview',
         cursor: 'move',
@@ -107,12 +107,22 @@
         url: '@Url.Page("CreateEvent", "Upload")',
         addRemoveLinks: true,
       init: function() {
-
         dzClosure = this;
-        document.getElementById("setup-event").addEventListener("click", async function(e) {
+        this.on("thumbnail", function(file) {
+          if (file.width < 300 || file.height < 300) {
+              file.rejectDimensions();
+              dzClosure.removeFile(file);
+          }else if(file.size > 1024*1024){
+              file.rejectSize();
+              dzClosure.removeFile(file);
+          }   
+              
+          });
+
+      document.getElementById("setup-event").addEventListener("click", async function(e) {
             e.preventDefault();
             e.stopPropagation();
-            if(await UpdateFiles(dzClosure.files)){
+            if(await UpdateFiles(dzClosure.getAcceptedFiles())){
                  console.log("ending with click")
           
                 $('#post-event').click();
@@ -123,6 +133,11 @@
         success: function (file, response) {
         },
         error: function (file, response) {
+        },
+        accept: function(file, done) {
+          file.acceptDimensions = done;
+          file.rejectDimensions = function() { alert("Image width or height too big."); };
+          file.rejectSize = function() { alert("Image size too big."); };
         }
     });
 });

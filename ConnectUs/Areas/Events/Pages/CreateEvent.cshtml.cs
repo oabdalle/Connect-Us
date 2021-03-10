@@ -93,7 +93,6 @@ namespace ConnectUs.Areas.Events.Pages
         }
 
         public async Task InitCategories(){
-
            Categories = await _db.Category.ToListAsync();
            CategoriesDropDownList = new SelectList(Categories, "CategoryId", "CategoryName");
         }

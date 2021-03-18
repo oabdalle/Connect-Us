@@ -44,7 +44,7 @@ namespace ConnectUs.Areas.Events.Pages
             {
                 await _db.Category.AddAsync(Category);
                 await _db.SaveChangesAsync();
-                return RedirectToPage("/Index", new { area = "Home" });
+                return RedirectToPage("/Index", new { area = "Events" });
 
             }
             else

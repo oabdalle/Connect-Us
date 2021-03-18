@@ -20,6 +20,7 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Routing.Internal;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 
+
 namespace ConnectUs
 {
     public class Startup
@@ -40,6 +41,7 @@ namespace ConnectUs
 
             services.AddDatabaseDeveloperPageExceptionFilter();
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+                .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
         services.Configure<IdentityOptions>(options =>
@@ -69,7 +71,7 @@ namespace ConnectUs
 
             services.AddRazorPages().AddRazorRuntimeCompilation()
                 .AddRazorPagesOptions(options => {
-                        options.RootDirectory = "/Areas/Home/Pages/";
+                        options.RootDirectory = "/Areas/Events/Pages/";
                         options.Conventions.Add(new PageRouteTransformerConvention(new SlugifyParameterTransformer()));
                     });
              services.AddMvc();

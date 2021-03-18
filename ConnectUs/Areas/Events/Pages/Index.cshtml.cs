@@ -9,7 +9,7 @@ using ConnectUs.Model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Diagnostics;
-namespace ConnectUs.Areas.Home.Pages
+namespace ConnectUs.Areas.Events.Pages
 {
     public class IndexModel : PageModel
     {

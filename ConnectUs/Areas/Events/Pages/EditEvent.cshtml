@@ -14,7 +14,10 @@
     <img src="data:image/png;base64, @item.Content"/>
     </div>
     @if(Model.eventsImages.Count()>1){
-    <button onclick="deleteImage(@item.ImageId)">Remove</button>   
+    <button onclick="deleteImage(@item.ImageId)">Remove</button>
+    }
+     @if(item.Cover != true){
+    <button onclick="setAsCover(@item.ImageId)">Set as Cover</button>      
     }
     }
   }
@@ -96,6 +99,26 @@
         $("#addImages").toggle();
         $("#showDropzone").toggle();
         $("#hideDropzone").toggle();
+    }
+function setAsCover(imgId){
+    console.log(imgId)
+    $.ajax({
+            type: "POST",
+            url: '@Url.Page("EditEvent", "SetCover")',            
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("XSRF-TOKEN",$('input:hidden[name="__RequestVerificationToken"]').val());
+            },
+            data: {Item1: imgId},
+            success: function () {
+            location.reload();
+            },
+            failure: function () {
+                alert("fail: ");
+            },
+            error: function () {
+                alert("error: ");
+            }
+        });
     }
  function deleteImage(imgId){
     console.log(imgId)

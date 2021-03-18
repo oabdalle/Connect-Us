@@ -49,6 +49,14 @@ namespace ConnectUs.Areas.Events.Pages
             await _db.SaveChangesAsync();
         }
 
+          public async Task OnPostSetCover(int Item1){
+            var imageToCover = await _db.EventImage.FindAsync(Item1);
+            var imageToReset = await _db.EventImage.FirstOrDefaultAsync(x => x.EventId == imageToCover.EventId && x.Cover == true);
+            imageToCover.Cover = true;
+            imageToReset.Cover = false;
+            await _db.SaveChangesAsync();
+        }
+
         public async Task<IActionResult> OnPost()
         {
             if(ModelState.IsValid)

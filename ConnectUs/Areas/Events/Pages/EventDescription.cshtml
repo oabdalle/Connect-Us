@@ -22,7 +22,7 @@
 
         <button asp-page-handler="Delete" asp-route-id="@Model.eventEntry.EventId" onclick="return confirm('Are you sure')" class="btn btn-danger btn-sm">Remove</button>
         <a asp-area="Events" asp-page="/EditEvent" asp-route-id="@Model.eventEntry.EventId" class="btn btn-sm">Edit</a>
-        <a asp-area="Home" asp-page="/Index" class="btn btn-sm">Return</a>
+        <a asp-area="Events" asp-page="/Index" class="btn btn-sm">Return</a>
     </div>
 </form>
 @section Scripts{

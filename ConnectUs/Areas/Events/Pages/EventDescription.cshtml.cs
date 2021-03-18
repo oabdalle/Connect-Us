@@ -42,7 +42,7 @@ namespace ConnectUs.Areas.Events.Pages
             _db.EventImage.RemoveRange(_db.EventImage.Where(x => x.EventId == eventToDelete.EventId));
             _db.Event.Remove(eventToDelete);
             await _db.SaveChangesAsync();
-            return RedirectToPage("/Index",  new { area = "Home" });
+            return RedirectToPage("/Index",  new { area = "Events" });
         }
     }
 }

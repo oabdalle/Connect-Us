@@ -1,0 +1,35 @@
+﻿
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - ConnectUs</title>
+    @* <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" /> *@
+    <link rel="stylesheet" href="~/dist/bundle.css" />
+
+</head>
+<h2>Manage your account</h2>
+<body>
+<div>
+    <h4>Change your account settings</h4>
+    <hr />
+    <div class="row">
+        <div class="col-md-3">
+  
+        </div>
+        <div class="col-md-9">
+            @RenderBody()
+        </div>
+    </div>
+</div>
+</body>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2020 - ConnectUs - <a asp-area="Events" asp-page="/Privacy">Privacy</a>
+        </div>
+    </footer>
+
+@await RenderSectionAsync("Scripts", required: false)

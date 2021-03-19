@@ -25,7 +25,7 @@ namespace ConnectUs.Areas.Account.Pages
         private readonly UserManager<IdentityUser> _userManager;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
-        private readonly RoleManager<IdentityRole> roleManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
         
         public RegisterModel(
@@ -39,7 +39,7 @@ namespace ConnectUs.Areas.Account.Pages
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
-            this.roleManager = roleManager;
+            _roleManager = roleManager;
         }
 
         [BindProperty]
@@ -77,7 +77,7 @@ namespace ConnectUs.Areas.Account.Pages
         {
             ReturnUrl = returnUrl;
 
-            RoleList = roleManager.Roles.Select(x => new SelectListItem { Text = x.Name, Value = x.Name }).ToList();
+            RoleList = _roleManager.Roles.Select(x => new SelectListItem { Text = x.Name, Value = x.NormalizedName }).ToList();
 
             return Page();
           
@@ -105,7 +105,11 @@ namespace ConnectUs.Areas.Account.Pages
 
                     await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
                         $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
-
+                    if(await _roleManager.RoleExistsAsync(Input.SelectedRole))
+                    {
+                        var addClaimResult = await _userManager.AddToRoleAsync(user, Input.SelectedRole);
+                    }
+                    
                     if (_userManager.Options.SignIn.RequireConfirmedAccount)
                     {
                         return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });

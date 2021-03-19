@@ -11,6 +11,8 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using ConnectUs.Services;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace ConnectUs.Areas.Account.Pages
 {
@@ -85,6 +87,11 @@ namespace ConnectUs.Areas.Account.Pages
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");
+                    var user = await _userManager.FindByEmailAsync(Input.Email);
+                    string rolename = "";
+                    if(rolename == "HII"){
+                      return RedirectToPage("/Index",  new { area = "Admin" });
+                    }
                     return LocalRedirect(returnUrl);
                 }
                 if (result.RequiresTwoFactor)

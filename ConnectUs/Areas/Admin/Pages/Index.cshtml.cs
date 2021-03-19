@@ -9,8 +9,10 @@ using ConnectUs.Model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Diagnostics;
+using Microsoft.AspNetCore.Authorization;
 namespace ConnectUs.Areas.Admin.Pages
 {
+    [Authorize(Roles = "Administrator")]
     public class IndexModel : PageModel
     {
         private readonly ILogger<IndexModel> _logger;

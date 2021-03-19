@@ -88,8 +88,8 @@ namespace ConnectUs.Areas.Account.Pages
                 {
                     _logger.LogInformation("User logged in.");
                     var user = await _userManager.FindByEmailAsync(Input.Email);
-                    string rolename = "";
-                    if(rolename == "HII"){
+                    var roles = await _userManager.GetRolesAsync(user);
+                    if(roles[0] == "our baby"){
                       return RedirectToPage("/Index",  new { area = "Admin" });
                     }
                     return LocalRedirect(returnUrl);

@@ -64,7 +64,11 @@ namespace ConnectUs
                 "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
                 options.User.RequireUniqueEmail = false;
             });
-
+            services.ConfigureApplicationCookie(options => {
+                options.LoginPath = "/account/login";
+                options.AccessDeniedPath = "/account/access-denied";
+                
+            });
                           
             services.AddTransient<IEmailSender, EmailSender>();
             services.Configure<AuthMessageSenderOptions>(Configuration);

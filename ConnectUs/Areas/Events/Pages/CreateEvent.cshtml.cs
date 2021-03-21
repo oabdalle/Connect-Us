@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using ConnectUs.Model;
+using ConnectUs.Model.Entities;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
@@ -15,7 +16,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Authorization;
 namespace ConnectUs.Areas.Events.Pages
 {
-    [Authorize(Roles = "Creator")]
+    [Authorize(Roles = "Creator, Admin")]
     public class CreateEventModel : PageModel
     {
         private readonly ILogger<CreateEventModel> _logger;
@@ -46,10 +47,16 @@ namespace ConnectUs.Areas.Events.Pages
         public async Task<IActionResult> OnPost() //we use <IActionResult> to direct to new page
         { 
             Event.EventGallery = new List<EventImage>();
-
+            
             if(Event.GalleryFiles != null){
-                foreach (var file in Event.GalleryFiles){
-                {
+                int index = 0;
+              foreach (var file in Event.GalleryFiles){
+              {   
+                    var isCover = false;
+                    if(index==0){
+                        isCover=true;
+                    }
+                    index++;
                     using (var ms = new MemoryStream())
                     {
                         await file.CopyToAsync(ms);
@@ -58,6 +65,7 @@ namespace ConnectUs.Areas.Events.Pages
                         Event.EventGallery.Add(new EventImage()
                         {
                             Content = s,
+                            Cover = isCover,
                             Event = Event
                         });
                     }

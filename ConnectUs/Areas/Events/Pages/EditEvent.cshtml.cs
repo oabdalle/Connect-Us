@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using ConnectUs.Model;
+using ConnectUs.Model.Entities;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
@@ -20,7 +21,7 @@ namespace ConnectUs.Areas.Events.Pages
     {
         public string Result {get; set;}
     }
-    [Authorize(Roles = "Creator")]
+    [Authorize(Roles = "Creator, Admin")]
     public class EditEvent : PageModel
     {
         private readonly ApplicationDbContext _db;

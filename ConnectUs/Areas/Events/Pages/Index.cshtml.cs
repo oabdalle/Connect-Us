@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using ConnectUs.Model;
+using ConnectUs.Model.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Diagnostics;
@@ -17,8 +18,7 @@ namespace ConnectUs.Areas.Events.Pages
 
         private readonly ApplicationDbContext _db;
         
-        public IEnumerable<Event> Events { get; set; }
-        public IEnumerable<Category> Categories { get; set; }
+        public EventCategoryViewModel EventCategory {get; set;}
         
         public IndexModel(ILogger<IndexModel> logger, ApplicationDbContext db)
         {
@@ -28,15 +28,11 @@ namespace ConnectUs.Areas.Events.Pages
 
         public async Task OnGet()
         { 
-            Events = await _db.Event.ToListAsync();
-            Categories = await _db.Category.ToListAsync();
-            
-            List<Event> EventList = new List<Event>(Events);
-
-            for(int i = 0; i < Events.Count(); i++){
-                var imgHolder = await _db.EventImage.Where(x => x.EventId == (EventList[i].EventId)).ToListAsync();
-                EventList[i].EventGallery = imgHolder;
-            }
+            EventCategory = new EventCategoryViewModel{
+                EventImages= await _db.EventImage.ToListAsync(), 
+                Events=await _db.Event.ToListAsync(),
+                Categories= await _db.Category.ToListAsync()
+            };
         }
         
     }

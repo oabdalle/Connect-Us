@@ -7,12 +7,13 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
 using ConnectUs.Model;
+using ConnectUs.Model.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 
 namespace ConnectUs.Areas.Events.Pages
 {
-    [Authorize(Roles = "Creator")]
+    [Authorize(Roles = "Creator, Admin")]
     public class CreateCategoryModel : PageModel
     {
         private readonly ILogger<CreateCategoryModel> _logger;

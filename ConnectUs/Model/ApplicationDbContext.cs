@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-
+using ConnectUs.Model.Entities;
 namespace ConnectUs.Model
 {
     public class ApplicationDbContext : IdentityDbContext

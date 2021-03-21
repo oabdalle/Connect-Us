@@ -67,7 +67,7 @@
         </div>
         
       </div>
-        <input hidden type="file" id="imgs" asp-for="Event.GalleryFiles" multiple/>
+        <input type="file" id="imgs" asp-for="Event.GalleryFiles" multiple/>
         <span asp-validation-for="Event.GalleryFiles" class="text-danger"></span>
     </div>
 </div>
@@ -108,21 +108,12 @@
         addRemoveLinks: true,
       init: function() {
         dzClosure = this;
-        this.on("thumbnail", function(file) {
-          if (file.width < 300 || file.height < 300) {
-              file.rejectDimensions();
-              dzClosure.removeFile(file);
-          }else if(file.size > 1024*1024){
-              file.rejectSize();
-              dzClosure.removeFile(file);
-          }   
-              
-          });
+
 
       document.getElementById("setup-event").addEventListener("click", async function(e) {
             e.preventDefault();
             e.stopPropagation();
-            if(await UpdateFiles(dzClosure.getAcceptedFiles())){
+            if(await UpdateFiles(dzClosure)){
                  console.log("ending with click")
           
                 $('#post-event').click();
@@ -135,16 +126,14 @@
         error: function (file, response) {
         },
         accept: function(file, done) {
-          file.acceptDimensions = done;
-          file.rejectDimensions = function() { alert("Image width or height too big."); };
-          file.rejectSize = function() { alert("Image size too big."); };
+    
         }
     });
 });
     async function UpdateFiles(dzFiles){
         console.log("here")
         newQueue = [];
-        var queue = dzFiles;
+        var queue = dzFiles.files;
         console.log(queue)
         await $('#dZUpload .dz-preview .dz-filename [data-dz-name]').each(async function (count, el) {           
             var name = el.innerHTML;

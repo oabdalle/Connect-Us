@@ -19,7 +19,7 @@
         <div>
             <label>@Model.eventEntry.Description</label>
         </div>  
-        @if (User.Identity.IsAuthenticated && User.IsInRole("Creator"))
+        @if (User.Identity.IsAuthenticated && (User.IsInRole("Creator") || User.IsInRole("Admin")))
         {
         <button asp-page-handler="Delete" asp-route-id="@Model.eventEntry.EventId" onclick="return confirm('Are you sure')" class="btn btn-danger btn-sm">Remove</button>
         <a asp-area="Events" asp-page="/EditEvent" asp-route-id="@Model.eventEntry.EventId" class="btn btn-sm">Edit</a>

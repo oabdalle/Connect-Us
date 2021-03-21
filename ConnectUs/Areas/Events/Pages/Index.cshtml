@@ -2,7 +2,8 @@
 @model IndexModel
 @{
     ViewData["Title"] = "Home page";
-}@if (User.Identity.IsAuthenticated && User.IsInRole("Creator"))
+}
+@if (User.Identity.IsAuthenticated && (User.IsInRole("Creator") || User.IsInRole("Admin")))
 {
 
 <div class="row p-3 justify-content-center">
@@ -14,34 +15,4 @@
   </div>
 </div>
 }
-<div class="w-100 my-5">
-  @if(Model.Events.Count()>0){
-     @if(Model.Categories.Count()>0){
-      @foreach (var category in Model.Categories){
-        <h1 class="text-center">@Html.DisplayFor(c=>category.CategoryName)</h1>
-        <div class="row d-flex justify-content-center py-5">
-         
-          @foreach (var item in Model.Events.Where(x => x.CategoryId == (category.CategoryId)))
-          {     
-            <div class="col-xl-2 col-lg-3 col-md-4 col-sm-12 p-5 m-3 border">
-              <a asp-area="Events" asp-page="/EventDescription" asp-route-id="@item.EventId">
-              <img style="width: 100px; height: 100px;" src="data:image/png;base64, @item.EventGallery.SingleOrDefault(x => x.Cover == true).Content"/>
-              </a>
-                  @Html.DisplayFor(m=>item.Name)
-              
-                  @Html.DisplayFor(m=>item.EventDate)
-
-                
-                  @Html.DisplayFor(m=>item.Category)
-              
-            </div>
-          }
-        </div>
-      }
-    }else{
-        <p>No Categories available.</p>
-    }
-  }else{
-      <p>No Events available.</p>
-  }
-</div>
+<partial name="_EventsListing" model="@Model.EventCategory"/>

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations.Schema;
-namespace ConnectUs.Model
+namespace ConnectUs.Model.Entities
 {
   public class EventImage
   {

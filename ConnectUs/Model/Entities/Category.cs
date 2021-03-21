@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace ConnectUs.Model
+namespace ConnectUs.Model.Entities
 {
   public class Category
   {

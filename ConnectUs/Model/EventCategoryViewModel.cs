@@ -22,7 +22,7 @@ namespace ConnectUs.Model
 
         public EventCategoryViewModel()
         {
-
+  
         }
 
   }

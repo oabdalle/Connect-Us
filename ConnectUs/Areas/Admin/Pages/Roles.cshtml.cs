@@ -28,9 +28,9 @@ namespace ConnectUs.Areas.Admin.Pages
             _db = db;
         }
 
-        public async Task OnGet()
+        public IActionResult OnGet()
         { 
-  
+          return Page();
         }
         
     }

@@ -32,7 +32,7 @@ namespace ConnectUs.Areas.Events.Pages
         public Event eventEntry {get; set;}
         [BindProperty]
         public Category categoryEntry {get; set;}
-        [BindProperty]
+       
         public List<EventImage> eventsImages {get; set;}
 
 
@@ -45,18 +45,30 @@ namespace ConnectUs.Areas.Events.Pages
             }
         } 
 
-        public async Task OnPostRemoveImage(int Item1){
+        public async Task<IActionResult> OnPostRemoveImage(int Item1){
             var imageToDelete = await _db.EventImage.FindAsync(Item1);
+            
+            if(imageToDelete.Cover==true){
+               var setCoverImage = await _db.EventImage.FindAsync(Item1+1);
+               setCoverImage.Cover=true;
+            }
             _db.EventImage.Remove(imageToDelete);
             await _db.SaveChangesAsync();
+            eventsImages = await _db.EventImage.Where(x => x.EventId == imageToDelete.EventId).ToListAsync();
+            return Partial("_EditImages", eventsImages);
         }
 
-          public async Task OnPostSetCover(int Item1){
+          public async Task<IActionResult> OnPostSetCover(int Item1){
+            
             var imageToCover = await _db.EventImage.FindAsync(Item1);
             var imageToReset = await _db.EventImage.FirstOrDefaultAsync(x => x.EventId == imageToCover.EventId && x.Cover == true);
             imageToCover.Cover = true;
             imageToReset.Cover = false;
             await _db.SaveChangesAsync();
+
+            eventsImages = await _db.EventImage.Where(x => x.EventId == imageToCover.EventId).ToListAsync();
+           
+            return Partial("_EditImages", eventsImages);
         }
 
         public async Task<IActionResult> OnPost()
@@ -97,5 +109,7 @@ namespace ConnectUs.Areas.Events.Pages
             }
             return RedirectToPage();
         }
+      
+      
     }
 }

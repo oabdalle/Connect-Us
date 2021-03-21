@@ -8,9 +8,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
 using ConnectUs.Model;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ConnectUs.Areas.Events.Pages
 {
+    [Authorize(Roles = "Creator")]
     public class CreateCategoryModel : PageModel
     {
         private readonly ILogger<CreateCategoryModel> _logger;

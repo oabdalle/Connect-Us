@@ -13,13 +13,14 @@ using System.IO;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Hosting;
 using Newtonsoft.Json;
-
+using Microsoft.AspNetCore.Authorization;
 namespace ConnectUs.Areas.Events.Pages
 {
     public class PostData
     {
         public string Result {get; set;}
     }
+    [Authorize(Roles = "Creator")]
     public class EditEvent : PageModel
     {
         private readonly ApplicationDbContext _db;

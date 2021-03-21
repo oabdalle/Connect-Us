@@ -12,7 +12,7 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Authorization;
 namespace ConnectUs.Areas.Admin.Pages
 {
-    [Authorize(Roles = "Administrator")]
+    [Authorize(Roles = "our baby")]
     public class IndexModel : PageModel
     {
         private readonly ILogger<IndexModel> _logger;

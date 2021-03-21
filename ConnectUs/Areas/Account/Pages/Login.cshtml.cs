@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using ConnectUs.Services;
 using Microsoft.AspNetCore.Mvc.Rendering;
-
+using System.Security.Claims;
 namespace ConnectUs.Areas.Account.Pages
 {
     [AllowAnonymous]
@@ -89,6 +89,12 @@ namespace ConnectUs.Areas.Account.Pages
                     _logger.LogInformation("User logged in.");
                     var user = await _userManager.FindByEmailAsync(Input.Email);
                     var roles = await _userManager.GetRolesAsync(user);
+                    var userClaim = new List<Claim>(){
+                        new Claim(ClaimTypes.Role, roles[0])
+                    };
+                    var userIdentity = new ClaimsIdentity(userClaim, "user");
+                    var userPrincipal = new ClaimsPrincipal(new[]{userIdentity});
+                    HttpContext.SignInAsync(userPrincipal);
                     if(roles[0] == "our baby"){
                       return RedirectToPage("/Index",  new { area = "Admin" });
                     }

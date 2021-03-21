@@ -12,9 +12,10 @@ using Microsoft.AspNetCore.Http;
 using System.IO;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Hosting;
-
+using Microsoft.AspNetCore.Authorization;
 namespace ConnectUs.Areas.Events.Pages
 {
+    [Authorize(Roles = "Creator")]
     public class CreateEventModel : PageModel
     {
         private readonly ILogger<CreateEventModel> _logger;

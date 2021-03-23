@@ -1,0 +1,48 @@
+@page
+@model ManageCategoriesModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<div class="container row p-0 m-0">
+  <div class="col-9">
+    <h2 class="text-info">Categories List</h2>
+  </div>
+
+
+<partial name="_CreateEditCategory" model="@Model.CategoryViewModel"/>
+
+  <div class="col-12 border p-3 mt-3">
+    <form method="post">
+    @if(Model.CategoryList != null){
+      @if(Model.CategoryList.Count()>0){
+      <table class="table table-striped border">
+        <tr class="table-secondary">
+          <th>
+            <label asp-for="CategoryList.FirstOrDefault().CategoryName"></label>
+          </th>
+          <th></th>
+        </tr>
+        @foreach (var item in Model.CategoryList)
+        {
+        <tr>
+          <td>
+            @Html.DisplayFor(m=>item.CategoryName)
+          </td>
+
+          <td>
+            <button asp-page-handler="DeleteCategory" asp-route-id="@item.CategoryId" class="btn btn-danger btn-sm">Delete</button>
+            <button type="button" data-name="@item.CategoryName" data-id="@item.CategoryId" class="edit-category btn btn-success btn-sm text-white" data-toggle="modal" data-target="#categoryEditModalCenter">Edit</button>
+
+          </td>
+        </tr>
+
+        }
+      </table>
+      }else{
+      <p>No Categories available.</p>
+      }
+    }
+    </form>
+  </div>
+

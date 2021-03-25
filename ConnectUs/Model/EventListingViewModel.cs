@@ -12,7 +12,7 @@ using ConnectUs.Model.Entities;
 
 namespace ConnectUs.Model
 {
-  public class EventCategoryViewModel
+  public class EventListingViewModel
   {
   
         public IEnumerable<Event> Events { get; set; }
@@ -20,9 +20,9 @@ namespace ConnectUs.Model
 
         public IEnumerable<EventImage> EventImages { get; set; }
 
-        public EventCategoryViewModel()
+        public EventListingViewModel()
         {
-
+  
         }
 
   }

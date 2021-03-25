@@ -20,7 +20,7 @@ namespace ConnectUs.Areas.Admin.Pages
 
         private readonly ApplicationDbContext _db;
       
-        public EventCategoryViewModel EventCategory {get; set;}
+        public EventListingViewModel EventListing {get; set;}
         
         public IndexModel(ILogger<IndexModel> logger, ApplicationDbContext db)
         {
@@ -30,7 +30,7 @@ namespace ConnectUs.Areas.Admin.Pages
 
         public async Task OnGet()
         { 
-       EventCategory = new EventCategoryViewModel{
+       EventListing = new EventListingViewModel{
                 EventImages= await _db.EventImage.ToListAsync(), 
                 Events=await _db.Event.ToListAsync(),
                 Categories= await _db.Category.ToListAsync()

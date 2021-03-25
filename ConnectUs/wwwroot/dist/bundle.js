@@ -149,7 +149,7 @@ eval("var g;\n\n// This works in non-strict mode\ng = (function() {\n\treturn th
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-eval("﻿// Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification\r\n// for details on configuring this project to bundle and minify static web assets.\r\n\r\n// Write your JavaScript code.\r\n\n\n//# sourceURL=webpack:///./wwwroot/js/site.js?");
+eval("﻿// Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification\r\n// for details on configuring this project to bundle and minify static web assets.\r\n\r\n// Write your JavaScript code.\r\n\r\n\n\n//# sourceURL=webpack:///./wwwroot/js/site.js?");
 
 /***/ }),
 

@@ -7,6 +7,7 @@
     @* <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" /> *@
     <link rel="stylesheet" href="~/dist/bundle.css" />
+    <link rel="icon" type="image/svg" href="~/images/connectus-logo.png" />
 
 </head>
 <body>
@@ -55,10 +56,11 @@
     </footer>
 
      <script src="~/lib/jquery/dist/jquery.min.js"></script>
+     <script src="~/dist/bundle.js" asp-append-version="true"></script> 
     @* <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script> 
     <script src="~/dist/bundle.js" asp-append-version="true"></script> *@
     @await RenderSectionAsync("Scripts", required: false)
-       <script src="~/dist/bundle.js" asp-append-version="true"></script> 
+       
 </body>
 </html>

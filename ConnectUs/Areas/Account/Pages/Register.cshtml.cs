@@ -73,11 +73,11 @@ namespace ConnectUs.Areas.Account.Pages
             public string SelectedRole { get; set; }
         }
 
-        public async Task<IActionResult> OnGetAsync(string returnUrl = null)
+        public IActionResult OnGet(string returnUrl = null)
         {
             ReturnUrl = returnUrl;
 
-            RoleList = _roleManager.Roles.Select(x => new SelectListItem { Text = x.Name, Value = x.NormalizedName }).ToList();
+            RoleList =  _roleManager.Roles.Select(x => new SelectListItem { Text = x.Name, Value = x.NormalizedName }).ToList();
 
             return Page();
           

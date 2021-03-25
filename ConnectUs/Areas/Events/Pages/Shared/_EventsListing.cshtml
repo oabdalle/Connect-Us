@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" />
 
 @model EventCategoryViewModel
@@ -8,6 +9,9 @@
   @if(User.Identity.IsAuthenticated){
      user=await userManager.FindByNameAsync(User.Identity.Name);
   }
+=======
+@model EventListingViewModel
+>>>>>>> development
 
 <div class="w-100 my-5">
   @if(Model.Events.Count()>0){
@@ -24,8 +28,14 @@
               @if(user.Id != ""){
               @if(item.HostId == user.Id){<div class="featured fa fa-star"></div>}}
               <a asp-area="Events" asp-page="/EventDescription" asp-route-id="@item.EventId">
+<<<<<<< HEAD
               <img style="width: 100px; height: 100px;" src="data:image/png;base64, @Model.EventImages.Where(x=>x.EventId == item.EventId).SingleOrDefault(x => x.Cover == true).Content"/>
 
+=======
+                @if(Model.EventImages.Count()>0){ 
+                 <img style="width: 100px; height: 100px;" src="data:image/png;base64, @Model.EventImages.Where(x=>x.EventId == item.EventId).SingleOrDefault(x => x.Cover == true).Content"/>
+                }
+>>>>>>> development
               </a>
                   @Html.DisplayFor(m=>item.Name)
               

@@ -14,6 +14,8 @@ using System.IO;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 namespace ConnectUs.Areas.Events.Pages
 {
     [Authorize(Roles = "Creator, Admin")]
@@ -22,7 +24,7 @@ namespace ConnectUs.Areas.Events.Pages
         private readonly ILogger<CreateEventModel> _logger;
         private readonly ApplicationDbContext _db;
         private readonly IWebHostEnvironment _env;
-
+        private readonly UserManager<IdentityUser> _userManager;
         [Required]
         [BindProperty] //this assumes then onPost you will be getting this event here that the user modified so no need for onPost(Event eventObj)
         public Event Event { get; set; }
@@ -31,16 +33,19 @@ namespace ConnectUs.Areas.Events.Pages
 
         public SelectList CategoriesDropDownList { get; set; }
 
-        public CreateEventModel(ILogger<CreateEventModel> logger, ApplicationDbContext db, IWebHostEnvironment env)
+        public string userId {get; set;}
+
+        public CreateEventModel(ILogger<CreateEventModel> logger, ApplicationDbContext db, IWebHostEnvironment env, UserManager<IdentityUser> um)
         {
             _logger = logger;
             _db = db;
             _env=env;
+            _userManager = um;
         }
 
         public async Task OnGet()
         {
-           await InitCategories();
+           await InitItems();
 
         }
 
@@ -73,7 +78,7 @@ namespace ConnectUs.Areas.Events.Pages
                 }
                 }
             }else{
-                await InitCategories();
+                await InitItems();
                 return Page();
             }
 
@@ -91,7 +96,7 @@ namespace ConnectUs.Areas.Events.Pages
                 var errors = ModelState.Select(x => x.Value.Errors)
                                     .Where(y=>y.Count>0)
                                     .ToList();
-                await InitCategories();
+                await InitItems();
                 return Page();
             }
 
@@ -101,7 +106,9 @@ namespace ConnectUs.Areas.Events.Pages
             return Page();
         }
 
-        public async Task InitCategories(){
+        public async Task InitItems(){
+           var user = await _userManager.GetUserAsync(HttpContext.User);
+           userId = user.Id;
            Categories = await _db.Category.ToListAsync();
            CategoriesDropDownList = new SelectList(Categories, "CategoryId", "CategoryName");
         }

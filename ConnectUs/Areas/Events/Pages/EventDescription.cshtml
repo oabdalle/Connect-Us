@@ -1,9 +1,13 @@
 @page
 @model EventDescription
+@inject UserManager<IdentityUser> userManager;
 @{
     ViewData["Title"] = "Event Description";
+    var user = new IdentityUser {Id = "" };
 }
-
+  @if(User.Identity.IsAuthenticated){
+     user=await userManager.FindByNameAsync(User.Identity.Name);
+  }
 <h1>@ViewData["Title"]</h1>
 <form method="post" id ="eventInfo">
     <div>
@@ -19,12 +23,13 @@
         <div>
             <label>@Model.eventEntry.Description</label>
         </div>  
-        @if (User.Identity.IsAuthenticated && (User.IsInRole("Creator") || User.IsInRole("Admin")))
+        @if (Model.eventEntry.HostId == user.Id && (User.IsInRole("Creator") || User.IsInRole("Admin")))
         {
         <button asp-page-handler="Delete" asp-route-id="@Model.eventEntry.EventId" onclick="return confirm('Are you sure')" class="btn btn-danger btn-sm">Remove</button>
         <a asp-area="Events" asp-page="/EditEvent" asp-route-id="@Model.eventEntry.EventId" class="btn btn-sm">Edit</a>
-        <a asp-area="Events" asp-page="/Index" class="btn btn-sm">Return</a>
         }
+        <a asp-area="Events" asp-page="/Index" class="btn btn-sm">Return</a>
+        
     </div>
 </form>
 @section Scripts{

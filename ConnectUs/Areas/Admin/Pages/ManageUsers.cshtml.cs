@@ -96,6 +96,7 @@ namespace ConnectUs.Areas.Admin.Pages
               var role = await _roleManager.FindByNameAsync(roleName);
               var currentRoles= await _userManager.GetRolesAsync(user);
               if(user!=null && role!=null && currentRoles!=null){
+                
                    await _userManager.RemoveFromRolesAsync(user, currentRoles.ToList());
                   var result = await _userManager.AddToRoleAsync(user, role.Name);
 

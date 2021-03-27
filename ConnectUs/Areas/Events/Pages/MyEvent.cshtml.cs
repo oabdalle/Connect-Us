@@ -19,7 +19,7 @@ namespace ConnectUs.Areas.Events.Pages
 
         private readonly ApplicationDbContext _db;
         
-        public EventCategoryViewModel EventCategory {get; set;}
+        public EventListingViewModel EventCategory {get; set;}
         public MyEventModel(ILogger<MyEventModel> logger, ApplicationDbContext db)
         {
             _logger = logger;
@@ -28,7 +28,7 @@ namespace ConnectUs.Areas.Events.Pages
 
         public async Task OnGet()
         {
-            EventCategory = new EventCategoryViewModel{
+            EventCategory = new EventListingViewModel{
                 EventImages= await _db.EventImage.ToListAsync(), 
                 Events=await _db.Event.ToListAsync(),
                 Categories= await _db.Category.ToListAsync()

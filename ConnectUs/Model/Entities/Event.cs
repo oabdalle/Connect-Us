@@ -39,7 +39,7 @@ namespace ConnectUs.Model.Entities
     public List<EventImage> EventGallery { get; set; }
 
     [Required]
-    public string HostId {get; set; }
+    public string HostId { get; set; }
   }
 
 }

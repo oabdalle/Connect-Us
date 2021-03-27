@@ -142,13 +142,10 @@ function EditCategory(categoryId, categoryName){
           success: function (result) {
               console.log(result)
               if(result=="Success"){
-         
+    
                 sessionStorage.setItem('reloadAfterEdit', "true"); 
-                  window.location.reload(true);
-            
-            
-       
-        
+                window.location.reload(true);     
+                    
               }
           },
           failure: function () {

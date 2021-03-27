@@ -1,0 +1,106 @@
+@model EditRoleViewModel
+
+@Html.AntiForgeryToken()
+<div class="modal fade" id="roleEditModalCenter" tabindex="-1" role="dialog" aria-labelledby="roleEditModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="roleEditModalLongTitle">Edit role</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      
+      <div class="modal-body">
+        <div class="form-group row">
+          <div class="col-6">
+            <label>Current role</label>
+          </div>
+          <div class="col-6">
+              <input type="text" readonly name="roleId" id="roleId" value=""/>
+              <input type="text" readonly name="roleName" id="roleName" value=""/>
+                <input type="text" readonly name="userId" id="userId" value=""/>
+
+          </div>
+        </div>
+    <form id="editForm" method="post">
+        <div class="form-group row">
+          <div class="col-6">
+            <label asp-for="Role.Name">
+            </label>
+          </div>
+          <div class="col-6">
+            <select asp-for="Role.Name" id="newroleName" asp-items="Model.RoleList" class="form-control"></select>
+          </div>
+          <span asp-validation-for="Role.Name" class="text-danger"></span>
+          <span style="display:none;" id="differentRole" class="text-danger">Please select a different role from the current user role.</span>
+
+        </div>
+    </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <input onclick="EditUserRole(document.getElementById('roleName').value, document.getElementById('newroleName').value, document.getElementById('userId').value)" class="btn btn-primary" value="Save"> 
+
+      </div>
+    
+    </div>
+  </div>
+</div>
+
+<script>
+
+function EditUserRole(oldRoleName, newRoleName, userId){
+  console.log(oldRoleName)
+  console.log(newRoleName)
+  console.log(userId)
+
+  if(oldRoleName == newRoleName){
+    $('#differentRole').show();
+    return;
+  }
+  if($("#editForm").valid()){
+    $.ajax({
+          type: "POST",
+          url:'/admin/manage-users?handler=EditUserRole',          
+          beforeSend: function (xhr) {
+              xhr.setRequestHeader("XSRF-TOKEN",$('input:hidden[name="__RequestVerificationToken"]').val());
+          },
+          data: {roleName: newRoleName, userId: userId},
+          success: function (result) {
+              if(result=="Success"){
+                sessionStorage.setItem('reloadAfterEditRole', "true");
+                window.location.reload(true);
+              }
+          },
+          failure: function () {
+              alert("fail: ");
+          },
+          error: function (xhr, status, error) {
+              alert(xhr.responseText);
+          }
+      });
+  }
+}
+
+</script>
+<script>
+window.addEventListener('load', function () {
+
+    $(".edit-role").click(function(){
+        var roleId = $(this).data('id');
+        var roleName = $(this).data('name');
+        var userId = $(this).data('userid');
+        $("#roleEditModalCenter #roleId").val( roleId );
+        $("#roleEditModalCenter #roleName").val( roleName );
+        $("#roleEditModalCenter #userId").val( userId );
+    }); 
+    
+      if (sessionStorage.getItem('reloadAfterEditRole')=="true"){
+            sessionStorage.setItem('reloadAfterEditRole', "false");
+            toastr.success("Successful Role Edit");
+      }
+})
+
+
+</script>

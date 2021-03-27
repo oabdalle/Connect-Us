@@ -1,0 +1,50 @@
+@page
+@model ManageUsersModel
+@{
+    ViewData["Title"] = "Home page";
+}
+<partial name="_EditRole" model="@Model.RoleViewModel"/>
+
+<div class="col-12 border p-3 mt-3">
+    <form method="post">
+    @if(Model.Users != null){
+      <table class="table table-striped border">
+        <tr class="table-secondary">
+          <th>
+            <label>Email</label>
+          </th>
+          <th><label>User Id</label></th>
+          <th><label>Role</label></th>
+          <th></th>
+        </tr>
+        
+        @foreach (var key in Model.Users.Keys)
+        {
+        <tr>
+          <td>
+            @Html.DisplayFor(m=>key.Email)
+          </td>
+          <td>
+            @Html.DisplayFor(m=>key.Id)
+          </td>
+          <td>
+            @Html.DisplayFor(m=>Model.Users[key].Name)
+          </td>
+
+          <td>
+        
+            <button asp-page-handler="DeleteUser" asp-route-id="@key.Id" class="btn btn-danger btn-sm">Delete</button>
+            <button type="button" data-id="@Model.Users[key].Id" data-userid="@key.Id" data-name="@Model.Users[key].Name" class="edit-role btn btn-primary btn-sm text-white" data-toggle="modal" data-target="#roleEditModalCenter">Edit Role</button>
+            @if(key.EmailConfirmed == false){
+                <button asp-page-handler="ActivateUser" asp-route-email="@key.Email" class="btn btn-success btn-sm">Activate User</button>
+            }
+          </td>
+        </tr>
+
+        }
+      </table>
+      }else{
+      <p>No Categories available.</p>
+      }
+    </form>
+  </div> 

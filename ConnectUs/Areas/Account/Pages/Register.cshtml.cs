@@ -129,6 +129,8 @@ namespace ConnectUs.Areas.Account.Pages
                 }
             }
 
+            RoleList = _roleManager.Roles.Select(x => new SelectListItem { Text = x.Name, Value = x.NormalizedName }).ToList();
+
             // If we got this far, something failed, redisplay form
             return Page();
         }

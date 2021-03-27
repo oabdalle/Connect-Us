@@ -38,7 +38,8 @@ namespace ConnectUs.Model.Entities
     [NotMapped]
     public List<EventImage> EventGallery { get; set; }
 
-
+    [Required]
+    public string HostId { get; set; }
   }
 
 }

@@ -80,3 +80,27 @@ body {
   white-space: nowrap;
   line-height: 60px; /* Vertically center the text there */
 }
+.featured.fa {
+  width: 100px;
+  display: block; /* needed to override FA styling */
+  //position: relative;
+}
+.featured.fa::before {
+  position: absolute;
+  right: 0%;
+  top: 0;
+  margin: .25em;
+  color: gold;
+}
+.featured::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 0;
+  top: 0;
+  right: 0;
+  border-width: 20px;
+  border-style: solid;
+  border-color: darkorange darkorange transparent transparent;
+  z-index: -1;
+}

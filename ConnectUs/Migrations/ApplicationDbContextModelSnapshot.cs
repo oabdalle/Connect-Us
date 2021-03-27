@@ -19,7 +19,7 @@ namespace ConnectUs.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("ProductVersion", "5.0.0");
 
-            modelBuilder.Entity("ConnectUs.Model.Category", b =>
+            modelBuilder.Entity("ConnectUs.Model.Entities.Category", b =>
                 {
                     b.Property<int>("CategoryId")
                         .ValueGeneratedOnAdd()
@@ -35,7 +35,7 @@ namespace ConnectUs.Migrations
                     b.ToTable("Category");
                 });
 
-            modelBuilder.Entity("ConnectUs.Model.Event", b =>
+            modelBuilder.Entity("ConnectUs.Model.Entities.Event", b =>
                 {
                     b.Property<int>("EventId")
                         .ValueGeneratedOnAdd()
@@ -52,6 +52,10 @@ namespace ConnectUs.Migrations
                     b.Property<DateTime>("EventDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("HostId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -63,7 +67,7 @@ namespace ConnectUs.Migrations
                     b.ToTable("Event");
                 });
 
-            modelBuilder.Entity("ConnectUs.Model.EventImage", b =>
+            modelBuilder.Entity("ConnectUs.Model.Entities.EventImage", b =>
                 {
                     b.Property<int>("ImageId")
                         .ValueGeneratedOnAdd()
@@ -84,6 +88,24 @@ namespace ConnectUs.Migrations
                     b.HasIndex("EventId");
 
                     b.ToTable("EventImage");
+                });
+
+            modelBuilder.Entity("ConnectUs.Model.Entities.Profile", b =>
+                {
+                    b.Property<int>("ImageId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<string>("Content")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("HostId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ImageId");
+
+                    b.ToTable("Profile");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -286,9 +308,9 @@ namespace ConnectUs.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("ConnectUs.Model.Event", b =>
+            modelBuilder.Entity("ConnectUs.Model.Entities.Event", b =>
                 {
-                    b.HasOne("ConnectUs.Model.Category", "Category")
+                    b.HasOne("ConnectUs.Model.Entities.Category", "Category")
                         .WithMany()
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -297,9 +319,9 @@ namespace ConnectUs.Migrations
                     b.Navigation("Category");
                 });
 
-            modelBuilder.Entity("ConnectUs.Model.EventImage", b =>
+            modelBuilder.Entity("ConnectUs.Model.Entities.EventImage", b =>
                 {
-                    b.HasOne("ConnectUs.Model.Event", "Event")
+                    b.HasOne("ConnectUs.Model.Entities.Event", "Event")
                         .WithMany()
                         .HasForeignKey("EventId")
                         .OnDelete(DeleteBehavior.Cascade)

@@ -29,9 +29,14 @@ namespace ConnectUs.Areas.Events.Pages
 
         public async Task OnGet(int id)
         {
+            await InitEvent(id);
+        }
+
+        public async Task InitEvent(int id){
             eventEntry  = await _db.Event.FindAsync(id);
             if(eventEntry is not null)
-            categoryEntry = await _db.Category.FindAsync(eventEntry.CategoryId);
+              categoryEntry = await _db.Category.FindAsync(eventEntry.CategoryId);
+
         }
         public async Task<IActionResult> OnPostDelete(int id)
         {
@@ -44,6 +49,30 @@ namespace ConnectUs.Areas.Events.Pages
             _db.Event.Remove(eventToDelete);
             await _db.SaveChangesAsync();
             return RedirectToPage("/Index",  new { area = "Events" });
+        }
+        public async Task<IActionResult> OnPostBookEvent(int eventId, string userId)
+        {   
+                            
+            Booking booking = new Booking();
+            if(eventId !=null & userId !=null){
+              var checkBooked = _db.Booking
+                                  .Where(x=>x.EventId == eventId)
+                                  .Where(x=>x.UserId == userId);
+                if(checkBooked != null){
+                  await InitEvent(eventId);
+                  return RedirectToPage(eventId);
+                }
+              DateTime newDateTime = DateTime.Now;
+              booking.EventId = eventId;
+              booking.UserId= userId;
+              booking.DateBooked=newDateTime;
+              await _db.Booking.AddAsync(booking);
+              await _db.SaveChangesAsync();
+              return RedirectToPage("/Index",  new { area = "Events" });
+
+            }else{
+              return RedirectToPage("/Index",  new { area = "Events" });
+            }
         }
     }
 }

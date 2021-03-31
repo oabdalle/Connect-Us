@@ -18,5 +18,6 @@ namespace ConnectUs.Model
         public DbSet<EventImage> EventImage { get; set; }
         public DbSet<Category> Category { get; set; }
         public DbSet<Profile> Profile { get; set; }
+        public DbSet<Booking> Booking { get; set; }
     }
 }

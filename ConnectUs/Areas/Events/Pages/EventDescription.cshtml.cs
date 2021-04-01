@@ -58,7 +58,7 @@ namespace ConnectUs.Areas.Events.Pages
               var checkBooked = _db.Booking
                                   .Where(x=>x.EventId == eventId)
                                   .Where(x=>x.UserId == userId);
-                if(checkBooked != null){
+                if(checkBooked == null){
                   await InitEvent(eventId);
                   return RedirectToPage(eventId);
                 }

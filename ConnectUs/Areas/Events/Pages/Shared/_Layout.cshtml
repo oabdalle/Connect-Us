@@ -31,8 +31,13 @@
           Events
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+        @if(User.Identity.IsAuthenticated && !User.IsInRole("Attendee")){
           <a class="dropdown-item" asp-area="Events" asp-page="/MyEvent">My Events</a>
           <a class="dropdown-item" asp-area="Events" asp-page="/CreateEvent">Create Event</a>
+          }
+        @if(User.Identity.IsAuthenticated){
+          <a class="dropdown-item" asp-area="Events" asp-page="/CreateEvent">Past Events</a>
+        }
           <div class="dropdown-divider"></div>
           <a class="dropdown-item" href="#">Something else here</a>
         </div>

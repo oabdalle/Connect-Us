@@ -28,11 +28,11 @@
       </li>
       <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Manage
+          Manage Events
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-          <a class="dropdown-item" asp-area="Admin" asp-page="/ManageCategories">Categories</a>
-          <a class="dropdown-item" asp-area="Admin" asp-page="/ManageUsers">Users</a>
+          <a class="dropdown-item" asp-area="Creator" asp-page="/Events/CreateEvent">Create Event</a>
+        
         </div>
       </li>
     </ul>
@@ -60,11 +60,10 @@
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
     @* <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script> *@
     @* <script src="~/dist/bundle.js" asp-append-version="true"></script>  *@
-    
-  
-<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
-<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 </body>
 </html>
- 
+
+@await RenderSectionAsync("Scripts", required: false)

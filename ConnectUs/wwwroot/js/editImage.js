@@ -53,7 +53,8 @@ function deleteImage(imgId){
      }
  
    Dropzone.autoDiscover = false;
-   
+
+
    $(document).ready(function () {
      console.log("His11!");
     
@@ -69,6 +70,7 @@ function deleteImage(imgId){
          autoProcessQueue: false,
          url: '@Url.Page("EditEvent", "Upload")',
          addRemoveLinks: true,
+         acceptedFiles:'image/*',
        init: function() {
  
          dzClosure = this;

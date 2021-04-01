@@ -19,5 +19,7 @@ namespace ConnectUs.Model
         public DbSet<Category> Category { get; set; }
         public DbSet<Profile> Profile { get; set; }
         public DbSet<Booking> Booking { get; set; }
+        public DbSet<Product> Product { get; set; }
+
     }
 }

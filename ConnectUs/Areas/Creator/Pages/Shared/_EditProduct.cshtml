@@ -1,0 +1,176 @@
+@model Product
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.7.6/dropzone.min.css" integrity="sha512-jU/7UFiaW5UBGODEopEqnbIAHOI8fO6T99m7Tsmqs2gkdujByJfkCbbfPSN4Wlqlb9TGnsuC0YgUgWkRBK7B9A==" crossorigin="anonymous" />
+
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#productEditModalCenter">
+  Create Product
+</button>
+
+
+<div class="modal fade" id="productEditModalCenter" tabindex="-1" role="dialog" aria-labelledby="productEditModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="productEditModalLongTitle">Edit Product</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+      <form id="editForm" method="post">
+        <input asp-for="ProductId" type="text" readonly hidden id="productId"/>
+        <input asp-for="EventId" type="text" readonly hidden id="eventId"/>
+
+        <div class="form-group row">
+          <div class="col-6">
+            <label asp-for="Name">
+            </label> 
+          </div>
+          <div class="col-6">
+            <input asp-for="Name" type="text" id="productName" class="form-control"/>
+          </div>
+          <span asp-validation-for="Name"  class="text-danger"></span>
+        </div>
+        <div class="form-group row">
+          <div class="col-6">
+            <label asp-for="Price">
+            </label> 
+          </div>
+          <div class="col-6">
+            <input asp-for="Price" type="text" id="productPrice" class="form-control"/>
+          </div>
+          <span asp-validation-for="Price" class="text-danger"></span>
+        </div>
+        <div class="form-group row">
+          <div class="col-6">
+            <label asp-for="ImageBase64">
+            </label> 
+          </div>
+          <div class="col-6">
+              <div id="dZUpload" class="border border-primary dropzone dz-clickable rounded">
+                <div class="dz-message">Drop files here or click to upload and rearrange.
+                    <br>
+              </div>
+              </div>
+            <input type="file" id="imgs" />
+        </div>
+
+        </div>
+    </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <input id="setup-event" value="Save" class="btn btn-primary"/>
+        <input onclick="EditProduct()" hidden type="submit" id="post-event" />
+      </div>
+    
+    </div>
+  </div>
+</div>
+
+
+
+
+<script>
+
+
+
+const toBase64 = file => new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = error => reject(error);
+});
+
+async function EditProduct(){
+
+  var inputs = $('#editForm :input[type=text]');
+
+  var values = {};
+    inputs.each(function() {
+        values[this.name] = $(this).val();
+    });
+
+
+  const file = document.querySelector('#imgs').files[0];
+  if(file != null){
+    values['ImageBase64'] = await toBase64(file);
+  }
+
+  if($("#editForm").valid()){
+    
+    $.ajax({
+          type: "POST",
+          contentType: "application/json",
+          url:'/creator/events/manage-products?handler=EditProduct',          
+          beforeSend: function (xhr) {
+              xhr.setRequestHeader("XSRF-TOKEN",$('input:hidden[name="__RequestVerificationToken"]').val());
+          },
+          data: JSON.stringify(values),
+          dataType: "json",
+          success: function (result) {
+              console.log(result)
+              if(result=="Success"){
+    
+                sessionStorage.setItem('reloadAfterEdit', "true"); 
+                window.location.reload(true);     
+                    
+              }
+          },
+          failure: function () {
+              alert("fail: " );
+          },
+          error: function (xhr, status, error) {
+              alert(xhr.responseText);
+          }
+      });
+  }
+
+
+}
+
+</script>
+<script>
+window.addEventListener('load', function () {
+   
+    $(".edit-product").click(function(){
+
+          var productId = $(this).data('id');
+
+          $.ajax({
+          type: "POST",
+          url:'/creator/events/manage-products?handler=ProductDetails',          
+          beforeSend: function (xhr) {
+              xhr.setRequestHeader("XSRF-TOKEN",$('input:hidden[name="__RequestVerificationToken"]').val());
+          },
+          data: {id: productId},
+          success: function (result) {
+              console.log(result);
+              if(result != null){
+                console.log(result.name)
+                $('#productName').val(result.name);
+                $('#productPrice').val(result.price);
+                $('#productId').val(result.productId);
+                $('#eventId').val(result.eventId);
+              }
+          },
+          failure: function () {
+              alert("fail: ");
+          },
+          error: function (xhr, status, error) {
+              alert(xhr.responseText);
+          }
+      });
+    }); 
+    
+      if (sessionStorage.getItem('reloadAfterEdit')=="true"){
+            sessionStorage.setItem('reloadAfterEdit', "false");
+            toastr.success("Successful Edit");
+      }else if(sessionStorage.getItem('reloadAfterCreate')=="true"){
+            sessionStorage.setItem('reloadAfterCreate', "false");
+            toastr.success("Successful Create");
+      }
+})
+
+
+</script>

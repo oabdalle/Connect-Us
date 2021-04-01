@@ -16,9 +16,10 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
-namespace ConnectUs.Areas.Creator.Pages
+
+namespace ConnectUs.Areas.Creator.Pages.Events
 {
-    [Authorize(Roles = "Creator, Admin")]
+
     public class CreateEventModel : PageModel
     {
         private readonly ILogger<CreateEventModel> _logger;

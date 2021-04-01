@@ -111,6 +111,32 @@ namespace ConnectUs.Migrations
                     b.ToTable("EventImage");
                 });
 
+            modelBuilder.Entity("ConnectUs.Model.Entities.Product", b =>
+                {
+                    b.Property<int>("ProductId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<int>("EventId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ImageBase64")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Price")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ProductId");
+
+                    b.HasIndex("EventId");
+
+                    b.ToTable("Product");
+                });
+
             modelBuilder.Entity("ConnectUs.Model.Entities.Profile", b =>
                 {
                     b.Property<int>("ImageId")
@@ -341,6 +367,17 @@ namespace ConnectUs.Migrations
                 });
 
             modelBuilder.Entity("ConnectUs.Model.Entities.EventImage", b =>
+                {
+                    b.HasOne("ConnectUs.Model.Entities.Event", "Event")
+                        .WithMany()
+                        .HasForeignKey("EventId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Event");
+                });
+
+            modelBuilder.Entity("ConnectUs.Model.Entities.Product", b =>
                 {
                     b.HasOne("ConnectUs.Model.Entities.Event", "Event")
                         .WithMany()

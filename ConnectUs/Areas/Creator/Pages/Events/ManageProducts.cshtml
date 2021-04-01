@@ -1,0 +1,57 @@
+@page
+@model ManageProducts
+@{
+    ViewData["Title"] = "Manage Products";
+}
+
+
+<partial name="_EditProduct" model="@new Product()"/>
+
+  <div class="col-12 border p-3 mt-3">
+    <form method="post">
+    @if(Model.ProductList != null){
+      @if(Model.ProductList.Count()>0){
+      <table class="table table-striped border">
+        <tr class="table-secondary">
+          <th></th>
+          <th>
+            <label asp-for="ProductList.FirstOrDefault().Name"></label>
+          </th>
+          <th> <label asp-for="ProductList.FirstOrDefault().Price"></label></th>
+          <th></th>
+        </tr>
+        @foreach (var item in Model.ProductList)
+        {
+        <tr>
+          <td>
+            <img src="@item.ImageBase64" style="width: 300px;">
+          </td>
+          <td>
+            @Html.DisplayFor(m=>item.Name)
+          </td>
+          <td>
+            @Html.DisplayFor(m=>item.Price)
+          </td>
+
+          <td>
+            <button asp-page-handler="DeleteProduct" asp-route-id="@item.ProductId" asp-route-eventId="@item.EventId" class="btn btn-danger btn-sm">Delete</button>
+            <button type="button" data-id="@item.ProductId" class="edit-product btn btn-success btn-sm text-white" data-toggle="modal" data-target="#productEditModalCenter">Edit</button>
+
+          </td>
+        </tr>
+
+        }
+      </table>
+      }else{
+      <p>No Products available.</p>
+      }
+    }
+    </form>
+  </div>
+
+  @section Scripts {
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.7.6/min/dropzone.min.js" integrity="sha512-KgeSi6qqjyihUcmxFn9Cwf8dehAB8FFZyl+2ijFEPyWu4ZM8ZOQ80c2so59rIdkkgsVsuTnlffjfgkiwDThewQ==" crossorigin="anonymous"></script>
+  <script src="~/js/editImage.js"></script>
+  
+}

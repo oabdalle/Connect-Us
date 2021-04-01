@@ -20,7 +20,6 @@ namespace ConnectUs.Model
         public IEnumerable<Category> Categories { get; set; }
 
         public IEnumerable<EventImage> EventImages { get; set; }
-
         public List<Event> BookedEvents {get; set;}
 
         public EventListingViewModel()

@@ -95,8 +95,13 @@ namespace ConnectUs.Areas.Account.Pages
                     var userIdentity = new ClaimsIdentity(userClaim, "user");
                     var userPrincipal = new ClaimsPrincipal(new[]{userIdentity});
                     await HttpContext.SignInAsync(userPrincipal);
-                    if(roles[0] == "Admin"){
+                    var role = roles[0];
+                    if(role == "Admin"){
                       return RedirectToPage("/Index",  new { area = "Admin" });
+                    }else if(role =="Creator"){
+                      return RedirectToPage("/Index",  new { area = "Creator" });
+                    }else if(role=="Attendee"){
+                      return RedirectToPage("/Index",  new { area = "Attendee" });
                     }
                     return LocalRedirect(returnUrl);
                 }

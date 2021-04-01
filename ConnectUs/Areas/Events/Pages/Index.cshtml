@@ -3,13 +3,5 @@
 @{
     ViewData["Title"] = "Home page";
 }
-@if (User.Identity.IsAuthenticated && (User.IsInRole("Creator") || User.IsInRole("Admin")))
-{
 
-<div class="row p-3 justify-content-center">
-  <div class="col-3 d-flex justify-content-center">
-    <a asp-area="Events" asp-page="/CreateEvent" class="btn btn-info text-white">Create New Event</a>
-  </div>
-</div>
-}
 <partial name="_EventsListing" model="@Model.EventListing"/>

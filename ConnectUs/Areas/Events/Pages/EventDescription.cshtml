@@ -23,9 +23,13 @@
         </div>  
       @if((Model.eventEntry.HostId == userManager.GetUserId(User)) && (User.Identity.IsAuthenticated && User.IsInRole("Admin") || User.IsInRole("Creator"))){        
           <button asp-page-handler="Delete" asp-route-id="@Model.eventEntry.EventId" onclick="return confirm('Are you sure')" class="btn btn-danger btn-sm">Remove</button>
-          <a asp-area="Events" asp-page="/EditEvent" asp-route-id="@Model.eventEntry.EventId" class="btn btn-sm">Edit</a>
+          <a asp-area="Creator" asp-page="/EditEvent" asp-route-id="@Model.eventEntry.EventId" class="btn btn-sm">Edit</a>
         }else if(User.Identity.IsAuthenticated && User.IsInRole("Attendee")){
-          <button asp-page-handler="BookEvent" asp-route-eventId="@Model.eventEntry.EventId"  asp-route-userId="@userManager.GetUserId(User)" class="btn btn-primary btn-sm">Book Event</button>
+          @if(@Model.eventBooked==false){
+            <button asp-page-handler="BookEvent" asp-route-eventId="@Model.eventEntry.EventId"  asp-route-userId="@userManager.GetUserId(User)" class="btn btn-primary btn-sm">Book Event</button>
+          }else{
+            <button disabled class="btn btn-primary btn-sm">Event Booked</button>
+          }
         }   
         <a asp-area="Events" asp-page="/Index" class="btn btn-sm">Return</a>
     </div>

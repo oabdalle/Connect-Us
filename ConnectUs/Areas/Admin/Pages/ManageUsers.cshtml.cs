@@ -15,7 +15,6 @@ using Microsoft.AspNetCore.Identity;
 
 namespace ConnectUs.Areas.Admin.Pages
 {
-    [Authorize(Roles = "Admin")]
     public class ManageUsersModel : PageModel
     {
         private readonly ILogger<ManageUsersModel> _logger;

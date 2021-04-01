@@ -16,7 +16,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
-namespace ConnectUs.Areas.Events.Pages
+namespace ConnectUs.Areas.Creator.Pages
 {
     [Authorize(Roles = "Creator, Admin")]
     public class CreateEventModel : PageModel

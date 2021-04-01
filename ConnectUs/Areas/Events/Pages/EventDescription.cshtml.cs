@@ -13,13 +13,20 @@ using Microsoft.AspNetCore.Http;
 using System.IO;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 
 namespace ConnectUs.Areas.Events.Pages
 {
        public class EventDescription : PageModel
     {
-         private readonly ApplicationDbContext _db;
-        public EventDescription(ApplicationDbContext db){
+        private readonly ApplicationDbContext _db;
+        private readonly UserManager<IdentityUser> _userManager;
+
+        public EventDescription(ApplicationDbContext db, UserManager<IdentityUser> userManager){
+            _userManager=userManager;
             _db = db;
         } 
         [BindProperty]
@@ -27,17 +34,30 @@ namespace ConnectUs.Areas.Events.Pages
         [BindProperty]
         public Category categoryEntry {get; set;}
 
+  
+        public bool eventBooked {get; set;}
+
         public async Task OnGet(int id)
         {
-            await InitEvent(id);
+            await InitEvent(id);      
         }
 
         public async Task InitEvent(int id){
             eventEntry  = await _db.Event.FindAsync(id);
             if(eventEntry is not null)
               categoryEntry = await _db.Category.FindAsync(eventEntry.CategoryId);
-
+            
+            if(User.Identity.IsAuthenticated && User.IsInRole("Attendee")){
+                var checkBooked = _db.Booking
+                                  .Where(x=>x.EventId == id)
+                                  .Where(x=>x.UserId == _userManager.GetUserId(User));
+                if(checkBooked != null){
+                  eventBooked=true;     
+                }
+            }
+           
         }
+
         public async Task<IActionResult> OnPostDelete(int id)
         {
             var eventToDelete = await _db.Event.FindAsync(id);
@@ -50,17 +70,18 @@ namespace ConnectUs.Areas.Events.Pages
             await _db.SaveChangesAsync();
             return RedirectToPage("/Index",  new { area = "Events" });
         }
+
         public async Task<IActionResult> OnPostBookEvent(int eventId, string userId)
         {   
                             
             Booking booking = new Booking();
-            if(eventId !=null & userId !=null){
+            if(userId !=null){
               var checkBooked = _db.Booking
                                   .Where(x=>x.EventId == eventId)
                                   .Where(x=>x.UserId == userId);
-                if(checkBooked == null){
-                  await InitEvent(eventId);
-                  return RedirectToPage(eventId);
+                if(checkBooked != null){
+             
+                  return RedirectToPage("/EventDescription", new {id = eventId});
                 }
               DateTime newDateTime = DateTime.Now;
               booking.EventId = eventId;

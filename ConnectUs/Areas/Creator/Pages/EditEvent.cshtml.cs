@@ -15,7 +15,7 @@ using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Hosting;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Authorization;
-namespace ConnectUs.Areas.Events.Pages
+namespace ConnectUs.Areas.Creator.Pages
 {
     public class PostData
     {

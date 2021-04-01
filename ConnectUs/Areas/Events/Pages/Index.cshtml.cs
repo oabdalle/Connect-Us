@@ -25,11 +25,6 @@ namespace ConnectUs.Areas.Events.Pages
         
         public EventListingViewModel EventListing {get; set;}
 
-        public List<Event> watchlist = new List<Event>();
-
-        public List<Booking> userBookings{get; set;}
-
-        public List<EventImage> eventImages = new List<EventImage>();
         private readonly UserManager<IdentityUser> _userManager;
         
         public IndexModel(ILogger<IndexModel> logger, ApplicationDbContext db, UserManager<IdentityUser> userManager)
@@ -41,19 +36,10 @@ namespace ConnectUs.Areas.Events.Pages
         
         public async Task OnGet()
         { 
-            var user = await _userManager.GetUserAsync(User);
-            if(user != null){
-                userBookings = await _db.Booking.Where(x => x.UserId == user.Id).ToListAsync();
-                for(int i = 0; i < userBookings.Count; i++){
-                    var eventToAdd = await _db.Event.FindAsync(userBookings[i].EventId);
-                    watchlist.Add(eventToAdd);
-                }
-            }
             EventListing = new EventListingViewModel{
                 EventImages= await _db.EventImage.ToListAsync(), 
                 Events=await _db.Event.ToListAsync(),
-                Categories= await _db.Category.ToListAsync(),
-                BookedEvents= watchlist
+                Categories= await _db.Category.ToListAsync()
             };
         }
         

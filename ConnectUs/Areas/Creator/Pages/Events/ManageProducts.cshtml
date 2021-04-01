@@ -5,7 +5,9 @@
 }
 
 
-<partial name="_EditProduct" model="@new Product()"/>
+<button data-toggle="modal" data-id="@Model.eventEntry.EventId" data-target="#productEditModalCenter" class="create-product btn btn-primary">Create Products</button>
+
+<partial name="_CreateEditProduct" model="@new Product()"/>
 
   <div class="col-12 border p-3 mt-3">
     <form method="post">

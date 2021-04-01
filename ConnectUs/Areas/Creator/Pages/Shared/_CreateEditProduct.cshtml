@@ -2,22 +2,18 @@
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.7.6/dropzone.min.css" integrity="sha512-jU/7UFiaW5UBGODEopEqnbIAHOI8fO6T99m7Tsmqs2gkdujByJfkCbbfPSN4Wlqlb9TGnsuC0YgUgWkRBK7B9A==" crossorigin="anonymous" />
 
-<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#productEditModalCenter">
-  Create Product
-</button>
-
 
 <div class="modal fade" id="productEditModalCenter" tabindex="-1" role="dialog" aria-labelledby="productEditModalCenterTitle" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="productEditModalLongTitle">Edit Product</h5>
+        <h5 class="modal-title" id="productEditModalLongTitle">Manage Product</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
-      <form id="editForm" method="post">
+      <form id="productForm" method="post">
         <input asp-for="ProductId" type="text" readonly hidden id="productId"/>
         <input asp-for="EventId" type="text" readonly hidden id="eventId"/>
 
@@ -61,7 +57,7 @@
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
         <input id="setup-event" value="Save" class="btn btn-primary"/>
-        <input onclick="EditProduct()" hidden type="submit" id="post-event" />
+        <input hidden type="submit" id="post-event" />
       </div>
     
     </div>
@@ -74,6 +70,41 @@
 <script>
 
 
+async function CreateProduct(){
+
+  var values = await GetFormValues();
+
+  values['ProductId']=0;
+  if($("#productForm").valid()){
+
+    $.ajax({
+          type: "POST",
+          contentType: "application/json",
+          url:'/creator/events/manage-products?handler=CreateProduct',          
+          beforeSend: function (xhr) {
+              xhr.setRequestHeader("XSRF-TOKEN",$('input:hidden[name="__RequestVerificationToken"]').val());
+          },
+          data: JSON.stringify(values),
+          dataType: "json",
+          success: function (result) {
+              console.log(result)
+              if(result=="Success"){
+    
+                sessionStorage.setItem('reloadAfterCreate', "true"); 
+                window.location.reload(true);     
+                    
+              }
+          },
+          failure: function () {
+              alert("fail: " );
+          },
+          error: function (xhr, status, error) {
+              alert(xhr.responseText);
+          }
+      });
+  }
+
+}
 
 const toBase64 = file => new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -82,22 +113,23 @@ const toBase64 = file => new Promise((resolve, reject) => {
     reader.onerror = error => reject(error);
 });
 
-async function EditProduct(){
-
-  var inputs = $('#editForm :input[type=text]');
+async function GetFormValues(){
+  var inputs = $('#productForm :input[type=text]');
 
   var values = {};
-    inputs.each(function() {
-        values[this.name] = $(this).val();
-    });
-
-
+  inputs.each(function() {
+      values[this.name] = $(this).val();
+  });
   const file = document.querySelector('#imgs').files[0];
   if(file != null){
     values['ImageBase64'] = await toBase64(file);
   }
+  return values;
+}
 
-  if($("#editForm").valid()){
+async function EditProduct(){
+  var values = await GetFormValues();
+  if($("#productForm").valid()){
     
     $.ajax({
           type: "POST",
@@ -134,7 +166,14 @@ async function EditProduct(){
 window.addEventListener('load', function () {
    
     $(".edit-product").click(function(){
-
+          var inputs = $('#productForm :input[type=text]');
+          inputs.each(function() {
+            $(this).val('');
+          });
+          $('#post-event').unbind('click');
+          $('#post-event').click(function(){
+            EditProduct();
+          });
           var productId = $(this).data('id');
 
           $.ajax({
@@ -163,6 +202,20 @@ window.addEventListener('load', function () {
       });
     }); 
     
+      $('.create-product').click(function(){
+      
+        var inputs = $('#productForm :input[type=text]');
+        inputs.each(function() {
+          $(this).val('');
+        });
+        var eventId = $(this).data('id');
+        $("#eventId").val( eventId );
+          $('#post-event').unbind('click');
+          $('#post-event').click(function(){
+            CreateProduct();
+          });
+      });
+
       if (sessionStorage.getItem('reloadAfterEdit')=="true"){
             sessionStorage.setItem('reloadAfterEdit', "false");
             toastr.success("Successful Edit");

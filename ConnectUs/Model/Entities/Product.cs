@@ -14,11 +14,15 @@ namespace ConnectUs.Model.Entities
 
     [Key]
     public int ProductId {get;set;}
+
     [Required]    
     public string Name { get; set; }
 
     [Required]
-    public string Price { get; set; }
+    [Display(Name = "Price ($)")]
+    [RegularExpression(@"^\d+\.\d{0,2}$", ErrorMessage="Please enter a decimal amount (ex. 10.00)")]
+    [Range(0, 9999999999999999.99)]
+    public decimal Price { get; set; }
 
     [MaxLength]
     [Display(Name = "Product Image")]

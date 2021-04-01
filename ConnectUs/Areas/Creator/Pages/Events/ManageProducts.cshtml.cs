@@ -50,7 +50,28 @@ namespace ConnectUs.Areas.Creator.Pages.Events
 
             ProductList = await _db.Product.Where(x => x.EventId == eventEntry.EventId).ToListAsync();
         }
+        public async Task<IActionResult> OnPostCreateProduct([FromBody]Product product){
 
+               if(product!=null){
+
+                  Product productToAdd = new Product(){
+                    Name=product.Name,
+                    Price=product.Price,
+                    EventId=product.EventId,
+                    ImageBase64=product.ImageBase64
+                    
+                    };
+                  await _db.Product.AddAsync(productToAdd);
+                  await _db.SaveChangesAsync();
+    
+                  return new JsonResult("Success");
+
+               }else{
+
+                  return new JsonResult(product);
+               }        
+        
+        }
         public async Task<IActionResult> OnPostEditProduct([FromBody]Product product){
 
 
@@ -104,43 +125,6 @@ namespace ConnectUs.Areas.Creator.Pages.Events
               return new JsonResult("Category Name is null");
             }        
         
-        }
-
-        public async Task<IActionResult> OnPostRemoveImage(int Item1){
-            var imageToDelete = await _db.EventImage.FindAsync(Item1);
-            
-            if(imageToDelete.Cover==true){
-               var setCoverImage = await _db.EventImage.FindAsync(Item1+1);
-               setCoverImage.Cover=true;
-            }
-            _db.EventImage.Remove(imageToDelete);
-            await _db.SaveChangesAsync();
-            eventsImages = await _db.EventImage.Where(x => x.EventId == imageToDelete.EventId).ToListAsync();
-            return Partial("_EditImages", eventsImages);
-        }
-
-          public async Task<IActionResult> OnPostSetCover(int Item1){
-            
-            var imageToCover = await _db.EventImage.FindAsync(Item1);
-            var imageToReset = await _db.EventImage.FirstOrDefaultAsync(x => x.EventId == imageToCover.EventId && x.Cover == true);
-            imageToCover.Cover = true;
-            imageToReset.Cover = false;
-            await _db.SaveChangesAsync();
-
-            eventsImages = await _db.EventImage.Where(x => x.EventId == imageToCover.EventId).ToListAsync();
-           
-            return Partial("_EditImages", eventsImages);
-        }
-
-        public async Task<IActionResult> OnPost()
-        {
-            if(ModelState.IsValid)
-            {
-        
-                await _db.SaveChangesAsync();
-                return RedirectToPage("/Index",  new { area = "Events" });
-            }
-            return RedirectToPage();
         }
       
       

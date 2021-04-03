@@ -101,7 +101,7 @@ namespace ConnectUs.Areas.Events.Pages
         {   
                             
             Booking booking = new Booking();
-            if(userId !=null)
+            if(userId !=null){
                Booking checkExistingBooking = _db.Booking.Where(x=>x.EventId == eventId).Where(x=>x.UserId == userId).FirstOrDefault();
                 if(checkExistingBooking != null){
                   return RedirectToPage("/EventDescription", new {id = eventId});

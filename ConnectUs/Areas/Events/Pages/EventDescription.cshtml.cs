@@ -17,6 +17,9 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using ConnectUs.Services;
+using ConnectUs.Hubs;
+using Microsoft.AspNetCore.SignalR;
 
 namespace ConnectUs.Areas.Events.Pages
 {
@@ -24,21 +27,29 @@ namespace ConnectUs.Areas.Events.Pages
     {
         private readonly ApplicationDbContext _db;
         private readonly UserManager<IdentityUser> _userManager;
+        private IChatService _chatService;
+        public EventDescription(ApplicationDbContext db, UserManager<IdentityUser> userManager, IChatService chatService){
 
-        public EventDescription(ApplicationDbContext db, UserManager<IdentityUser> userManager){
             _userManager=userManager;
             _db = db;
+            _chatService = chatService;
         } 
+
         [BindProperty]
         public Event eventEntry {get; set;}
         [BindProperty]
         public Category categoryEntry {get; set;}
 
-        public List<Booking> checkBookings = new List<Booking>();
+        [BindProperty]
+        public Chat Chat {get; set;}
+  
         public bool eventBooked {get; set;}
+        
+        public List<Booking> checkBookings = new List<Booking>();
 
         public async Task OnGet(int id)
         {
+            
             await InitEvent(id);      
         }
 
@@ -47,6 +58,17 @@ namespace ConnectUs.Areas.Events.Pages
             if(eventEntry is not null)
               categoryEntry = await _db.Category.FindAsync(eventEntry.CategoryId);
             
+            if(!(await _chatService.CheckRoomExists(id))){
+              if((eventEntry.EventDate > DateTime.Now) && User.Identity.IsAuthenticated){
+                  await _chatService.CreateRoom(id, _userManager.GetUserId(User));
+              }
+            }else{
+                if(User.Identity.IsAuthenticated)
+                  await _chatService.JoinRoom(id, _userManager.GetUserId(User));
+            }
+
+            Chat = _chatService.GetChat(id);
+
             if(User.Identity.IsAuthenticated && User.IsInRole("Attendee")){
                 var attendeeID = _userManager.GetUserId(User);
                 checkBookings = await _db.Booking.Where(x=>x.EventId == id && x.UserId == attendeeID).ToListAsync();
@@ -55,6 +77,7 @@ namespace ConnectUs.Areas.Events.Pages
             }
            
         }
+  
 
         public async Task<IActionResult> OnPostDelete(int id)
         {

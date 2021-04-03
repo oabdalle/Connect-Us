@@ -19,7 +19,8 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Routing.Internal;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
-
+using ConnectUs.Hubs;
+using Microsoft.AspNetCore.SignalR;
 
 namespace ConnectUs
 {
@@ -35,7 +36,8 @@ namespace ConnectUs
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-        
+            services.AddSignalR();
+            
             services.AddDbContext<ApplicationDbContext>(
                     options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
@@ -71,6 +73,10 @@ namespace ConnectUs
             });
                           
             services.AddTransient<IEmailSender, EmailSender>();
+            services.AddTransient<IChatService, ChatService>();
+
+
+
             services.Configure<AuthMessageSenderOptions>(Configuration);
 
             services.AddRazorPages().AddRazorRuntimeCompilation()
@@ -113,6 +119,8 @@ namespace ConnectUs
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapRazorPages();
+                endpoints.MapControllers();
+                endpoints.MapHub<ChatHub>("/chatHub");
             });
         }
     }

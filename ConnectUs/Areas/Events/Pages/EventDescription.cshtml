@@ -41,7 +41,86 @@
         }
     </div>
 </form>
+
+<div class="chat-body">
+    @foreach(var message in Model.Chat.Messages){
+    <div class="message">
+        <header>@message.Name:</header>
+        <p>@message.Text</p>
+        <footer>@message.Timestamp</footer>
+    </div>
+    }
+</div>
+
+<div class="chat-input">
+    <input type="hidden" name="roomId" id="roomId" value="@Model.Chat.ChatId">
+    <input type="text" name="message" id="message" class="message-input">
+    <button id="submitMessage" type="submit">Send</button>
+</div>
+
 @section Scripts{
     <script src="~/js/VenueFilter.js"></script>
+    <script src="~/js/messageBuilder.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aspnet-signalr/1.1.4/signalr.min.js" integrity="sha512-hqwtOj6waHZZoLRoJoLn0tq34JS97tR1QmhM69uvyrt3LVBiR1o0xeOVAskjUFL1L1fahQH2W7IdcMaFbqCEaw==" crossorigin="anonymous"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+      $(document).ready(function () {
+            $("#submitMessage").click(function (event) {
+               
+                var chatMessage ={
+                  roomId: $("#roomId").val(),
+                  message: $("#message").val()
+                };
+              console.log(chatMessage)
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("SendMessage", "Message")',
+                    data: JSON.stringify(chatMessage),
+                    dataType: "json",
+                    contentType:'application/json',
+                    success: function (result) {
+                      console.log(result);
+                      $("#message").val('');
+              
+                    },
+                    failure: function () {
+                      alert("fail: " );
+                    },
+                    error: function (xhr, status, error) {
+                      alert('error'+ xhr.responseText);
+                    }
+                });
+            });                  
+        });
+    </script>
+ <script>
+    var connection = new signalR.HubConnectionBuilder()
+        .withUrl("/chatHub")
+        .build();
+    var _connectionId = '';
+    connection.on("RecieveMessage", function (data) {
+      console.log(data);
+        var message = messageBuilder()
+            .createMessage()
+            .withHeader(data.name)
+            .withParagraph(data.text)
+            .withFooter(data.timestamp)
+            .build();
+        document.querySelector('.chat-body').append(message);
+    })
+    connection.start()
+        .then(function () {
+          connection.invoke('joinRoom', '@Model.Chat.ChatId');
+        })
+        .catch(function (err) {
+            console.log(err)
+        })
+    window.addEventListener('onunload', function () {
+        connection.invoke('leaveRoom', '@Model.Chat.ChatId');
+    })
+   
+</script>
+
+    
 }
+ @* data-request-url="@Url.Action("Action", "Controller")" *@

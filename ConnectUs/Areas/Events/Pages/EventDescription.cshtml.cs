@@ -43,6 +43,7 @@ namespace ConnectUs.Areas.Events.Pages
         [BindProperty]
         public Chat Chat {get; set;}
   
+        [BindProperty]
         public bool eventBooked {get; set;}
 
         public async Task OnGet(int id)
@@ -69,10 +70,12 @@ namespace ConnectUs.Areas.Events.Pages
 
             if(User.Identity.IsAuthenticated && User.IsInRole("Attendee")){
                 var checkBooked = _db.Booking
-                                  .Where(x=>x.EventId == id)
-                                  .Where(x=>x.UserId == _userManager.GetUserId(User));
+                                  .FirstOrDefault(x=>x.EventId == id && (x.UserId == _userManager.GetUserId(User)));
+                                
                 if(checkBooked != null){
                   eventBooked=true;     
+                }else{
+                  eventBooked=false;
                 }
             }
            
@@ -97,9 +100,8 @@ namespace ConnectUs.Areas.Events.Pages
                             
             Booking booking = new Booking();
             if(userId !=null){
-              var checkBooked = _db.Booking
-                                  .Where(x=>x.EventId == eventId)
-                                  .Where(x=>x.UserId == userId);
+                var checkBooked = _db.Booking
+                                  .FirstOrDefault(x=>x.EventId == eventId && (x.UserId == userId));
                 if(checkBooked != null){
              
                   return RedirectToPage("/EventDescription", new {id = eventId});

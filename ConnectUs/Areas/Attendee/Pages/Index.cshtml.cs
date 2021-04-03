@@ -48,8 +48,8 @@ namespace ConnectUs.Areas.Attendee.Pages
             for(int i = 0; i < userBookings.Count; i++){
               var eventToAdd = await _db.Event.FindAsync(userBookings[i].EventId);
               BookedEvents.Add(eventToAdd);
+            }
           }
-        }
           EventListing = new EventListingViewModel{
                 EventImages= await _db.EventImage.ToListAsync(), 
                 Events=await _db.Event.ToListAsync(),

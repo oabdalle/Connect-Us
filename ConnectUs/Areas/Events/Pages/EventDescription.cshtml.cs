@@ -45,6 +45,8 @@ namespace ConnectUs.Areas.Events.Pages
   
         [BindProperty]
         public bool eventBooked {get; set;}
+        
+        public List<Booking> checkBookings = new List<Booking>();
 
         public async Task OnGet(int id)
         {
@@ -69,14 +71,14 @@ namespace ConnectUs.Areas.Events.Pages
             Chat = _chatService.GetChat(id);
 
             if(User.Identity.IsAuthenticated && User.IsInRole("Attendee")){
-                var checkBooked = _db.Booking
-                                  .FirstOrDefault(x=>x.EventId == id && (x.UserId == _userManager.GetUserId(User)));
-                                
-                if(checkBooked != null){
-                  eventBooked=true;     
-                }else{
+
+                var attendeeID = _userManager.GetUserId(User);
+                checkBookings = await _db.Booking.Where(x=>x.EventId == id && x.UserId == attendeeID).ToListAsync();
+                if(checkBookings.Count() > 0)
+                 eventBooked=true;
+                else
                   eventBooked=false;
-                }
+
             }
            
         }
@@ -99,11 +101,9 @@ namespace ConnectUs.Areas.Events.Pages
         {   
                             
             Booking booking = new Booking();
-            if(userId !=null){
-                var checkBooked = _db.Booking
-                                  .FirstOrDefault(x=>x.EventId == eventId && (x.UserId == userId));
-                if(checkBooked != null){
-             
+            if(userId !=null)
+               Booking checkExistingBooking = _db.Booking.Where(x=>x.EventId == eventId).Where(x=>x.UserId == userId).FirstOrDefault();
+                if(checkExistingBooking != null){
                   return RedirectToPage("/EventDescription", new {id = eventId});
                 }
               DateTime newDateTime = DateTime.Now;
@@ -112,10 +112,33 @@ namespace ConnectUs.Areas.Events.Pages
               booking.DateBooked=newDateTime;
               await _db.Booking.AddAsync(booking);
               await _db.SaveChangesAsync();
+              if(User.Identity.IsAuthenticated && User.IsInRole("Attendee")){
+                return RedirectToPage("/Index",  new { area = "Attendee" });
+              }
               return RedirectToPage("/Index",  new { area = "Events" });
 
             }else{
+              if(User.Identity.IsAuthenticated && User.IsInRole("Attendee")){
+                return RedirectToPage("/Index",  new { area = "Attendee" });
+              }
               return RedirectToPage("/Index",  new { area = "Events" });
+            }
+        }
+        public async Task<IActionResult> OnPostDeleteBooking(int eventId, string userId)
+        {   
+                            
+            Booking booking = new Booking();
+            if(userId !=null){
+              booking = _db.Booking.Where(x=>x.EventId == eventId).Where(x=>x.UserId == userId).FirstOrDefault();
+                if(booking  == null){
+                  return RedirectToPage("/EventDescription", new {id = eventId});
+                }
+              _db.Booking.Remove(booking );
+              await _db.SaveChangesAsync();
+              return RedirectToPage("/Index",  new { area = "Attendee" });
+
+            }else{
+              return RedirectToPage("/Index",  new { area = "Attendee" });
             }
         }
     }

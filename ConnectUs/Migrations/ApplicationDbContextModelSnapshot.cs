@@ -56,6 +56,43 @@ namespace ConnectUs.Migrations
                     b.ToTable("Category");
                 });
 
+            modelBuilder.Entity("ConnectUs.Model.Entities.Chat", b =>
+                {
+                    b.Property<int>("ChatId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<int>("EventId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ChatId");
+
+                    b.ToTable("Chat");
+                });
+
+            modelBuilder.Entity("ConnectUs.Model.Entities.ChatUser", b =>
+                {
+                    b.Property<int>("ChatUserId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<int>("ChatId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("ChatUserId");
+
+                    b.HasIndex("ChatId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("ChatUser");
+                });
+
             modelBuilder.Entity("ConnectUs.Model.Entities.Event", b =>
                 {
                     b.Property<int>("EventId")
@@ -109,6 +146,32 @@ namespace ConnectUs.Migrations
                     b.HasIndex("EventId");
 
                     b.ToTable("EventImage");
+                });
+
+            modelBuilder.Entity("ConnectUs.Model.Entities.Message", b =>
+                {
+                    b.Property<int>("MessageId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<int>("ChatId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Text")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("MessageId");
+
+                    b.HasIndex("ChatId");
+
+                    b.ToTable("Message");
                 });
 
             modelBuilder.Entity("ConnectUs.Model.Entities.Product", b =>
@@ -356,6 +419,23 @@ namespace ConnectUs.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
+            modelBuilder.Entity("ConnectUs.Model.Entities.ChatUser", b =>
+                {
+                    b.HasOne("ConnectUs.Model.Entities.Chat", "Chat")
+                        .WithMany("Users")
+                        .HasForeignKey("ChatId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("Chat");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("ConnectUs.Model.Entities.Event", b =>
                 {
                     b.HasOne("ConnectUs.Model.Entities.Category", "Category")
@@ -376,6 +456,17 @@ namespace ConnectUs.Migrations
                         .IsRequired();
 
                     b.Navigation("Event");
+                });
+
+            modelBuilder.Entity("ConnectUs.Model.Entities.Message", b =>
+                {
+                    b.HasOne("ConnectUs.Model.Entities.Chat", "Chat")
+                        .WithMany("Messages")
+                        .HasForeignKey("ChatId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Chat");
                 });
 
             modelBuilder.Entity("ConnectUs.Model.Entities.Product", b =>
@@ -438,6 +529,13 @@ namespace ConnectUs.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("ConnectUs.Model.Entities.Chat", b =>
+                {
+                    b.Navigation("Messages");
+
+                    b.Navigation("Users");
                 });
 #pragma warning restore 612, 618
         }

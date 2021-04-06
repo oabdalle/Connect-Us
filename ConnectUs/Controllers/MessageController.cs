@@ -25,23 +25,30 @@ namespace ConnectUs.Controllers
         private readonly UserManager<IdentityUser> _userManager;
 
         public MessageController(IChatService chatService, UserManager<IdentityUser> userManager){
-          _chatService = chatService;
+           _chatService = chatService;
            _userManager=userManager;
         }
 
-          [HttpPost]
+        [HttpPost]
         public async Task<IActionResult> SendMessage([FromBody] ChatMessageInputs chatMessage, [FromServices] IHubContext<ChatHub> chat)
         {
-            var Message = await _chatService.CreateMessage(chatMessage.roomId, chatMessage.message, ((await _userManager.GetUserAsync(User)).UserName));
-          
-            await chat.Clients.Group(chatMessage.roomId.ToString())
-                .SendAsync("RecieveMessage", new
-                {
-                    Text = Message.Text,
-                    Name = Message.Name,
-                    Timestamp = Message.Timestamp.ToString("dd/MM/yyyy hh:mm:ss")
-                });
-            return new JsonResult("Success");
+            if(chatMessage.message == ""){
+              return new JsonResult("No message.");
+            }
+
+            if(User.Identity.IsAuthenticated){
+              var Message = await _chatService.CreateMessage(chatMessage.roomId, chatMessage.message, ((await _userManager.GetUserAsync(User)).UserName));
+            
+              await chat.Clients.Group(chatMessage.roomId.ToString())
+                  .SendAsync("RecieveMessage", new{
+                      Text = Message.Text,
+                      Name = Message.Name,
+                      Timestamp = Message.Timestamp.ToString("dd/MM/yyyy hh:mm:ss")});
+              return new JsonResult("Success");
+            }else{
+              return new JsonResult("Not signed in.");
+            }
+           
         }
 
 

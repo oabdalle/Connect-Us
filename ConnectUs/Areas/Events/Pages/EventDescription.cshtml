@@ -79,9 +79,15 @@
                     dataType: "json",
                     contentType:'application/json',
                     success: function (result) {
-                      console.log(result);
-                      $("#message").val('');
-              
+
+                        console.log(result);
+                      if(result=="Success"){
+                        $("#message").val('');
+                      }else if(result=="Not signed in."){
+                        alert('Not signed in')
+                      }else if(result=="No message."){
+                        alert('No chat message.')
+                      }
                     },
                     failure: function () {
                       alert("fail: " );

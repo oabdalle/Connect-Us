@@ -1,0 +1,33 @@
+@page
+@model DashboardModel
+@{
+    ViewData["Title"] = "Dashboard";
+}
+<h1>@ViewData["Title"]</h1>
+
+
+<div class="row d-flex justify-content-center py-5">
+         
+    @foreach (var key in Model.EventsChat.Keys)
+    {    
+        
+      <div class="col-xl-2 col-lg-3 col-md-4 col-sm-12 p-5 m-3 border">
+    
+        <a asp-area="Events" asp-page="/EventDescription" asp-route-id="@key.EventId">
+
+   
+           Name: @Html.DisplayFor(m=>key.Name)
+           <br>
+            Date: @Html.DisplayFor(m=>key.EventDate)
+        <br>
+        <strong>@Html.DisplayFor(m=>Model.EventsChat[key].Messages.Count) Total Chat Messages</strong> 
+          <br>
+        <strong>@Model.EventsChat[key].Messages.Where(m=>m.Text.Contains("Buy")).Count() Positive Chat Messages</strong> 
+        <br>
+          <strong>@Model.EventsChat[key].Messages.Where(m=>m.Text.Contains("Sell")).Count() Negative Chat Messages</strong> 
+        <br>
+
+        </a>
+      </div>
+    }
+</div>

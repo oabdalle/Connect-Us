@@ -24,6 +24,7 @@ namespace ConnectUs.Model
         public DbSet<Chat> Chat { get; set; }
         public DbSet<Message> Message { get; set; }
         public DbSet<ChatUser> ChatUser { get; set; }
+        public DbSet<VideoFiles> VideoFiles { get; set; }
 
     }
 }

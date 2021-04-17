@@ -31,6 +31,7 @@ namespace ConnectUs.Model.Entities
     [ForeignKey("Event")]    
     public int EventId { get; set; }
     public Event Event { get; set; }
+    public string VideoBase64{get; set;}
   }
 
 }

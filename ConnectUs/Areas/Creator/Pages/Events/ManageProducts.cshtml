@@ -20,6 +20,7 @@
             <label asp-for="ProductList.FirstOrDefault().Name"></label>
           </th>
           <th> <label asp-for="ProductList.FirstOrDefault().Price"></label></th>
+          <th>Video</th>
           <th></th>
         </tr>
         @foreach (var item in Model.ProductList)
@@ -34,7 +35,9 @@
           <td>
             @Html.DisplayFor(m=>item.Price)
           </td>
-
+          <td>
+             <video width="200" height="200" controls muted src="@item.VideoBase64" type="video/mp4"></video>
+          </td>
           <td>
             <button asp-page-handler="DeleteProduct" asp-route-id="@item.ProductId" asp-route-eventId="@item.EventId" class="btn btn-danger btn-sm">Delete</button>
             <button type="button" data-id="@item.ProductId" class="edit-product btn btn-success btn-sm text-white" data-toggle="modal" data-target="#productEditModalCenter">Edit</button>

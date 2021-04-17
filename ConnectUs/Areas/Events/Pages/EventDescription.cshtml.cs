@@ -20,6 +20,9 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using ConnectUs.Services;
 using ConnectUs.Hubs;
 using Microsoft.AspNetCore.SignalR;
+using System.Configuration;
+using System.Data.SqlClient;
+using System.Collections.Generic;
 
 namespace ConnectUs.Areas.Events.Pages
 {

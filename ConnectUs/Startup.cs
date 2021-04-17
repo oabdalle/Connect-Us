@@ -21,6 +21,7 @@ using Microsoft.AspNetCore.Routing.Internal;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using ConnectUs.Hubs;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.AspNetCore.Http.Features;
 
 namespace ConnectUs
 {
@@ -78,7 +79,7 @@ namespace ConnectUs
 
 
             services.Configure<AuthMessageSenderOptions>(Configuration);
-
+            services.Configure<FormOptions>(options => options.MultipartBodyLengthLimit = long.MaxValue);
             services.AddRazorPages().AddRazorRuntimeCompilation()
                 .AddRazorPagesOptions(options => {
                         options.RootDirectory = "/Areas/Events/Pages/";

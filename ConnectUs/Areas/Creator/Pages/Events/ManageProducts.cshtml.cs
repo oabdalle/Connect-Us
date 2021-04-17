@@ -58,8 +58,8 @@ namespace ConnectUs.Areas.Creator.Pages.Events
                     Name=product.Name,
                     Price=product.Price,
                     EventId=product.EventId,
-                    ImageBase64=product.ImageBase64
-                    
+                    ImageBase64=product.ImageBase64,
+                    VideoBase64=product.VideoBase64
                     };
                   await _db.Product.AddAsync(productToAdd);
                   await _db.SaveChangesAsync();

@@ -18,12 +18,23 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace ConnectUs.Areas.Creator.Pages.Events
 {
-  
+    public class VideoUploadViewModel
+    {
+
+        public IFormFile fileupload { get; set; }
+
+        public int productId { get; set; }
+        public int eventId { get; set; } 
+    }
+
     public class ManageProducts : PageModel
     {
         private readonly ApplicationDbContext _db;
-        public ManageProducts(ApplicationDbContext db){
+        private readonly IWebHostEnvironment _env;
+
+        public ManageProducts(ApplicationDbContext db, IWebHostEnvironment env){
             _db = db;
+            _env = env;
         } 
         [BindProperty]
         public Event eventEntry {get; set;}
@@ -33,8 +44,9 @@ namespace ConnectUs.Areas.Creator.Pages.Events
         public List<EventImage> eventsImages {get; set;}
 
         public IEnumerable<Product> ProductList {get; set;}
-
-
+        public string _dir;
+        [BindProperty]
+        public VideoUploadViewModel UploadModel { get; set; }
         public async Task OnGet(int id)
         {
           await InitProducts(id);
@@ -72,6 +84,34 @@ namespace ConnectUs.Areas.Creator.Pages.Events
                }        
         
         }
+        public async Task<IActionResult> OnPostUploadVideo()    
+        {   
+            _dir =  _env.WebRootPath;
+            var fileupload =  UploadModel.fileupload;
+            var productId =  UploadModel.productId;
+            var eventId = UploadModel.eventId;
+            if ( fileupload != null)    
+            {   
+                var uploads = Path.Combine(_dir, "uploads");
+                var uniqueFileName = GetUniqueFileName(fileupload.FileName);
+                using(var fileStream =
+                    new FileStream(Path.Combine(uploads, uniqueFileName), FileMode.Create, FileAccess.Write)){
+                        fileupload.CopyTo(fileStream);
+                    }
+                var productToEdit = await _db.Product.FindAsync(productId);
+                productToEdit.VideoBase64 = uniqueFileName;
+                await _db.SaveChangesAsync(); 
+            }  
+            return RedirectToPage(new {id = eventId}); 
+        }    
+        private string GetUniqueFileName(string fileName)
+            {
+                fileName = Path.GetFileName(fileName);
+                return  Path.GetFileNameWithoutExtension(fileName)
+                        + "_" 
+                        + Guid.NewGuid().ToString().Substring(0, 4) 
+                        + Path.GetExtension(fileName);
+            }
         public async Task<IActionResult> OnPostEditProduct([FromBody]Product product){
 
 
@@ -106,12 +146,27 @@ namespace ConnectUs.Areas.Creator.Pages.Events
           {
               return NotFound();
           }
-
+          
           _db.Product.Remove(product);
-         
+          _dir =  _env.WebRootPath;
+          var vidPath = Path.Combine(_dir, "uploads", product.VideoBase64);
+          try    
+          {    
+          // Check if file exists with its full path    
+          if (System.IO.File.Exists(vidPath))    
+          {    
+          // If file found, delete it    
+             System.IO.File.Delete(vidPath);    
+            Console.WriteLine("File deleted.");    
+          }    
+          else Console.WriteLine("File not found");    
+          }    
+          catch (IOException ioExp)    
+          {    
+            Console.WriteLine(ioExp.Message);    
+          }    
           await _db.SaveChangesAsync();
           return RedirectToPage(new {id = eventId});
-          
         }
          public async Task<IActionResult> OnPostProductDetails(int id){
 

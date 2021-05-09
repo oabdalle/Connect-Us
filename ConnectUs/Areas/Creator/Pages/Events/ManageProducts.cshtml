@@ -1,4 +1,5 @@
 @page
+@inject UserManager<IdentityUser> userManager;
 @model ManageProducts
 @{
     ViewData["Title"] = "Manage Products";
@@ -36,7 +37,12 @@
             @Html.DisplayFor(m=>item.Price)
           </td>
           <td>
-             <video width="200" height="200" controls muted src="@item.VideoBase64" type="video/mp4"></video>
+            <div>
+              <button style="margin-left: 27px; margin-bottom:10px;" type="button" class="btn btn-danger rounded-0 popup" data-toggle="modal" data-target="#UploadVideo" data-product=@item.ProductId data-event=@item.EventId>  
+                        <i class="fa fa-plus-circle"></i> Add New  
+                    </button>   
+            </div>  
+             <video width="200" height="200" controls muted src="~/uploads/@item.VideoBase64" type="video/mp4"></video>
           </td>
           <td>
             <button asp-page-handler="DeleteProduct" asp-route-id="@item.ProductId" asp-route-eventId="@item.EventId" class="btn btn-danger btn-sm">Delete</button>
@@ -53,10 +59,58 @@
     }
     </form>
   </div>
-
-  @section Scripts {
+  <div class="modal fade" id="UploadVideo">  
+    <div class="modal-dialog">  
+      <div class="modal-content">  
+        <div class="modal-header">  
+          <h4 class="modal-title">Upload New video File</h4>  
+          <button type="button" class="close" data-dismiss="modal">×</button>  
+          </div>  
+            <div class="modal-body">  
+            <form enctype = "multipart/form-data" method="post">
+                <div class="form-group">   
+                <label>Choose File:</label>  
+                  <div class="input-group">  
+                    <div class="custom-file">  
+                      <input asp-for="UploadModel.fileupload" type="file" class="custom-file-input" />  
+                      <label class="custom-file-label"></label>  
+                    </div>  
+                    <div class="input-group-append"> 
+                       <input asp-for="UploadModel.productId" hidden type="number" />
+                       <input asp-for="UploadModel.eventId" hidden type="number" />
+                       <button asp-page-handler="UploadVideo" class="btn btn-primary btn-sm">Save Video</button>
+                  </div>  
+                </div> 
+            </form> 
+            </div>  
+            <div class="modal-footer">  
+              <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>  
+            </div>  
+        </div>  
+    </div>  
+  </div>
+  @section Scripts { 
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.7.6/min/dropzone.min.js" integrity="sha512-KgeSi6qqjyihUcmxFn9Cwf8dehAB8FFZyl+2ijFEPyWu4ZM8ZOQ80c2so59rIdkkgsVsuTnlffjfgkiwDThewQ==" crossorigin="anonymous"></script>
   <script src="~/js/editImage.js"></script>
-  
+  <script>
+            $('#UploadModel_fileupload').on('change',function(){
+                //get the file name
+                var fileName = $(this).val().split("\\")[2];
+                //replace the "Choose a file" label
+                $('.custom-file-label').html(fileName);
+            })
+            $(".popup").click(function(){
+              var prodId = $(this).data('product');
+              var eventId = $(this).data('event');
+              $('#UploadModel_productId').val(prodId);
+              $('#UploadModel_eventId').val(eventId);
+              //console.log(document.querySelector('#productId').value);
+              //console.log(document.querySelector('#eventId').value);
+            });
+             $(".check").click(function(){
+              console.log(document.querySelector('#UploadModel_productId').value);
+              console.log(document.querySelector('#UploadModel_eventId').value);
+            });
+  </script>
 }

@@ -194,14 +194,38 @@ namespace ConnectUs.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
+
                     b.Property<string>("VideoBase64")
                         .HasColumnType("nvarchar(max)");
+                   b.Property<bool>("Selected")
+                        .HasColumnType("bit");
+
 
                     b.HasKey("ProductId");
 
                     b.HasIndex("EventId");
 
                     b.ToTable("Product");
+                });
+
+            modelBuilder.Entity("ConnectUs.Model.Entities.ProductDisplay", b =>
+                {
+                    b.Property<int>("DisplayId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("DisplayId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("ProductDisplay");
                 });
 
             modelBuilder.Entity("ConnectUs.Model.Entities.Profile", b =>
@@ -511,6 +535,17 @@ namespace ConnectUs.Migrations
                         .IsRequired();
 
                     b.Navigation("Event");
+                });
+
+            modelBuilder.Entity("ConnectUs.Model.Entities.ProductDisplay", b =>
+                {
+                    b.HasOne("ConnectUs.Model.Entities.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

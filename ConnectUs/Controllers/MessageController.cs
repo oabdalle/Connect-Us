@@ -18,7 +18,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 namespace ConnectUs.Controllers
 {
    [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     public class MessageController : Controller
     {
         private IChatService _chatService;
@@ -26,7 +26,7 @@ namespace ConnectUs.Controllers
 
         public MessageController(IChatService chatService, UserManager<IdentityUser> userManager){
            _chatService = chatService;
-           _userManager=userManager;
+           _userManager = userManager;
         }
 
         [HttpPost]
@@ -51,6 +51,27 @@ namespace ConnectUs.Controllers
            
         }
 
+        [HttpPost]
+        public async Task<IActionResult> SendProduct([FromBody] ProductMessageInputs productMessage, [FromServices] IHubContext<ChatHub> chat)
+        {
+            if(productMessage.productId <= 0 ){
+              return new JsonResult(productMessage.productId);
+            }
+
+            if(User.Identity.IsAuthenticated){
+              var Message = await _chatService.CreateProductDisplay(productMessage.productId);
+            
+              await chat.Clients.Group(productMessage.roomId.ToString())
+                  .SendAsync("RecieveProductMessage", new{
+                      Text = Message.ProductId,
+                      Timestamp = Message.Timestamp.ToString("dd/MM/yyyy hh:mm:ss")});
+              return new JsonResult("Success");
+            }else{
+              return new JsonResult("Not signed in.");
+            }
+           
+        }
+
 
 
 
@@ -63,5 +84,15 @@ namespace ConnectUs.Controllers
 
         public string message { get; set; }
     }
+
+
+    public class ProductMessageInputs
+    {
+       
+        public int roomId { get; set; }
+
+        public int productId { get; set; }
+    }
+
 
 }

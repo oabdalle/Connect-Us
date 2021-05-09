@@ -85,6 +85,19 @@ namespace ConnectUs.Services
 
             return Message;
         }
+      public async Task<ProductDisplay> CreateProductDisplay(int productId)
+        {
+            var display = new ProductDisplay
+            {
+                ProductId = productId,
+                Timestamp = DateTime.Now
+            };
+
+            await _db.ProductDisplay.AddAsync(display);
+            await _db.SaveChangesAsync();
+
+            return display;
+        }
 
 
 

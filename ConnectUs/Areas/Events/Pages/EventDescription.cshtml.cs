@@ -46,6 +46,7 @@ namespace ConnectUs.Areas.Events.Pages
         [BindProperty]
         public Chat Chat {get; set;}
   
+        [BindProperty]
         public bool eventBooked {get; set;}
         
         public List<Booking> checkBookings = new List<Booking>();
@@ -73,10 +74,14 @@ namespace ConnectUs.Areas.Events.Pages
             Chat = _chatService.GetChat(id);
 
             if(User.Identity.IsAuthenticated && User.IsInRole("Attendee")){
+
                 var attendeeID = _userManager.GetUserId(User);
                 checkBookings = await _db.Booking.Where(x=>x.EventId == id && x.UserId == attendeeID).ToListAsync();
                 if(checkBookings.Count() > 0)
                  eventBooked=true;
+                else
+                  eventBooked=false;
+
             }
            
         }
@@ -102,7 +107,6 @@ namespace ConnectUs.Areas.Events.Pages
             if(userId !=null){
                Booking checkExistingBooking = _db.Booking.Where(x=>x.EventId == eventId).Where(x=>x.UserId == userId).FirstOrDefault();
                 if(checkExistingBooking != null){
-             
                   return RedirectToPage("/EventDescription", new {id = eventId});
                 }
               DateTime newDateTime = DateTime.Now;

@@ -10,13 +10,21 @@
 
 <div class="row">
   <div class="col-sm-4 video-display" >
-    <video class="w-100">
+    @if(Model.ProductToDisplay != null){
+    <video class="w-100" controls="" muted="" src="../uploads/@Model.ProductToDisplay.VideoBase64" type="video/mp4"></video>
+    }else{
+    <video class="w-100" muted="" type="video/mp4"></video>
+    }
   </div>
   <div class="col-sm-4 product-display">
-    <img class="w-100">
-    <div class="product-name">
-
-    </div>
+    @if(Model.ProductToDisplay != null){
+      <img class="w-100" src="@Model.ProductToDisplay.ImageBase64">
+      <div class="product-name">@Model.ProductToDisplay.Name $@Model.ProductToDisplay.Price</div>
+    }else{
+      <img class="w-100">
+      <div class="product-name"></div>
+    }
+    
   </div>
 
 </div>
@@ -74,7 +82,9 @@
   </div>   
 }
 </div>
+  @if(Model.Chat != null){
 <div class="chat-body">
+
     @foreach(var message in Model.Chat.Messages){
     <div class="message">
         <header>@message.Name:</header>
@@ -82,6 +92,7 @@
         <footer>@message.Timestamp</footer>
     </div>
     }
+
 </div>
 
 <div class="chat-input">
@@ -91,7 +102,9 @@
     <button id="sell" class="btn-danger btn">Sell</button>
     <button id="submitMessage" type="submit">Send</button>
 </div>
-
+  }else{
+    <div>Event has not started. Chat disabled.</div>
+  }
 @section Scripts{
     <script>
       $(".product-row .product").click(function(){
@@ -187,7 +200,32 @@
                     }
                 });
         }
+    function CreateProductDisplay(productId){
+      $.ajax({
+          type: "POST",
+          url:'/events/event-description?handler=DisplayProduct',          
+          beforeSend: function (xhr) {
+              xhr.setRequestHeader("XSRF-TOKEN",$('input:hidden[name="__RequestVerificationToken"]').val());
+          },
+          data: {productId: productId},
+          success: function (result) {
+           console.log(result);
+           document.querySelector('.product-display img').src = result.imageBase64;
+           document.querySelector('.product-name').innerHTML=result.name + " $"+result.price.toFixed(2);
+           var video = document.querySelector('.video-display video');
+           video.src = "../uploads/"+result.videoBase64;
+           video.setAttribute("controls","controls"); 
+          },
+          failure: function () {
+              alert("fail: ");
+          },
+          error: function () {
+              alert("error: ");
+          }
+      });
+        }
     </script>
+@if(Model.Chat !=null){
  <script>
     var connection = new signalR.HubConnectionBuilder()
         .withUrl("/chatHub")
@@ -218,30 +256,7 @@
     window.addEventListener('onunload', function () {
         connection.invoke('leaveRoom', '@Model.Chat.ChatId');
     })
-    function CreateProductDisplay(productId){
-      $.ajax({
-          type: "POST",
-          url:'/events/event-description?handler=DisplayProduct',          
-          beforeSend: function (xhr) {
-              xhr.setRequestHeader("XSRF-TOKEN",$('input:hidden[name="__RequestVerificationToken"]').val());
-          },
-          data: {productId: productId},
-          success: function (result) {
-           console.log(result);
-           document.querySelector('.product-display img').src = result.imageBase64;
-           document.querySelector('.product-name').innerHTML=result.name + " $"+result.price;
-            document.querySelector('.video-display video').src = result.videoBase64;
-          },
-          failure: function () {
-              alert("fail: ");
-          },
-          error: function () {
-              alert("error: ");
-          }
-      });
-        }
 </script>
-
-    
+}
 }
  @* data-request-url="@Url.Action("Action", "Controller")" *@

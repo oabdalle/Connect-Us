@@ -49,6 +49,7 @@ namespace ConnectUs.Areas.Events.Pages
         [BindProperty]
         public bool eventBooked {get; set;}
         public IEnumerable<Product> ProductList {get; set;}
+        public Product ProductToDisplay {get; set;}
         public List<Booking> checkBookings = new List<Booking>();
 
         public async Task OnGet(int id)
@@ -61,7 +62,7 @@ namespace ConnectUs.Areas.Events.Pages
             eventEntry  = await _db.Event.FindAsync(id);
             
             ProductList = await _db.Product.Where(x => x.EventId == eventEntry.EventId).ToListAsync();
-
+            ProductToDisplay = ProductList.FirstOrDefault(x => x.Selected == true);
             if(eventEntry is not null)
               categoryEntry = await _db.Category.FindAsync(eventEntry.CategoryId);
             
@@ -153,7 +154,14 @@ namespace ConnectUs.Areas.Events.Pages
                if(productId>0){
 
                   var product = await _db.Product.FindAsync(productId);
+                  var productsToReset = await _db.Product.Where(x=>x.EventId==product.EventId).ToListAsync();
+                  foreach (var item in productsToReset){
+                    item.Selected=false;
+                  }
+                  product.Selected = true;
                   
+                  await _db.SaveChangesAsync();
+            
                   return new JsonResult(product);
 
                }else{

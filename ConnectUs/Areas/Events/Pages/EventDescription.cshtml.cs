@@ -50,7 +50,7 @@ namespace ConnectUs.Areas.Events.Pages
         public bool eventBooked {get; set;}
         
         public List<Booking> checkBookings = new List<Booking>();
-
+        public int likeCount {get; set;}
         public async Task OnGet(int id)
         {
             
@@ -59,9 +59,10 @@ namespace ConnectUs.Areas.Events.Pages
 
         public async Task InitEvent(int id){
             eventEntry  = await _db.Event.FindAsync(id);
-            if(eventEntry is not null)
+            if(eventEntry is not null){
               categoryEntry = await _db.Category.FindAsync(eventEntry.CategoryId);
-            
+              likeCount = eventEntry.TotalLikes;
+            }
             if(!(await _chatService.CheckRoomExists(id))){
               if((eventEntry.EventDate > DateTime.Now) && User.Identity.IsAuthenticated){
                   await _chatService.CreateRoom(id, _userManager.GetUserId(User));

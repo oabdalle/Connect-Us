@@ -40,6 +40,8 @@ namespace ConnectUs.Model.Entities
 
     [Required]
     public string HostId { get; set; }
+
+    public int TotalLikes {get; set; }
   }
 
 }

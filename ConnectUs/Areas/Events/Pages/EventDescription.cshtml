@@ -61,7 +61,11 @@
     <button id="sell" class="btn-danger btn">Sell</button>
     <button id="submitMessage" type="submit">Send</button>
 </div>
-
+<button type="button" class="like-button" title="Click to like this post!">
+    <i class="fa fa-thumbs-up"></i> Like
+    |
+    <span class="like-count">@Model.likeCount</span>
+</button>
 @section Scripts{
     <script src="~/js/VenueFilter.js"></script>
     <script src="~/js/messageBuilder.js"></script>
@@ -69,7 +73,15 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
       $(document).ready(function () {
-
+            $('.like-button').click(function(event)
+              {
+                var like ={
+                  roomId: $("#roomId").val(),
+                  eventId: @Model.eventEntry.EventId
+                };
+                SendAjaxLike(like);
+              }
+            )
             $("#buy").click(function (event) {
               var chatMessage ={
                   roomId: $("#roomId").val(),
@@ -122,6 +134,32 @@
                     }
                 });
         }
+        function SendAjaxLike(likeUpdate){
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("LikeMessageUpdate", "Message")',
+                    data: JSON.stringify(likeUpdate),
+                    dataType: "json",
+                    contentType:'application/json',
+                    success: function (result) {
+
+                        console.log(result);
+                      if(result=="Success"){
+                        $("#message").val('');
+                      }else if(result=="Not signed in."){
+                        alert('Not signed in')
+                      }else if(result=="No message."){
+                        alert('No chat message.')
+                      }
+                    },
+                    failure: function () {
+                      alert("fail: " );
+                    },
+                    error: function (xhr, status, error) {
+                      alert('error'+ xhr.responseText);
+                    }
+                });
+        }
     </script>
  <script>
     var connection = new signalR.HubConnectionBuilder()
@@ -137,6 +175,10 @@
             .withFooter(data.timestamp)
             .build();
         document.querySelector('.chat-body').append(message);
+    })
+    connection.on("RecieveLikes", function (data) {
+        console.log(data);
+        $(".like-count").text(data.totalLikes);
     })
     connection.start()
         .then(function () {

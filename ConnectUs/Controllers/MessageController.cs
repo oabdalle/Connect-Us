@@ -18,7 +18,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 namespace ConnectUs.Controllers
 {
    [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     public class MessageController : Controller
     {
         private IChatService _chatService;
@@ -51,9 +51,21 @@ namespace ConnectUs.Controllers
            
         }
 
+        [HttpPost]
+        public async Task<IActionResult> LikeMessageUpdate([FromBody] LikeMessage likeUpdate, [FromServices] IHubContext<ChatHub> chat)
+        {
+            if(User.Identity.IsAuthenticated){
+              var Likes= await _chatService.AddLike(likeUpdate.roomId, likeUpdate.eventId, _userManager.GetUserId(User));
 
-
-
+              //Add total event like
+              await chat.Clients.Group(likeUpdate.roomId.ToString())
+                  .SendAsync("RecieveLikes", new{
+                      TotalLikes = Likes});
+              return new JsonResult("Success");
+            }else{
+              return new JsonResult("Not signed in.");
+            }        
+        }
     }
 
     public class ChatMessageInputs
@@ -62,6 +74,14 @@ namespace ConnectUs.Controllers
         public int roomId { get; set; }
 
         public string message { get; set; }
+    }
+
+    public class LikeMessage
+    {
+       
+        public int roomId { get; set; }
+
+        public int eventId { get; set; }
     }
 
 }

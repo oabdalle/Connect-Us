@@ -86,7 +86,41 @@ namespace ConnectUs.Services
             return Message;
         }
 
-
+       public async Task<int> AddLike(int likeId, int eventId, string userId){
+        //Find to see if he already is in table
+         //Find to see if he already is in table
+        Like checkExistingLike = _db.Like.Where(x=>x.UserId == userId).FirstOrDefault();
+        
+            var like = new Like
+            {
+                EventId = eventId,
+                UserId = userId,
+                Liked = true
+            };
+            var likeToIncrement = 0;
+            if(checkExistingLike == null ){
+                Event eventToLike = await _db.Event.FirstOrDefaultAsync(x => x.EventId == eventId);
+                eventToLike.TotalLikes += 1;
+                likeToIncrement = eventToLike.TotalLikes;
+                await _db.Like.AddAsync(like);
+            }
+            else{
+                Event eventToLike = await _db.Event.FirstOrDefaultAsync(x => x.EventId == eventId);
+                if(checkExistingLike.Liked == true){
+                    eventToLike.TotalLikes -= 1;
+                    checkExistingLike.Liked = false;
+                }
+                else{
+                    eventToLike.TotalLikes += 1;
+                    checkExistingLike.Liked = true;
+                }
+                likeToIncrement = eventToLike.TotalLikes;
+            }
+            
+            
+            await _db.SaveChangesAsync();
+            return likeToIncrement;
+        }
 
     }
 

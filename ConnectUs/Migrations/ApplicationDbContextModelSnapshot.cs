@@ -118,6 +118,9 @@ namespace ConnectUs.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("TotalLikes")
+                        .HasColumnType("int");
+
                     b.HasKey("EventId");
 
                     b.HasIndex("CategoryId");
@@ -146,6 +149,27 @@ namespace ConnectUs.Migrations
                     b.HasIndex("EventId");
 
                     b.ToTable("EventImage");
+                });
+
+            modelBuilder.Entity("ConnectUs.Model.Entities.Like", b =>
+                {
+                    b.Property<int>("LikeId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<int>("EventId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("Liked")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("LikeId");
+
+                    b.ToTable("Like");
                 });
 
             modelBuilder.Entity("ConnectUs.Model.Entities.Message", b =>

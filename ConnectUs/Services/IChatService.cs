@@ -13,6 +13,7 @@ namespace ConnectUs.Services
         Task JoinRoom(int eventId, string userId);
         Chat GetChat(int eventId);
         Task<Message> CreateMessage(int chatId, string message, string username);
+        Task<int> AddLike(int chatId, int message, string username);
 
     }
 }

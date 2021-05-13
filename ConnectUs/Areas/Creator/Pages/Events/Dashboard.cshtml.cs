@@ -31,6 +31,7 @@ namespace ConnectUs.Areas.Creator.Pages.Events
         public Dictionary<Event, Chat> EventsChat {get; set;} 
         public List<Event> Events { get; set; }
         public List<Chat> Chats {get; set;}
+        public int LikeTotal {get; set;}
         public DashboardModel(ILogger<DashboardModel> logger, ApplicationDbContext db, IWebHostEnvironment env, UserManager<IdentityUser> um, IChatService chatService)
         {
             _logger = logger;
@@ -57,7 +58,7 @@ namespace ConnectUs.Areas.Creator.Pages.Events
               if(chat != null){
                   EventsChat.Add(item, chat);
               }
-          
+              LikeTotal = item.TotalLikes;
             }
         
         }

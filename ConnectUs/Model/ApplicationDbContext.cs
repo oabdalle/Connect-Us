@@ -25,6 +25,6 @@ namespace ConnectUs.Model
         public DbSet<Message> Message { get; set; }
         public DbSet<ChatUser> ChatUser { get; set; }
         public DbSet<VideoFiles> VideoFiles { get; set; }
-
+        public DbSet<Like> Like { get; set; }
     }
 }

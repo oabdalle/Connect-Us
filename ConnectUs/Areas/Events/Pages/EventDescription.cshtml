@@ -7,7 +7,30 @@
 }
  
 <h1>@ViewData["Title"]</h1>
-<form method="post" id ="eventInfo">
+
+<div class="row">
+  <div class="col-sm-4 video-display" >
+    @if(Model.ProductToDisplay != null){
+    <video class="w-100" controls="" muted="" src="../uploads/@Model.ProductToDisplay.VideoBase64" type="video/mp4"></video>
+    }else{
+    <video class="w-100" muted="" type="video/mp4"></video>
+    }
+  </div>
+  <div class="col-sm-4 product-display">
+    @if(Model.ProductToDisplay != null){
+      <img class="w-100" src="@Model.ProductToDisplay.ImageBase64">
+      <div class="product-name">@Model.ProductToDisplay.Name $@Model.ProductToDisplay.Price</div>
+    }else{
+      <img class="w-100">
+      <div class="product-name"></div>
+    }
+    
+  </div>
+
+</div>
+<div class="row">
+
+<form method="post" id ="eventInfo" class="col-sm-4">
     <div>
         <div>
             <label>@Model.eventEntry.Name</label>
@@ -43,8 +66,25 @@
         }
     </div>
 </form>
+@if(Model.ProductList.Count()>0){
 
+  <div class="col-sm-6">
+    <h1>Products List</h1>
+      <div class="row product-row">
+        @foreach (var item in Model.ProductList)
+        {
+          <div class="col-sm-4 product" data-id="@item.ProductId">
+            <img src="@item.ImageBase64" class="w-100">
+            @Html.DisplayFor(m=>item.Name)
+          </div>
+          }
+      </div>
+  </div>   
+}
+</div>
+  @if(Model.Chat != null){
 <div class="chat-body">
+
     @foreach(var message in Model.Chat.Messages){
     <div class="message">
         <header>@message.Name:</header>
@@ -52,6 +92,7 @@
         <footer>@message.Timestamp</footer>
     </div>
     }
+
 </div>
 
 <div class="chat-input">
@@ -61,12 +102,51 @@
     <button id="sell" class="btn-danger btn">Sell</button>
     <button id="submitMessage" type="submit">Send</button>
 </div>
+
 <button type="button" class="like-button" title="Click to like this post!">
     <i class="fa fa-thumbs-up"></i> Like
     |
     <span class="like-count">@Model.likeCount</span>
 </button>
+  }else{
+    <div>Event has not started. Chat disabled.</div>
+  }
 @section Scripts{
+    <script>
+      $(".product-row .product").click(function(){
+        $('.product-row .product.checked').not(this).removeClass('checked');
+        $(this).toggleClass('checked');
+    var productMessage ={
+                roomId: $("#roomId").val(),
+                productId: $(this).data('id')
+              };
+        console.log(productMessage)
+      $.ajax({
+        type: 'POST',
+        url: '@Url.Action("SendProduct", "Message")',
+        data: JSON.stringify(productMessage),
+        dataType: "json",
+        contentType:'application/json',
+        success: function (result) {
+
+          console.log(result);
+          if(result=="Success"){
+           
+          }else if(result=="Not signed in."){
+            alert('Not signed in')
+          }else if(result=="No message."){
+            alert('No chat message.')
+          }
+        },
+        failure: function () {
+          alert("fail: " );
+        },
+        error: function (xhr, status, error) {
+          alert('error'+ xhr.responseText);
+        }
+      });
+    })
+    </script>
     <script src="~/js/VenueFilter.js"></script>
     <script src="~/js/messageBuilder.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aspnet-signalr/1.1.4/signalr.min.js" integrity="sha512-hqwtOj6waHZZoLRoJoLn0tq34JS97tR1QmhM69uvyrt3LVBiR1o0xeOVAskjUFL1L1fahQH2W7IdcMaFbqCEaw==" crossorigin="anonymous"></script>
@@ -159,8 +239,33 @@
                       alert('error'+ xhr.responseText);
                     }
                 });
-        }
+    function CreateProductDisplay(productId){
+      $.ajax({
+          type: "POST",
+          url:'/events/event-description?handler=DisplayProduct',          
+          beforeSend: function (xhr) {
+              xhr.setRequestHeader("XSRF-TOKEN",$('input:hidden[name="__RequestVerificationToken"]').val());
+          },
+          data: {productId: productId},
+          success: function (result) {
+           console.log(result);
+           document.querySelector('.product-display img').src = result.imageBase64;
+           document.querySelector('.product-name').innerHTML=result.name + " $"+result.price.toFixed(2);
+           var video = document.querySelector('.video-display video');
+           video.src = "../uploads/"+result.videoBase64;
+           video.setAttribute("controls","controls"); 
+          },
+          failure: function () {
+              alert("fail: ");
+          },
+          error: function () {
+              alert("error: ");
+          }
+      });
+    }
+    }
     </script>
+@if(Model.Chat !=null){
  <script>
     var connection = new signalR.HubConnectionBuilder()
         .withUrl("/chatHub")
@@ -180,6 +285,10 @@
         console.log(data);
         $(".like-count").text(data.totalLikes);
     })
+    connection.on("RecieveProductMessage", function (data) {
+      console.log(data);
+      CreateProductDisplay(data.text);
+    })
     connection.start()
         .then(function () {
           connection.invoke('joinRoom', '@Model.Chat.ChatId');
@@ -190,9 +299,7 @@
     window.addEventListener('onunload', function () {
         connection.invoke('leaveRoom', '@Model.Chat.ChatId');
     })
-   
 </script>
-
-    
+}
 }
  @* data-request-url="@Url.Action("Action", "Controller")" *@

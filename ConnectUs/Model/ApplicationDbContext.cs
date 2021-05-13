@@ -20,7 +20,7 @@ namespace ConnectUs.Model
         public DbSet<Profile> Profile { get; set; }
         public DbSet<Booking> Booking { get; set; }
         public DbSet<Product> Product { get; set; }
-
+        public DbSet<ProductDisplay> ProductDisplay { get; set; }
         public DbSet<Chat> Chat { get; set; }
         public DbSet<Message> Message { get; set; }
         public DbSet<ChatUser> ChatUser { get; set; }

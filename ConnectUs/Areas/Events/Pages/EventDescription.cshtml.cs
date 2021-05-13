@@ -48,7 +48,8 @@ namespace ConnectUs.Areas.Events.Pages
   
         [BindProperty]
         public bool eventBooked {get; set;}
-        
+        public IEnumerable<Product> ProductList {get; set;}
+        public Product ProductToDisplay {get; set;}
         public List<Booking> checkBookings = new List<Booking>();
         public int likeCount {get; set;}
         public async Task OnGet(int id)
@@ -59,7 +60,11 @@ namespace ConnectUs.Areas.Events.Pages
 
         public async Task InitEvent(int id){
             eventEntry  = await _db.Event.FindAsync(id);
+
+          
             if(eventEntry is not null){
+              ProductList = await _db.Product.Where(x => x.EventId == eventEntry.EventId).ToListAsync();
+              ProductToDisplay = ProductList.FirstOrDefault(x => x.Selected == true);
               categoryEntry = await _db.Category.FindAsync(eventEntry.CategoryId);
               likeCount = eventEntry.TotalLikes;
             }
@@ -145,5 +150,28 @@ namespace ConnectUs.Areas.Events.Pages
               return RedirectToPage("/Index",  new { area = "Attendee" });
             }
         }
+
+        public async Task<IActionResult> OnPostDisplayProduct(int productId){
+
+               if(productId>0){
+
+                  var product = await _db.Product.FindAsync(productId);
+                  var productsToReset = await _db.Product.Where(x=>x.EventId==product.EventId).ToListAsync();
+                  foreach (var item in productsToReset){
+                    item.Selected=false;
+                  }
+                  product.Selected = true;
+                  
+                  await _db.SaveChangesAsync();
+            
+                  return new JsonResult(product);
+
+               }else{
+
+                  return new JsonResult("Category Name is null");
+               }        
+        
+        }
+      
     }
 }

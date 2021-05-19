@@ -218,12 +218,11 @@ namespace ConnectUs.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<bool>("Selected")
+                        .HasColumnType("bit");
 
                     b.Property<string>("VideoBase64")
                         .HasColumnType("nvarchar(max)");
-                   b.Property<bool>("Selected")
-                        .HasColumnType("bit");
-
 
                     b.HasKey("ProductId");
 

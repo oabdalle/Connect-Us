@@ -1,0 +1,13 @@
+@page
+@model CheckoutModel
+@{
+    ViewData["Title"] = "Checkout";
+}
+@using Microsoft.Extensions.Options
+@inject IOptions<StripeSettings> Stripe
+
+<form action="/api/Charge/ChargeCard" method="POST">
+<label>Amount: $5.00</label>
+<script src="//checkout.stripe.com/v2/checkout.js" class="stripe-button" data-key="@Stripe.Value.PublishableKey" data-description="ASP.NET Core Stripe Tutorial" data-amount="500" ></script>
+
+</form>

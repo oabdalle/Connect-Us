@@ -22,7 +22,7 @@ using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using ConnectUs.Hubs;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.Http.Features;
-
+using Stripe;
 namespace ConnectUs
 {
     public class Startup
@@ -87,6 +87,8 @@ namespace ConnectUs
                     });
              services.AddMvc();
              services.AddAntiforgery(o => o.HeaderName = "XSRF-TOKEN");
+             services.Configure<StripeSettings>(Configuration.GetSection("Stripe"));
+             
         
         }
 
@@ -97,6 +99,9 @@ namespace ConnectUs
             {
                 ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
             });
+
+            StripeConfiguration.SetApiKey(Configuration.GetSection("Stripe")["SecretKey"]);
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

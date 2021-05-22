@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ConnectUs.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210519010907_total")]
-    partial class total
+    [Migration("20210522215246_Likes")]
+    partial class Likes
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

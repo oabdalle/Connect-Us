@@ -2,10 +2,17 @@
 
 namespace ConnectUs.Migrations
 {
-    public partial class likes : Migration
+    public partial class Likes : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.AddColumn<int>(
+                name: "TotalLikes",
+                table: "Event",
+                type: "int",
+                nullable: false,
+                defaultValue: 0);
+
             migrationBuilder.CreateTable(
                 name: "Like",
                 columns: table => new
@@ -26,6 +33,10 @@ namespace ConnectUs.Migrations
         {
             migrationBuilder.DropTable(
                 name: "Like");
+
+            migrationBuilder.DropColumn(
+                name: "TotalLikes",
+                table: "Event");
         }
     }
 }

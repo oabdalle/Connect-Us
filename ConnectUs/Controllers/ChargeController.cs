@@ -16,34 +16,53 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Stripe;
 using Stripe.Checkout;
+using System.Collections;
+using System.Collections.Generic;
+
 namespace ConnectUs.Controllers
 {
    [ApiController]
-    [Route("api/[controller]/[action]")]
+    [Route("[controller]/[action]")]
     public class ChargeController : Controller
     {
 
         public ChargeController(){
-     
+    
         }
 
         [HttpPost]
-        public async Task<IActionResult> ChargeCard(string stripeEmail, string stripeToken)
-        {    
-          var customerService = new CustomerService();
-          var chargeService = new ChargeService();
-
-          var customer = customerService.Create(new CustomerCreateOptions{
-              Email = stripeEmail,
-              Source = stripeToken
-          });
-          var charge = chargeService.Create(new ChargeCreateOptions{
-            Amount = 500,
-            Description = "ASP.NET Core Stripe Tutorial",
-            Currency = "usd",
-            Customer = customer.Id
-          });
-           return RedirectToPage("Index");
+        public ActionResult CreateCheckoutSession()
+        {
+            var domain = "http://localhost";
+            var options = new SessionCreateOptions
+            {
+                PaymentMethodTypes = new List<string>
+                {
+                  "card",
+                },
+                LineItems = new List<SessionLineItemOptions>
+                {
+                  new SessionLineItemOptions
+                  {
+                    PriceData = new SessionLineItemPriceDataOptions
+                    {
+                      UnitAmount = 2000,
+                      Currency = "usd",
+                      ProductData = new SessionLineItemPriceDataProductDataOptions
+                      {
+                        Name = "Stubborn Attachments",
+                      },
+                    },
+                    Quantity = 1,
+                  },
+                },
+                Mode = "payment",
+                SuccessUrl = domain + "/success",
+                CancelUrl = domain + "/cancel",
+            };
+            var service = new SessionService();
+            Session session = service.Create(options);
+            return Json(new { id = session.Id });
         }
 
     }

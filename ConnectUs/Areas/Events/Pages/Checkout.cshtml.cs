@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using ConnectUs.Services;
+using ConnectUs.Model;
+using ConnectUs.Model.Entities;
 
 namespace ConnectUs.Areas.Events.Pages
 {
@@ -22,8 +25,11 @@ namespace ConnectUs.Areas.Events.Pages
 
         public void OnGet()
         {
- 
-         
+            var cart = CartSessionService.GetObjectFromJson<List<ItemViewModel>>(HttpContext.Session, "cart");
+            if(cart != null){
+              ViewData["cart"] = cart;
+              ViewData["total"] = cart.Sum(item => item.Product.Price * item.Quantity);
+            }
         }
     }
 }

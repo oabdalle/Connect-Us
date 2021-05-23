@@ -5,7 +5,7 @@
 @{
     ViewData["Title"] = "Event Description";
 }
- 
+@Html.AntiForgeryToken()
 <h1>@ViewData["Title"]</h1>
 
 <div class="row">
@@ -20,6 +20,7 @@
     @if(Model.ProductToDisplay != null){
       <img class="w-100" src="@Model.ProductToDisplay.ImageBase64">
       <div class="product-name">@Model.ProductToDisplay.Name $@Model.ProductToDisplay.Price</div>
+      <a class="btn btn-primary add-to-cart" data-id="@Model.ProductToDisplay.ProductId">Buy</a>
     }else{
       <img class="w-100">
       <div class="product-name"></div>
@@ -75,6 +76,7 @@
         {
           <div class="col-sm-4 product" data-id="@item.ProductId">
             <img src="@item.ImageBase64" class="w-100">
+       
             @Html.DisplayFor(m=>item.Name)
           </div>
           }
@@ -153,6 +155,13 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
       $(document).ready(function () {
+        $('.add-to-cart').click(function(event)
+            {
+              var id =$(this).attr("data-id")
+              console.log(id);
+              AddToCart(id);
+            });
+
             $('.like-button').click(function(event)
               {
                 var like ={
@@ -160,8 +169,8 @@
                   eventId: @Model.eventEntry.EventId
                 };
                 SendAjaxLike(like);
-              }
-            )
+              });
+
             $("#buy").click(function (event) {
               var chatMessage ={
                   roomId: $("#roomId").val(),
@@ -188,6 +197,40 @@
               SendAjaxMessage(chatMessage);
             });                  
         });
+        
+        function AddToCart(id){
+          
+          var productDetails ={
+            productId: parseInt(id),
+            eventId: parseInt(@Model.eventEntry.EventId)
+         
+          };
+          console.log(productDetails);
+          console.log('hii')
+           console.log(JSON.stringify(productDetails));
+
+          $.ajax({
+        
+              type: 'POST',
+              url: '/api/Cart/Buy',
+              data: JSON.stringify(productDetails),
+              dataType: "json",
+        
+              contentType:'application/json',
+              success: function (result) {
+                if(result=="Success"){
+                  console.log(result);
+              }
+              },
+              failure: function () {
+                alert("fail: " );
+              },
+              error: function (xhr, status, error) {
+    
+                alert('error'+ xhr.responseText);
+              }
+          });
+        }
         function SendAjaxMessage(message){
                 $.ajax({
                     type: 'POST',
@@ -239,6 +282,7 @@
                       alert('error'+ xhr.responseText);
                     }
                 });
+        }
     function CreateProductDisplay(productId){
       $.ajax({
           type: "POST",
@@ -248,9 +292,11 @@
           },
           data: {productId: productId},
           success: function (result) {
-           console.log(result);
+  
            document.querySelector('.product-display img').src = result.imageBase64;
            document.querySelector('.product-name').innerHTML=result.name + " $"+result.price.toFixed(2);
+           var addToCart = document.querySelector('.product-display a.add-to-cart');
+           addToCart.setAttribute('data-id', result.productId);
            var video = document.querySelector('.video-display video');
            video.src = "../uploads/"+result.videoBase64;
            video.setAttribute("controls","controls"); 
@@ -262,7 +308,6 @@
               alert("error: ");
           }
       });
-    }
     }
     </script>
 @if(Model.Chat !=null){

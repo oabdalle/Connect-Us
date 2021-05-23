@@ -34,28 +34,31 @@ namespace ConnectUs.Controllers
         public ActionResult CreateCheckoutSession()
         {
             var domain = "http://localhost";
+
+            var cart = CartSessionService.GetObjectFromJson<List<ItemViewModel>>(HttpContext.Session, "cart");
+            List<SessionLineItemOptions> LineItemsToAdd = new List<SessionLineItemOptions>();
+            foreach(var item in cart){
+                LineItemsToAdd.Add(new SessionLineItemOptions{
+                    
+                    PriceData = new SessionLineItemPriceDataOptions
+                    {
+                      UnitAmountDecimal = item.Product.Price*100,
+                      Currency = "usd",
+                      ProductData = new SessionLineItemPriceDataProductDataOptions
+                      {
+                        Name = item.Product.Name,
+                      },
+                    },
+                    Quantity = item.Quantity,
+                   });             
+             }
             var options = new SessionCreateOptions
             {
                 PaymentMethodTypes = new List<string>
                 {
                   "card",
                 },
-                LineItems = new List<SessionLineItemOptions>
-                {
-                  new SessionLineItemOptions
-                  {
-                    PriceData = new SessionLineItemPriceDataOptions
-                    {
-                      UnitAmount = 2000,
-                      Currency = "usd",
-                      ProductData = new SessionLineItemPriceDataProductDataOptions
-                      {
-                        Name = "Stubborn Attachments",
-                      },
-                    },
-                    Quantity = 1,
-                  },
-                },
+                LineItems = LineItemsToAdd,
                 Mode = "payment",
                 SuccessUrl = domain + "/success",
                 CancelUrl = domain + "/cancel",

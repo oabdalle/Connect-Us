@@ -86,6 +86,7 @@ namespace ConnectUs
                         options.Conventions.Add(new PageRouteTransformerConvention(new SlugifyParameterTransformer()));
                     });
              services.AddMvc();
+             services.AddSession();
              services.AddAntiforgery(o => o.HeaderName = "XSRF-TOKEN");
              services.Configure<StripeSettings>(Configuration.GetSection("Stripe"));
              
@@ -116,7 +117,7 @@ namespace ConnectUs
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
+            app.UseSession(); 
             app.UseRouting();
 
             app.UseAuthentication();

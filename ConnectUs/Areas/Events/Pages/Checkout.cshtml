@@ -6,19 +6,43 @@
 @using Microsoft.Extensions.Options
 @inject IOptions<StripeSettings> Stripe
 
- <section>
-      <div class="product">
-        <img
-          src="https://i.imgur.com/EHyR2nP.png"
-          alt="The cover of Stubborn Attachments"
-        />
-        <div class="description">
-          <h3>Stubborn Attachments</h3>
-          <h5>$20.00</h5>
-        </div>
-      </div>
-      <button type="button" id="checkout-button">Checkout</button>
-    </section>
+    <h3>Cart Page</h3>
+    <table cellpadding="2" cellspacing="2" border="1">
+        <tr>
+            <th>Option</th>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Price</th>
+            <th>Quantity</th>
+            <th>Sub Total</th>
+        </tr>
+    @if(ViewData["cart"]!=null){
+        @foreach (var item in (List<ItemViewModel>)ViewData["cart"])
+        {
+            <tr data-id="@item.Product.ProductId">
+                @* <td><a class="btn remove-from-cart btn-danger" data-id="@item.Product.ProductId">Remove</a></td> *@
+               <td><a asp-controller="cart" asp-action="remove" asp-route-id="@item.Product.ProductId">Remove</a></td>
+
+                <td>@item.Product.ProductId</td>
+                <td>@item.Product.Name</td>
+
+                <td>@item.Product.Price</td>
+                <td>@item.Quantity</td>
+                <td>@(item.Product.Price * item.Quantity)</td>
+            </tr>
+        }
+        <tr>
+            <td align="right" colspan="5">Sum</td>
+            <td>
+                @ViewData["total"]
+            </td>
+        </tr>
+    }
+    </table>
+
+
+      <button type="button" class="btn btn-primary" id="checkout-button">Checkout</button>
+
 
 @section Scripts { 
     <script src="https://polyfill.io/v3/polyfill.min.js?version=3.52.1&features=fetch"></script>
@@ -49,6 +73,7 @@
           console.error("Error:", error);
         });
     });
+
   </script>
   
   }

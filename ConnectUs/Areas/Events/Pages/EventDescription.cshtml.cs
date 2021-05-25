@@ -52,6 +52,8 @@ namespace ConnectUs.Areas.Events.Pages
         public Product ProductToDisplay {get; set;}
         public List<Booking> checkBookings = new List<Booking>();
         public int likeCount {get; set;}
+        public DateTime today {get; set;}
+        public Profile profile {get; set;}
         public async Task OnGet(int id)
         {
             
@@ -59,9 +61,9 @@ namespace ConnectUs.Areas.Events.Pages
         }
 
         public async Task InitEvent(int id){
+            today = DateTime.Today;
             eventEntry  = await _db.Event.FindAsync(id);
-
-          
+            profile =  await _db.Profile.FirstOrDefaultAsync(x => x.HostId == eventEntry.HostId);
             if(eventEntry is not null){
               ProductList = await _db.Product.Where(x => x.EventId == eventEntry.EventId).ToListAsync();
               ProductToDisplay = ProductList.FirstOrDefault(x => x.Selected == true);
@@ -69,7 +71,7 @@ namespace ConnectUs.Areas.Events.Pages
               likeCount = eventEntry.TotalLikes;
             }
             if(!(await _chatService.CheckRoomExists(id))){
-              if((eventEntry.EventDate > DateTime.Now) && User.Identity.IsAuthenticated){
+              if((eventEntry.EventDate.Date <= DateTime.Today) && User.Identity.IsAuthenticated){
                   await _chatService.CreateRoom(id, _userManager.GetUserId(User));
               }
             }else{

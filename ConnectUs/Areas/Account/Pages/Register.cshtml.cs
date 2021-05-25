@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using System.IO;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -13,8 +14,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
 using ConnectUs.Services;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using ConnectUs.Model;
+using ConnectUs.Model.Entities;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 
 namespace ConnectUs.Areas.Account.Pages
 {
@@ -26,6 +32,8 @@ namespace ConnectUs.Areas.Account.Pages
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IWebHostEnvironment _env;
+        private readonly ApplicationDbContext _db;
 
         
         public RegisterModel(
@@ -33,13 +41,17 @@ namespace ConnectUs.Areas.Account.Pages
             SignInManager<IdentityUser> signInManager,
             ILogger<RegisterModel> logger,
             RoleManager<IdentityRole> roleManager,
-            IEmailSender emailSender)
+            IEmailSender emailSender, 
+            IWebHostEnvironment env,
+            ApplicationDbContext db)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
             _roleManager = roleManager;
+            _env = env;
+            _db = db;
         }
 
         [BindProperty]
@@ -50,7 +62,6 @@ namespace ConnectUs.Areas.Account.Pages
  
 
         public List<SelectListItem> RoleList {get; set;}
-
         public class InputModel
         {
             [Required]
@@ -109,7 +120,15 @@ namespace ConnectUs.Areas.Account.Pages
                     {
                         var addClaimResult = await _userManager.AddToRoleAsync(user, Input.SelectedRole);
                     }
-                    
+                    string _dir =  _env.WebRootPath;
+                    var imagePath = Path.Combine(_dir, "images/Defualt image.jpg");
+                    string s = Convert.ToBase64String(System.IO.File.ReadAllBytes(imagePath));
+                    Profile profile= new Profile(){
+                    HostId = user.Id,
+                    Content = s
+                    };
+                    await _db.Profile.AddAsync(profile);
+                    await _db.SaveChangesAsync();
                     if (_userManager.Options.SignIn.RequireConfirmedAccount)
                     {
                         return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });

@@ -29,9 +29,10 @@ namespace ConnectUs.Areas.Creator.Pages.Events
         private readonly UserManager<IdentityUser> _userManager;
         private IChatService _chatService;
         public Dictionary<Event, Chat> EventsChat {get; set;} 
-        public List<Event> Events { get; set; }
+        public Dictionary<string, List<Event>> EventsDict { get; set; }
         public List<Chat> Chats {get; set;}
         public int LikeTotal {get; set;}
+        public IEnumerable<EventImage> EventImages { get; set; }
         public DashboardModel(ILogger<DashboardModel> logger, ApplicationDbContext db, IWebHostEnvironment env, UserManager<IdentityUser> um, IChatService chatService)
         {
             _logger = logger;
@@ -41,16 +42,31 @@ namespace ConnectUs.Areas.Creator.Pages.Events
             _chatService = chatService;
         }
 
-        public async Task OnGet()
+        public async Task OnGet(string id)
         {
-           await InitItems();
-
+            await InitItems(id);
         }
-
-        public async Task InitItems(){
-            var hostId = _userManager.GetUserId(User);
+        public async Task InitItems(string hostId = null){
+            EventsDict = new Dictionary<string, List<Event>>(){};
+            if(hostId == null)
+                hostId = _userManager.GetUserId(User);
+                
             var events = await _db.Event.Where(x=>x.HostId == hostId).ToListAsync();
-            
+            EventImages = await _db.EventImage.ToListAsync();
+            List<Event> pastEvents = new List<Event>();
+            List<Event> upcomingEvents = new List<Event>();
+            List<Event> currentEvents = new List<Event>();
+            foreach (var item in events) { 
+                if(item.EventDate > DateTime.Today)
+                    upcomingEvents.Add(item);
+                else if(item.EventDate == DateTime.Today)
+                    currentEvents.Add(item);
+                else
+                    pastEvents.Add(item);
+            }
+            EventsDict.Add("Past Events", pastEvents);
+            EventsDict.Add("Future Events", upcomingEvents);
+            EventsDict.Add("Ongoing Events", currentEvents);
             EventsChat = new Dictionary<Event, Chat> (){};
 
             foreach (var item in events) { 

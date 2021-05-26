@@ -54,7 +54,8 @@ namespace ConnectUs.Areas.Account.Pages.Manage
         {
             var userName = await _userManager.GetUserNameAsync(user);
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
-
+            var profileToRetrieve = await _db.Profile.Where(x => x.HostId == user.Id).ToListAsync();
+            Profile = profileToRetrieve.FirstOrDefault();
             Username = userName;
 
             Input = new InputModel
@@ -66,6 +67,7 @@ namespace ConnectUs.Areas.Account.Pages.Manage
         public async Task<IActionResult> OnGetAsync()
         {
             var user = await _userManager.GetUserAsync(User);
+            
             if (user == null)
             {
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
@@ -128,7 +130,6 @@ namespace ConnectUs.Areas.Account.Pages.Manage
             else{
             await _db.Profile.AddAsync(Profile);
             }
-            await _db.Profile.AddAsync(Profile);
             await _db.SaveChangesAsync();
             await _signInManager.RefreshSignInAsync(user);
             StatusMessage = "Your profile has been updated";

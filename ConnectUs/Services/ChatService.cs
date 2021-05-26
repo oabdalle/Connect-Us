@@ -100,8 +100,6 @@ namespace ConnectUs.Services
         }
 
        public async Task<int> AddLike(int likeId, int eventId, string userId){
-        //Find to see if he already is in table
-         //Find to see if he already is in table
         Like checkExistingLike = _db.Like.Where(x=>x.UserId == userId).FirstOrDefault();
         
             var like = new Like

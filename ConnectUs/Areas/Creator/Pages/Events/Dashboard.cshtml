@@ -32,3 +32,40 @@
       </div>
     }
 </div>
+<div class="w-100 my-5">
+  @if(Model.EventsDict.Count()>0){
+
+      foreach(KeyValuePair<string, List<Event>> entry in Model.EventsDict)
+      {
+
+        <h1 class="text-center"> @Html.DisplayFor(m=>entry.Key)</h1>
+        <div class="row d-flex justify-content-center py-5">
+         
+        @if(entry.Value.Count > 0){
+          @foreach (var item in entry.Value)
+          { 
+            
+            <div class="col-xl-2 col-lg-3 col-md-4 col-sm-12 p-5 m-3 border">
+              <a asp-area="Events" asp-page="/EventDescription" asp-route-id="@item.EventId">
+              <img style="width: 100px; height: 100px;" src="data:image/png;base64, @Model.EventImages.Where(x=>x.EventId == item.EventId).SingleOrDefault(x => x.Cover == true).Content"/>
+
+              </a>
+                  @Html.DisplayFor(m=>item.Name)
+              
+                  @Html.DisplayFor(m=>item.EventDate)
+                
+                  @Html.DisplayFor(m=>item.Category.CategoryName)
+              
+            </div>
+          }
+        }else{
+          <div>
+            <p>No events available.</p>
+          </div>
+        }
+        </div>
+      }
+  }else{
+      <p>No Events available.</p>
+  }
+</div>

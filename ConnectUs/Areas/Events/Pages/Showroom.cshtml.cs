@@ -68,14 +68,13 @@ namespace ConnectUs.Areas.Events.Pages
             Category category = new Category();
 
             EventToFind = await _db.Event.FindAsync(id);
+            today = DateTime.Today;
 
-          
             if(EventToFind is not null){
-              EventToFind  = await _db.Event.FindAsync(id);
-              profile =  await _db.Profile.FirstOrDefaultAsync(x => x.HostId == eventEntry.HostId);
-              ProductList = await _db.Product.Where(x => x.EventId == eventEntry.EventId).ToListAsync();
+              profile =  await _db.Profile.FirstOrDefaultAsync(x => x.HostId == EventToFind.HostId);
+              ProductList = await _db.Product.Where(x => x.EventId == EventToFind.EventId).ToListAsync();
               ProductToDisplay = ProductList.FirstOrDefault(x => x.Selected == true);
-              
+
               category = await _db.Category.FindAsync(EventToFind.CategoryId);
 
               EventEntry = new EventDescriptionViewModel{

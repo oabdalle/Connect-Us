@@ -53,13 +53,18 @@
       <partial name="_ProductToShowcase" model="@Model.ProductList"/>
   }
 
-  @if(Model.Chat != null){
+  @if(Model.Chat != null && Model.today == Model.EventEntry.Event.EventDate.Date){
     <partial name="_Chat" model="@Model.Chat"/>
+  }else if(Model.today > Model.eventEntry.EventDate.Date){
+    <div>Event has passed. Chat disabled.</div>
   }else{
     <div>Event has not started. Chat disabled.</div>
   }
-
-
+<div class="col-sm-1">
+  <a asp-area="Creator" asp-page="/Events/Dashboard" asp-route-id="@Model.EventEntry.Event.HostId">
+  <img src="data:image/jpeg;base64,@Model.profile.Content" class="w-100">
+  </a>
+</div>
 @section Scripts{
   @if(Model.Chat !=null){
       <script src="~/js/InitChat.js"></script>

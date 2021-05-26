@@ -1,0 +1,23 @@
+@model Product
+
+<div class="row">
+  <div class="col-sm-4 video-display" >
+    @if(Model != null){
+    <video class="w-100" controls="" muted="" src="../uploads/@Model.VideoBase64" type="video/mp4"></video>
+    }else{
+    <video class="w-100" muted="" type="video/mp4"></video>
+    }
+  </div>
+  <div class="col-sm-4 product-display">
+    @if(Model != null){
+      <img class="w-100" src="@Model.ImageBase64">
+      <div class="product-name">@Model.Name $@Model.Price</div>
+      <a class="btn btn-primary product-to-buy" data-id="@Model.ProductId">Buy</a>
+      <input type="number" id="quantity" class="form-control" value="0" min="0" step="1">
+    }else{
+      <img class="w-100">
+      <div class="product-name"></div>
+    }
+  </div>
+
+</div>

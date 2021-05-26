@@ -1,0 +1,17 @@
+@model IEnumerable<Product>
+
+<div class="row">
+  <div class="col-sm-6">
+    <h1>Products List</h1>
+      <div class="row product-row">
+        @foreach (var item in Model)
+        {
+          <div class="col-sm-4 product" data-id="@item.ProductId">
+            <img src="@item.ImageBase64" class="w-100">
+       
+            @Html.DisplayFor(m=>item.Name)
+          </div>
+          }
+      </div>
+  </div>   
+  </div>

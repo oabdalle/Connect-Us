@@ -26,12 +26,12 @@ using System.Collections.Generic;
 
 namespace ConnectUs.Areas.Events.Pages
 {
-       public class EventDescription : PageModel
+       public class Showroom : PageModel
     {
         private readonly ApplicationDbContext _db;
         private readonly UserManager<IdentityUser> _userManager;
         private IChatService _chatService;
-        public EventDescription(ApplicationDbContext db, UserManager<IdentityUser> userManager, IChatService chatService){
+        public Showroom(ApplicationDbContext db, UserManager<IdentityUser> userManager, IChatService chatService){
 
             _userManager=userManager;
             _db = db;
@@ -39,7 +39,8 @@ namespace ConnectUs.Areas.Events.Pages
         } 
 
         [BindProperty]
-        public Event eventEntry {get; set;}
+        public EventDescriptionViewModel EventEntry {get; set;}
+
         [BindProperty]
         public Category categoryEntry {get; set;}
 
@@ -59,17 +60,31 @@ namespace ConnectUs.Areas.Events.Pages
         }
 
         public async Task InitEvent(int id){
-            eventEntry  = await _db.Event.FindAsync(id);
+
+            Event EventToFind = new Event();
+
+            Category category = new Category();
+
+            EventToFind = await _db.Event.FindAsync(id);
 
           
-            if(eventEntry is not null){
-              ProductList = await _db.Product.Where(x => x.EventId == eventEntry.EventId).ToListAsync();
+            if(EventToFind is not null){
+              ProductList = await _db.Product.Where(x => x.EventId == EventToFind.EventId).ToListAsync();
               ProductToDisplay = ProductList.FirstOrDefault(x => x.Selected == true);
-              categoryEntry = await _db.Category.FindAsync(eventEntry.CategoryId);
-              likeCount = eventEntry.TotalLikes;
+              category = await _db.Category.FindAsync(EventToFind.CategoryId);
+
+              EventEntry = new EventDescriptionViewModel{
+                Event = EventToFind,
+                Category = category,
+                EventImages= await _db.EventImage.Where(x=>x.EventId == EventToFind.EventId).ToListAsync()
+
+              };
+
+              likeCount = EventToFind.TotalLikes;
             }
+
             if(!(await _chatService.CheckRoomExists(id))){
-              if((eventEntry.EventDate > DateTime.Now) && User.Identity.IsAuthenticated){
+              if((EventToFind.EventDate > DateTime.Now) && User.Identity.IsAuthenticated){
                   await _chatService.CreateRoom(id, _userManager.GetUserId(User));
               }
             }else{
@@ -113,7 +128,7 @@ namespace ConnectUs.Areas.Events.Pages
             if(userId !=null){
                Booking checkExistingBooking = _db.Booking.Where(x=>x.EventId == eventId).Where(x=>x.UserId == userId).FirstOrDefault();
                 if(checkExistingBooking != null){
-                  return RedirectToPage("/EventDescription", new {id = eventId});
+                  return RedirectToPage("/Event", new {id = eventId});
                 }
               DateTime newDateTime = DateTime.Now;
               booking.EventId = eventId;
@@ -140,7 +155,7 @@ namespace ConnectUs.Areas.Events.Pages
             if(userId !=null){
               booking = _db.Booking.Where(x=>x.EventId == eventId).Where(x=>x.UserId == userId).FirstOrDefault();
                 if(booking  == null){
-                  return RedirectToPage("/EventDescription", new {id = eventId});
+                  return RedirectToPage("/Event", new {id = eventId});
                 }
               _db.Booking.Remove(booking );
               await _db.SaveChangesAsync();

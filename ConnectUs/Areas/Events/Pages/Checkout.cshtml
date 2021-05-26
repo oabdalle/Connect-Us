@@ -3,6 +3,8 @@
 @{
     ViewData["Title"] = "Checkout";
 }
+@using Newtonsoft.Json
+@using Microsoft.AspNetCore.Http
 @using Microsoft.Extensions.Options
 @inject IOptions<StripeSettings> Stripe
 
@@ -23,11 +25,12 @@
                 @* <td><a class="btn remove-from-cart btn-danger" data-id="@item.Product.ProductId">Remove</a></td> *@
                <td><a asp-controller="cart" asp-action="remove" asp-route-id="@item.Product.ProductId">Remove</a></td>
 
-                <td>@item.Product.ProductId</td>
+                <td class="product-to-buy" data-id="@item.Product.ProductId">@item.Product.ProductId</td>
                 <td>@item.Product.Name</td>
 
                 <td>@item.Product.Price</td>
-                <td>@item.Quantity</td>
+                <td><input type="number" id="quantity" class="form-control" value="@item.Quantity" min="0" step="1"></td>
+                
                 <td>@(item.Product.Price * item.Quantity)</td>
             </tr>
         }
@@ -47,7 +50,13 @@
 @section Scripts { 
     <script src="https://polyfill.io/v3/polyfill.min.js?version=3.52.1&features=fetch"></script>
     <script src="https://js.stripe.com/v3/"></script>
+    <script src="~/js/Cart.js"></script>
   <script type="text/javascript">
+
+        var value = '@HttpContext.Session.GetString("cart")';
+console.log(JSON.parse(value))
+
+
     // Create an instance of the Stripe object with your publishable API key
     var stripe = Stripe('@Stripe.Value.PublishableKey');
     var checkoutButton = document.getElementById("checkout-button");

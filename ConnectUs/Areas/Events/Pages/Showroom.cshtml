@@ -55,7 +55,7 @@
 
   @if(Model.Chat != null && Model.today == Model.EventEntry.Event.EventDate.Date){
     <partial name="_Chat" model="@Model.Chat"/>
-  }else if(Model.today > Model.eventEntry.EventDate.Date){
+  }else if(Model.today > Model.EventEntry.Event.EventDate.Date){
     <div>Event has passed. Chat disabled.</div>
   }else{
     <div>Event has not started. Chat disabled.</div>

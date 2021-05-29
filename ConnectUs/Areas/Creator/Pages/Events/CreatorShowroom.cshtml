@@ -1,0 +1,75 @@
+@page
+@model CreatorShowroom
+@inject UserManager<IdentityUser> userManager;
+
+@{
+    ViewData["Title"] = "Event Description";
+}
+@Html.AntiForgeryToken()
+<h1>@ViewData["Title"]</h1>
+
+<input hidden value="@Model.EventEntry.Event.EventId" id="EventId"/>
+
+<partial name="_EventDescription" model="@Model.EventEntry"/>
+<partial name="_ProductShowcase" model="@Model.ProductToDisplay"/>
+
+
+<div class="row">
+
+<form method="post" id ="eventInfo" class="col-sm-4">
+
+      @if((Model.EventEntry.Event.HostId == userManager.GetUserId(User)) && (User.Identity.IsAuthenticated && User.IsInRole("Admin") || User.IsInRole("Creator"))){        
+          <button asp-page-handler="Delete" asp-route-id="@Model.EventEntry.Event.EventId" onclick="return confirm('Are you sure')" class="btn btn-danger btn-sm">Remove</button>
+          <a asp-area="Creator" asp-page="/Events/EditEvent" asp-route-id="@Model.EventEntry.Event.EventId" class="btn btn-sm">Edit</a>
+          <a asp-area="Creator" asp-page="/Events/ManageProducts" asp-route-id="@Model.EventEntry.Event.EventId" class="btn btn-success btn-sm">Manage Products</a>
+          <a asp-area="Creator" asp-page="/Events/Dashboard" class="btn btn-primary btn-sm">Dashboard</a>
+
+
+        }else if(User.Identity.IsAuthenticated && User.IsInRole("Attendee")){
+          @if(Model.eventBooked==false){
+            <button asp-page-handler="BookEvent" asp-route-eventId="@Model.EventEntry.Event.EventId"  asp-route-userId="@userManager.GetUserId(User)" class="btn btn-primary btn-sm">Book Event</button>
+          }else{
+            <button disabled class="btn btn-primary btn-sm">Event Booked</button>
+            <button asp-page-handler="DeleteBooking" asp-route-eventId="@Model.EventEntry.Event.EventId"  asp-route-userId="@userManager.GetUserId(User)" class="btn btn-primary btn-sm">Cancel Booking</button>
+          }
+        }
+        @if(User.Identity.IsAuthenticated && User.IsInRole("Attendee")){
+            <a asp-area="Attendee" asp-page="/Index" class="btn btn-sm">Return</a>
+        }else{   
+            <a asp-area="Events" asp-page="/Index" class="btn btn-sm">Return</a>
+        }
+   
+</form>
+</div>
+
+<button type="button" class="like-button" title="Click to like this post!">
+    <i class="fa fa-thumbs-up"></i> Like
+    |
+    <span class="like-count">@Model.likeCount</span>
+</button>
+
+
+  @if(Model.ProductList.Count()>0){
+      <partial name="_ProductToShowcase" model="@Model.ProductList"/>
+  }
+
+  @if(Model.Chat != null && Model.today == Model.EventEntry.Event.EventDate.Date){
+    <partial name="_Chat" model="@Model.Chat"/>
+  }else if(Model.today > Model.EventEntry.Event.EventDate.Date){
+    <div>Event has passed. Chat disabled.</div>
+  }else{
+    <div>Event has not started. Chat disabled.</div>
+  }
+
+@section Scripts{
+  @if(Model.Chat !=null){
+      <script src="~/js/InitChat.js"></script>
+    }
+    <script src="~/js/ProductDisplay.js"></script>
+    <script src="~/js/ChatMessage.js"></script>
+    <script src="~/js/VenueFilter.js"></script>
+    <script src="~/js/messageBuilder.js"></script>
+    <script src="~/js/Cart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aspnet-signalr/1.1.4/signalr.min.js" integrity="sha512-hqwtOj6waHZZoLRoJoLn0tq34JS97tR1QmhM69uvyrt3LVBiR1o0xeOVAskjUFL1L1fahQH2W7IdcMaFbqCEaw==" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+}

@@ -108,7 +108,7 @@ namespace ConnectUs.Areas.Creator.Pages.Events
         }
 
         public async Task InitItems(){
-           var user = await _userManager.GetUserAsync(HttpContext.User);
+           var user = await _userManager.GetUserAsync(User);
            userId = user.Id;
            Categories = await _db.Category.ToListAsync();
            CategoriesDropDownList = new SelectList(Categories, "CategoryId", "CategoryName");

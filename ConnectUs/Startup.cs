@@ -75,6 +75,7 @@ namespace ConnectUs
                           
             services.AddTransient<IEmailSender, EmailSender>();
             services.AddTransient<IChatService, ChatService>();
+            services.AddTransient<IEventsService, EventsService>();
 
 
 

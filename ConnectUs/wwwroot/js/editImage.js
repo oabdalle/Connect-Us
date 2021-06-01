@@ -86,6 +86,7 @@ function deleteImage(imgId){
          });
        },
          success: function (file, response) {
+             
          },
          error: function (file, response) {
          }

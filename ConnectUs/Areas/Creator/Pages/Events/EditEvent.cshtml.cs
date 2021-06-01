@@ -28,17 +28,24 @@ namespace ConnectUs.Areas.Creator.Pages.Events
         public EditEvent(ApplicationDbContext db){
             _db = db;
         } 
-        [BindProperty]
+        
         public Event eventEntry {get; set;}
         [BindProperty]
         public Category categoryEntry {get; set;}
-       
+        [BindProperty]
+        public EditEventViewModel EventViewModel {get; set;}
         public List<EventImage> eventsImages {get; set;}
 
 
         public async Task OnGet(int id)
         {
             eventEntry  = await _db.Event.FindAsync(id);
+            EventViewModel = new EditEventViewModel{
+              Name= eventEntry.Name,
+              EventDate = eventEntry.EventDate,
+              Description = eventEntry.Description,
+              GalleryFiles = eventEntry.GalleryFiles
+            };
             eventsImages = await _db.EventImage.Where(x => x.EventId == id).ToListAsync();
             if(eventEntry is not null){
             categoryEntry = await _db.Category.FindAsync(eventEntry.CategoryId);
@@ -71,20 +78,23 @@ namespace ConnectUs.Areas.Creator.Pages.Events
             return Partial("_EditImages", eventsImages);
         }
 
-        public async Task<IActionResult> OnPost()
+        public async Task<IActionResult> OnPost(int id)
         {
+            /*ModelState["eventEntry.GalleryFiles"].Errors.Clear();
+            TryValidateModel(eventEntry);*/
             if(ModelState.IsValid)
             {
+                eventEntry  = await _db.Event.FindAsync(id);
                 var eventToUpdate = await _db.Event.FindAsync(eventEntry.EventId);
                 var categoryToUpdate =  await _db.Category.FindAsync(eventEntry.CategoryId);
-                eventToUpdate.Name = eventEntry.Name;
-                eventToUpdate.EventDate = eventEntry.EventDate;
-                eventToUpdate.Description = eventEntry.Description;
+                eventToUpdate.Name = EventViewModel.Name;
+                eventToUpdate.EventDate = EventViewModel.EventDate;
+                eventToUpdate.Description = EventViewModel.Description;
                 categoryToUpdate.CategoryName = categoryEntry.CategoryName;
                 eventToUpdate.EventGallery = new List<EventImage>();
 
-                if(eventEntry.GalleryFiles != null){
-                    foreach (var file in eventEntry.GalleryFiles){
+                if(EventViewModel.GalleryFiles != null){
+                    foreach (var file in EventViewModel.GalleryFiles){
                     {
                         using (var ms = new MemoryStream())
                         {
@@ -107,7 +117,7 @@ namespace ConnectUs.Areas.Creator.Pages.Events
                 await _db.SaveChangesAsync();
                 return RedirectToPage("/Index",  new { area = "Events" });
             }
-            return RedirectToPage();
+            return RedirectToPage(); //Fix Routing
         }
       
       

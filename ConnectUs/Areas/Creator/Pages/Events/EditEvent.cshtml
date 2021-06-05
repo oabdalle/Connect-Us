@@ -8,11 +8,26 @@
 
 <h1>@ViewData["Title"]</h1>
 
-<div class="edit-images-view"
-  <partial name="_EditImages" model="@Model.eventsImages"/>
-</div>
 
+<div class="form-style-6">
+<h1>Edit Your Event!</h1>
 <form enctype = "multipart/form-data" method="post" id ="editEventInfo">
+    <div class="edit-images-view">
+    @if(Model.eventsImages.Count()>0){
+        @foreach (var item in Model.eventsImages)
+        {
+        <div>
+        <img class="edit-img"src="data:image/png;base64, @item.Content"/>
+        @if(Model.eventsImages.Count()>1){
+        <button type="submit" asp-page-handler="RemoveImage" asp-route-imageid="@item.ImageId" class="btn btn-danger btn-sm">Remove</button>
+        }
+        @if(item.Cover != true){
+        <button type="submit" asp-page-handler="SetCover" asp-route-imageid="@item.ImageId" class="btn btn-primary btn-sm">Set as Cover</button>      
+        }
+        </div>
+        }
+    }  
+    </div>
     <div>
         <input type="hidden" asp-for="eventEntry.EventId">
         <input type="hidden" asp-for="eventEntry.HostId">
@@ -23,7 +38,7 @@
                 <label asp-for="EventViewModel.Name"></label>
             </div>
             <div>
-                <input asp-for="EventViewModel.Name"></input>
+                <input class="form-input" type="text" asp-for="EventViewModel.Name"></input>
             </div>
             <span asp-validation-for="EventViewModel.Name" class="text-danger"></span>
         </div>
@@ -32,7 +47,7 @@
                 <label asp-for="EventViewModel.EventDate"></label>
             </div>
             <div>
-                <input asp-for="EventViewModel.EventDate"></input>
+                <input class="form-input" type="text" asp-for="EventViewModel.EventDate"></input>
             </div>
             <span asp-validation-for="EventViewModel.EventDate" class="text-danger"></span>
         </div>
@@ -41,7 +56,7 @@
                 <label asp-for="categoryEntry.CategoryName"></label>
             </div>
             <div>
-                <input asp-for="categoryEntry.CategoryName"></input>
+                <input class="form-input" type="text" asp-for="categoryEntry.CategoryName"></input>
             </div>
             <span asp-validation-for="categoryEntry.CategoryName" class="text-danger"></span>
         </div>
@@ -50,11 +65,12 @@
                 <label asp-for="EventViewModel.Description"></label>
             </div>
             <div>
-                <input asp-for="EventViewModel.Description"></input>
+                <input class="form-input" type="text" asp-for="EventViewModel.Description"></input>
             </div>
             <span asp-validation-for="EventViewModel.Description" class="text-danger"></span>
         </div>
-        
+        <input class="mb-1" type="button" id="showDropzone" onclick="showDropzoneInForm()" value="Add Image"/>
+        <input class="mb-1" type="button" id="hideDropzone"style="display: none;" onclick="showDropzoneInForm()" value="No Images"/>
         <div class="form-group row" id="addImages" style="display: none;">
             <div class="col-3">
                 <label asp-for="EventViewModel.GalleryFiles">
@@ -71,15 +87,14 @@
             <input hidden type="file" id="imgs" asp-for="EventViewModel.GalleryFiles" multiple/>
             </div>
         </div>
-        <input id="setup-event" value="Update" class="btn btn-primary w-100"/>
-        <input hidden type="submit" id="post-event" />
-        <a asp-area="Events" asp-page="/EventDescription" asp-route-id="@Model.eventEntry.EventId" class="btn btn-info text-white">Cancel</a>
+        <input type="button" id="setup-event" value="Update" class="btn btn-primary w-100"/>
+        <input asp-page-handler="AlterEvent" asp-route-id="@Model.eventEntry.EventId" hidden type="submit" id="post-event" />
+        <a asp-area="Events" asp-page="/EventDescription" asp-route-id="@Model.eventEntry.EventId" class="btn btn-info text-white mt-1">Cancel</a>
         
     </div>
 </form>
-<button id="showDropzone" onclick="showDropzoneInForm()">Add</button>
-<button id="hideDropzone"style="display: none;" onclick="showDropzoneInForm()">No Images</button>
 
+</div>
 @section Scripts{
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.7.6/min/dropzone.min.js" integrity="sha512-KgeSi6qqjyihUcmxFn9Cwf8dehAB8FFZyl+2ijFEPyWu4ZM8ZOQ80c2so59rIdkkgsVsuTnlffjfgkiwDThewQ==" crossorigin="anonymous"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>

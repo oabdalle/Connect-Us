@@ -52,22 +52,22 @@ namespace ConnectUs.Areas.Creator.Pages.Events
             }
         } 
 
-        public async Task<IActionResult> OnPostRemoveImage(int Item1){
-            var imageToDelete = await _db.EventImage.FindAsync(Item1);
+        public async Task<IActionResult> OnPostRemoveImage(int imageid){
+            var imageToDelete = await _db.EventImage.FindAsync(imageid);
             
             if(imageToDelete.Cover==true){
-               var setCoverImage = await _db.EventImage.FindAsync(Item1+1);
+               var setCoverImage = await _db.EventImage.FindAsync(imageid+1);
                setCoverImage.Cover=true;
             }
             _db.EventImage.Remove(imageToDelete);
             await _db.SaveChangesAsync();
             eventsImages = await _db.EventImage.Where(x => x.EventId == imageToDelete.EventId).ToListAsync();
-            return Partial("_EditImages", eventsImages);
+            return RedirectToPage("/Events/EditEvent",  new { area = "Creator", id = imageToDelete.EventId});
         }
 
-          public async Task<IActionResult> OnPostSetCover(int Item1){
+          public async Task<IActionResult> OnPostSetCover(int imageid){
             
-            var imageToCover = await _db.EventImage.FindAsync(Item1);
+            var imageToCover = await _db.EventImage.FindAsync(imageid);
             var imageToReset = await _db.EventImage.FirstOrDefaultAsync(x => x.EventId == imageToCover.EventId && x.Cover == true);
             imageToCover.Cover = true;
             imageToReset.Cover = false;
@@ -75,13 +75,12 @@ namespace ConnectUs.Areas.Creator.Pages.Events
 
             eventsImages = await _db.EventImage.Where(x => x.EventId == imageToCover.EventId).ToListAsync();
            
-            return Partial("_EditImages", eventsImages);
+            return RedirectToPage("/Events/EditEvent",  new { area = "Creator", id = imageToCover.EventId});
         }
 
-        public async Task<IActionResult> OnPost(int id)
+        public async Task<IActionResult> OnPostAlterEvent(int id)
         {
-            /*ModelState["eventEntry.GalleryFiles"].Errors.Clear();
-            TryValidateModel(eventEntry);*/
+
             if(ModelState.IsValid)
             {
                 eventEntry  = await _db.Event.FindAsync(id);
@@ -115,9 +114,9 @@ namespace ConnectUs.Areas.Creator.Pages.Events
                     await _db.EventImage.AddAsync(img);
                 }
                 await _db.SaveChangesAsync();
-                return RedirectToPage("/Index",  new { area = "Events" });
+                return RedirectToPage("/Events/EditEvent",  new { area = "Creator", id = id});
             }
-            return RedirectToPage(); //Fix Routing
+            return RedirectToPage("/Index",  new { area = "Events" });
         }
       
       

@@ -12,23 +12,27 @@
     <div class="col-md-6">
         <form id="profile-form" enctype = "multipart/form-data" method="post">
              <div class="form-group row">
-            <div class="col-3">
+            <div class="col-3 pl-0">
                 <div>
-                    <img src="data:image/jpeg;base64,@Model.Profile.Content" class="w-100">
+                    <img src="data:image/jpeg;base64,@Model.ProfileViewModel.Content" class="w-100">
                 </div>
                 <label>Image
                 </label>
             </div>
             <div class="col-9">
-            <div id="dZUpload" class="border border-primary dropzone dz-clickable rounded">
-                <div class="dz-message">Drop files here or click to upload and rearrange.
-                    <br>
+                <button type="button" id="toggle-dz" class="btn btn-primary ml-2 dz-vis">Replace image</button>
+                <div id="dZUpload" class="border border-primary dropzone dz-clickable rounded" style="display: none;">
+                    <div class="dz-message">Drop files here or click to upload and rearrange.
+                        <br>
+            
+                    </div>
         
-            </div>
-        
-            </div>
-            <input type="file" id="imgs" asp-for="Profile.GalleryFiles" />
-            <span asp-validation-for="Profile.GalleryFiles" class="text-danger"></span>
+                </div>
+                <div id="dz-buttons" style="display: none;">
+                    <input  type="file" id="imgs" asp-for="ProfileViewModel.GalleryFiles" />
+                    <span asp-validation-for="ProfileViewModel.GalleryFiles" class="text-danger"></span>
+                    <button type="button" id="hide-dz" class="btn btn-primary ml-2 float-right dz-vis">Cancel</button>
+                </div>
             </div>
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
@@ -41,7 +45,7 @@
                 <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
             </div>
             <div>
-            <button id="update-profile-button" class="btn btn-primary">Save</button>
+            <button id="update-profile-button" class="btn btn-primary ml-2">Save</button>
             <input hidden type="submit" id="post-form" />
             </div>
         </form>
@@ -55,7 +59,13 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.7.6/min/dropzone.min.js" integrity="sha512-KgeSi6qqjyihUcmxFn9Cwf8dehAB8FFZyl+2ijFEPyWu4ZM8ZOQ80c2so59rIdkkgsVsuTnlffjfgkiwDThewQ==" crossorigin="anonymous"></script>
  
   <script>
-      Dropzone.autoDiscover = false;
+    $(".dz-vis").click(function() {
+        $("#dZUpload").toggle();
+        $("#dz-buttons").toggle();
+        $("#toggle-dz").toggle();
+    });
+
+    Dropzone.autoDiscover = false;
    
    $(document).ready(function () {
       $("#dZUpload").sortable({

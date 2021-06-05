@@ -41,7 +41,8 @@ namespace ConnectUs.Areas.Account.Pages.Manage
         [BindProperty]
         public InputModel Input { get; set; }
         
-        [BindProperty] //this assumes then onPost you will be getting this event here that the user modified so no need for onPost(Event eventObj)
+        [BindProperty]
+        public EditProfileViewModel ProfileViewModel {get; set;}
         public Profile Profile { get; set; }
         public class InputModel
         {
@@ -56,6 +57,10 @@ namespace ConnectUs.Areas.Account.Pages.Manage
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
             var profileToRetrieve = await _db.Profile.Where(x => x.HostId == user.Id).ToListAsync();
             Profile = profileToRetrieve.FirstOrDefault();
+            ProfileViewModel = new EditProfileViewModel{
+              Content= Profile.Content,
+              GalleryFiles = Profile.GalleryFiles
+            };
             Username = userName;
 
             Input = new InputModel
@@ -81,16 +86,16 @@ namespace ConnectUs.Areas.Account.Pages.Manage
         public async Task<IActionResult> OnPostAsync()
         {
             var user = await _userManager.GetUserAsync(User);
+            var profileToRetrieve = await _db.Profile.Where(x => x.HostId == user.Id).ToListAsync();
+            Profile = profileToRetrieve.FirstOrDefault();
             if (user == null)
             {
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
-
-            
-            if(Profile.GalleryFiles != null){
+            if(ProfileViewModel.GalleryFiles != null){
                     using (var ms = new MemoryStream())
                     {
-                        await Profile.GalleryFiles.CopyToAsync(ms);
+                        await ProfileViewModel.GalleryFiles.CopyToAsync(ms);
                         var fileBytes = ms.ToArray();
                         string s = Convert.ToBase64String(fileBytes);
                         Profile.Content = s;

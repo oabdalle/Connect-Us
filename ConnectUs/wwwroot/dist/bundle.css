@@ -7299,6 +7299,19 @@ a.text-dark:hover, a.text-dark:focus {
   padding: 20px;
   font-weight: 400; }
 
+.custab {
+  border: 1px solid #ccc;
+  padding: 5px;
+  box-shadow: 3px 3px 2px #ccc;
+  transition: 0.5s; }
+
+.custab:hover {
+  box-shadow: 3px 3px 0px transparent;
+  transition: 0.5s; }
+
+td, tr, th {
+  text-align: center; }
+
 input[type=number] {
   width: 50px;
   margin: 0 10px; }

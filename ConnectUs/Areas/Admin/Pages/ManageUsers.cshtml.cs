@@ -120,6 +120,9 @@ namespace ConnectUs.Areas.Admin.Pages
               await InitRoles();
               return Page();
             }else{
+              var chatUser = _db.ChatUser.Where(x => x.UserId == user.Id).FirstOrDefault();
+              _db.ChatUser.Remove(chatUser);
+              
               var result = await _userManager.DeleteAsync(user);
               if (result.Succeeded)
               {      

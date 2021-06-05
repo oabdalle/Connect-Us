@@ -70,19 +70,17 @@ namespace ConnectUs.Areas.Creator.Pages.Events
               ProductToDisplay = ProductList.FirstOrDefault(x => x.Selected == true);
               likeCount = EventEntry.Event.TotalLikes;
 
-              if(!(await _chatService.CheckRoomExists(id))){
-                  if((EventEntry.Event.EventDate <= DateTime.Today) && User.Identity.IsAuthenticated){
-                      await _chatService.CreateRoom(id, _userManager.GetUserId(User));
-                  }
-                }else{
-                    if(User.Identity.IsAuthenticated)
+              if(!(await _chatService.CheckRoomExists(id)) && User.Identity.IsAuthenticated){
+                    await _chatService.CreateRoom(id, _userManager.GetUserId(User));
+                  
+                }else if(User.Identity.IsAuthenticated){
                       await _chatService.JoinRoom(id, _userManager.GetUserId(User));
                 }
             }
 
 
 
-          Chat = _chatService.GetChat(id);
+            Chat = _chatService.GetChat(id);
 
         }
   
@@ -116,7 +114,7 @@ namespace ConnectUs.Areas.Creator.Pages.Events
 
                }else{
 
-                  return new JsonResult("Category Name is null");
+                  return new JsonResult("Failed");
                }        
         
         }

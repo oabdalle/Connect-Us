@@ -58,16 +58,13 @@ namespace ConnectUs.Areas.Events.Pages
         {
 
             var user = await _userManager.GetUserAsync(HttpContext.User);
+            if(user !=null){
+              var roles = await _userManager.GetRolesAsync(user);
 
-            var roles = await _userManager.GetRolesAsync(user);
-
-            var role = roles[0];
-            if(role == "Admin" || role == "Creator"){
-              return RedirectToPage("/Events/CreatorShowroom",  new { area = "Creator", id = id  });
-            }else if(role=="Attendee"){
-              
-              await InitPage(id);      
-
+              var role = roles[0];
+              if(role == "Admin" || role == "Creator"){
+                return RedirectToPage("/Events/CreatorShowroom",  new { area = "Creator", id = id  });
+              }
             }
               await InitPage(id);      
               return Page();
@@ -96,14 +93,16 @@ namespace ConnectUs.Areas.Events.Pages
                 }
             }
 
-
+         if(today >= EventEntry.Event.EventDate.Date){
 
           Chat = _chatService.GetChat(id);
-
+         }else{
+           Chat = null;
+         }
           if(User.Identity.IsAuthenticated && User.IsInRole("Attendee")){
-              eventBooked=_eventsService.CheckBooking(id, _userManager.GetUserId(User)).Result;
+              EventEntry.EventBooked= _eventsService.CheckBooking(id, _userManager.GetUserId(User)).Result;
             }else{
-              eventBooked = false;
+              EventEntry.EventBooked = false;
             }
 
         }
@@ -115,7 +114,7 @@ namespace ConnectUs.Areas.Events.Pages
             if(userId !=null){
                Booking checkExistingBooking = _db.Booking.Where(x=>x.EventId == eventId).Where(x=>x.UserId == userId).FirstOrDefault();
                 if(checkExistingBooking != null){
-                  return RedirectToPage("/Event", new {id = eventId});
+                  return RedirectToPage("/Showroom", new {id = eventId});
                 }
               DateTime newDateTime = DateTime.Now;
               booking.EventId = eventId;
@@ -142,7 +141,7 @@ namespace ConnectUs.Areas.Events.Pages
             if(userId !=null){
               booking = _db.Booking.Where(x=>x.EventId == eventId).Where(x=>x.UserId == userId).FirstOrDefault();
                 if(booking  == null){
-                  return RedirectToPage("/Event", new {id = eventId});
+                  return RedirectToPage("/Showroom", new {id = eventId});
                 }
               _db.Booking.Remove(booking );
               await _db.SaveChangesAsync();
@@ -151,6 +150,28 @@ namespace ConnectUs.Areas.Events.Pages
             }else{
               return RedirectToPage("/Index",  new { area = "Attendee" });
             }
+        }
+
+        public async Task<IActionResult> OnPostDisplayProduct(int productId){
+
+            if(productId>0){
+
+              var product = await _db.Product.FindAsync(productId);
+              var productsToReset = await _db.Product.Where(x=>x.EventId==product.EventId).ToListAsync();
+              foreach (var item in productsToReset){
+                item.Selected=false;
+              }
+              product.Selected = true;
+              
+              await _db.SaveChangesAsync();
+        
+              return new JsonResult(product);
+
+            }else{
+
+              return new JsonResult("Failed");
+            }        
+    
         }
       
     }

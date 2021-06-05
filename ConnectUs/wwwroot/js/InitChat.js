@@ -9,12 +9,13 @@ $(document).ready(function () {
     connection.on("RecieveMessage", function (data) {
     console.log(data);
     var message = messageBuilder()
-        .createMessage()
-        .withHeader(data.name)
-        .withParagraph(data.text)
-        .withFooter(data.timestamp)
+        .createMessage(data.name)
+        .messageContainer()
+        .withSpan(data.name)
+        .withMessageText(data.text, data.timestamp)
         .build();
-    document.querySelector('.chat-body').append(message);
+    console.log(sessionStorage.getItem("user"))
+    document.querySelector('.card-body').append(message);
     })
 
     connection.on("RecieveLikes", function (data) {
@@ -24,7 +25,7 @@ $(document).ready(function () {
 
     connection.on("RecieveProductMessage", function (data) {
     console.log(data);
-    CreateProductDisplay(data.text);
+    CreateProductDisplay(data.text, data.requestedFrom);
     })
 
     connection.start()

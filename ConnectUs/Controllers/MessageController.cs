@@ -64,7 +64,9 @@ namespace ConnectUs.Controllers
               await chat.Clients.Group(productMessage.roomId.ToString())
                   .SendAsync("RecieveProductMessage", new{
                       Text = Message.ProductId,
-                      Timestamp = Message.Timestamp.ToString("dd/MM/yyyy hh:mm:ss")});
+                      Timestamp = Message.Timestamp.ToString("dd/MM/yyyy hh:mm:ss"),
+                      RequestedFrom =  productMessage.requestedFrom
+                      });
               return new JsonResult("Success");
             }else{
               return new JsonResult("Not signed in.");
@@ -106,5 +108,6 @@ namespace ConnectUs.Controllers
     {     
         public int roomId { get; set; }
         public int productId { get; set; }
+        public string requestedFrom { get; set; }
     }
 }

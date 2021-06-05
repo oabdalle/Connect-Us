@@ -14,12 +14,12 @@ namespace ConnectUs.Model
 {
   public class EventDescriptionViewModel
   {
-  
         public Event Event { get; set; }
         
         public Category Category { get; set; }
 
         public List<EventImage> EventImages { get; set; }
+        public bool EventBooked { get; set; }
    
         public EventDescriptionViewModel()
         {

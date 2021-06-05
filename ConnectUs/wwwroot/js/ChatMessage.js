@@ -37,6 +37,7 @@ $(document).ready(function () {
 });
 
 function SendAjaxMessage(message){
+  sessionStorage.setItem("user", $("#currentUser").val());
   $.ajax({
       type: 'POST',
       url: '/api/Message/SendMessage',

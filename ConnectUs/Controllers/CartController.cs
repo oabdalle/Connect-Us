@@ -25,31 +25,39 @@ namespace ConnectUs.Controllers
         [HttpPost]
         public IActionResult Buy([FromBody]CartInfo productDetails)
         {
+      
             if(productDetails!=null){
-            Product product =  _db.Product.Where(x => x.EventId == productDetails.eventId && x.ProductId == productDetails.productId).FirstOrDefault();
-                             
-            if (CartSessionService.GetObjectFromJson<List<ItemViewModel>>(HttpContext.Session, "cart") == null)
-            {
-                List<ItemViewModel> cart = new List<ItemViewModel>();
-                cart.Add(new ItemViewModel { Product = product, Quantity = 1 });
-                CartSessionService.SetObjectAsJson(HttpContext.Session, "cart", cart);
+              Product product =  _db.Product.Where(x => x.ProductId == productDetails.productId).FirstOrDefault();
+                              
+              if (CartSessionService.GetObjectFromJson<List<ItemViewModel>>(HttpContext.Session, "cart") == null)
+              {
+                  List<ItemViewModel> cart = new List<ItemViewModel>();
+                  cart.Add(new ItemViewModel { Product = product, Quantity = productDetails.quantity });
+                  CartSessionService.SetObjectAsJson(HttpContext.Session, "cart", cart);
+         
+              }
+              else
+              {
+                  List<ItemViewModel> cart = CartSessionService.GetObjectFromJson<List<ItemViewModel>>(HttpContext.Session, "cart");
+                  int index = isExist(productDetails.productId);
+                  if (index != -1)
+                  {
+                      cart[index].Quantity=productDetails.quantity;
+                  }
+                  else
+                  {
+                      cart.Add(new ItemViewModel { Product = product, Quantity = productDetails.quantity });
+
+                  }
+                  CartSessionService.SetObjectAsJson(HttpContext.Session, "cart", cart);
+              }
+              bool reload=false;
+              if(productDetails.atCheckout==true){
+                reload=true;
+              }
+              return Json(new { result = "Success", quantity=productDetails.quantity, reloadPage = reload });
             }
-            else
-            {
-                List<ItemViewModel> cart = CartSessionService.GetObjectFromJson<List<ItemViewModel>>(HttpContext.Session, "cart");
-                int index = isExist(productDetails.productId);
-                if (index != -1)
-                {
-                    cart[index].Quantity++;
-                }
-                else
-                {
-                    cart.Add(new ItemViewModel { Product = product, Quantity = 1 });
-                }
-                CartSessionService.SetObjectAsJson(HttpContext.Session, "cart", cart);
-            }
-            }
-            return new JsonResult("Success");
+          return Json(new { result = "Not Found" });
         }
 
 
@@ -80,6 +88,7 @@ namespace ConnectUs.Controllers
     }
     public class CartInfo{
       public int productId { get; set; }
-      public int eventId { get; set; }
+      public int quantity { get; set; }
+      public bool atCheckout { get; set; }
     }
 }

@@ -3,35 +3,55 @@
 @{
     ViewData["Title"] = "Dashboard";
 }
-<h1>@ViewData["Title"]</h1>
+<h1 class="p-5">@ViewData["Title"]</h1>
 
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.3.1/css/all.min.css" rel="stylesheet">
 
-<div class="row d-flex justify-content-center py-5">
-         
+  <div class="header-body">
+      <div class="row justify-content-center"> 
     @foreach (var key in Model.EventsChat.Keys)
     {    
-        
-      <div class="col-xl-2 col-lg-3 col-md-4 col-sm-12 p-5 m-3 border">
-    
-        <a asp-area="Events" asp-page="/EventDescription" asp-route-id="@key.EventId">
-
-   
-           Name: @Html.DisplayFor(m=>key.Name)
-           <br>
-            Date: @Html.DisplayFor(m=>key.EventDate)
-        <br>
-        <strong>@Html.DisplayFor(m=>Model.EventsChat[key].Messages.Count) Total Chat Messages</strong> 
-          <br>
-        <strong>@Model.EventsChat[key].Messages.Where(m=>m.Text.Contains("Buy")).Count() Positive Chat Messages</strong> 
-        <br>
-          <strong>@Model.EventsChat[key].Messages.Where(m=>m.Text.Contains("Sell")).Count() Negative Chat Messages</strong> 
-        <br>
-          <strong>@Model.LikeTotal Total Likes</strong> 
-        <br>
-        </a>
-      </div>
+           
+                  <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 p-3">
+                    <a asp-area="Events" asp-page="/Showroom" asp-route-id="@key.EventId" class="card card-stats mb-4 mb-xl-0">
+                        <div class="card-body">
+                          <div class="row">
+                              <div class="col">
+                                <h5 class="card-title text-uppercase text-muted mb-0">@Html.DisplayFor(m=>key.EventDate)</h5>
+                                <span class="h2 font-weight-bold mb-0">@Html.DisplayFor(m=>key.Name)</span>
+                              </div>
+                              <div class="col-auto">
+                                <div class="icon icon-shape bg-danger text-white rounded-circle shadow">
+                                    <i class="fas fa-chart-bar"></i>
+                                </div>
+                              </div>
+                          </div>
+                          <p class="mt-3 mb-0 text-muted text-sm">
+                              <span class="mr-2"><i class="far fa-comments"></i> @Html.DisplayFor(m=>Model.EventsChat[key].Messages.Count)</span>
+                              <span class="text-nowrap">Chat Messages</span>
+                          </p>
+                          <p class="mt-3 mb-0 text-muted text-sm">
+                              <span class="text-success mr-2"><i class="fas fa-plus-square"></i> @Model.EventsChat[key].Messages.Where(m=>m.Text.Contains("Buy")).Count()</span>
+                              <span class="text-nowrap">Positive Chat Messages</span>
+                          </p>
+                          <p class="mt-3 mb-0 text-muted text-sm">
+                              <span class="text-danger mr-2"><i class="fas fa-minus-square"></i> @Model.EventsChat[key].Messages.Where(m=>m.Text.Contains("Sell")).Count() </span>
+                              <span class="text-nowrap">Negative Chat Messages</span>
+                          </p>
+                          <p class="mt-3 mb-0 text-muted text-sm">
+                              <span class="text-success mr-2"><i class="fas fa-thumbs-up"></i> @Model.LikeTotal</span>
+                              <span class="text-nowrap">Total Likes</span>
+                          </p>
+                        </div>
+                    </a>
+                  </div>
+         
+                  
     }
-</div>
+
+         </div>
+    </div>
+
 <div class="w-100 my-5">
   @if(Model.EventsDict.Count()>0){
 
@@ -46,7 +66,7 @@
           { 
             
             <div class="col-xl-2 col-lg-3 col-md-4 col-sm-12 p-5 m-3 border">
-              <a asp-area="Events" asp-page="/EventDescription" asp-route-id="@item.EventId">
+              <a asp-area="Events" asp-page="/CreatorShowroom" asp-route-id="@item.EventId">
               <img style="width: 100px; height: 100px;" src="data:image/png;base64, @Model.EventImages.Where(x=>x.EventId == item.EventId).SingleOrDefault(x => x.Cover == true).Content"/>
 
               </a>
@@ -69,3 +89,21 @@
       <p>No Events available.</p>
   }
 </div>
+
+<style>
+.icon-shape {
+    display: inline-flex;
+    padding: 12px;
+    text-align: center;
+    border-radius: 50%;
+    align-items: center;
+    justify-content: center;
+}
+.card-stats{
+  text-decoration: none !important;
+} 
+.icon {
+    width: 3rem;
+    height: 3rem;
+}
+</style>

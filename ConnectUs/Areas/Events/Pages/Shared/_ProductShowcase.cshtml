@@ -1,0 +1,34 @@
+@model Product
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/material-design-iconic-font/2.2.0/css/material-design-iconic-font.min.css">
+
+@if(Model != null){
+<div class="row w-100 pt-5 justify-content-around no-gutters">
+
+  <div class="px-5 col-lg-7 col-md-10 col-sm-12 video-display">
+    <video class="w-100" controls="" muted="" src="~/uploads/@Model.VideoBase64" type="video/mp4"></video>
+  </div>
+
+  <div class="px-5 col-lg-4 col-md-6 col-sm-8 d-flex justify-content-center">
+      <div class="card product_item product-display">
+          <div class="body">
+              <div class="cp_img">
+                  <img src="@Model.ImageBase64" alt="Product" class="img-fluid">
+                  <div class="hover">
+                      <a class="btn btn-primary btn-sm waves-effect product-to-buy" data-id="@Model.ProductId" ><i class="zmdi zmdi-shopping-cart"></i></a>
+                      <input type="number" id="quantity" class="form-control" value="0" min="0" step="1">
+                  </div>
+              </div>
+              <div class="product_details">
+                  <h5 class="product-name">@Model.Name</h5>
+                  <ul class="product_price list-unstyled">
+                      <li>$@Model.Price</li>
+                  </ul>
+              </div>
+          </div>
+      </div>
+    </div>
+
+</div>
+
+
+}

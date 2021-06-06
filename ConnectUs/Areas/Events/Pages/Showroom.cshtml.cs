@@ -26,22 +26,22 @@ using System.Collections.Generic;
 
 namespace ConnectUs.Areas.Events.Pages
 {
-       public class EventDescription : PageModel
+       public class Showroom : PageModel
     {
         private readonly ApplicationDbContext _db;
         private readonly UserManager<IdentityUser> _userManager;
-        private IChatService _chatService;
-        public EventDescription(ApplicationDbContext db, UserManager<IdentityUser> userManager, IChatService chatService){
+        private IEventsService _eventsService;
+        private IChatService _chatService;  
+        public Showroom(ApplicationDbContext db, UserManager<IdentityUser> userManager,  IChatService chatService, IEventsService eventsService){
 
             _userManager=userManager;
             _db = db;
             _chatService = chatService;
+            _eventsService = eventsService;
         } 
 
         [BindProperty]
-        public Event eventEntry {get; set;}
-        [BindProperty]
-        public Category categoryEntry {get; set;}
+        public EventDescriptionViewModel EventEntry {get; set;}
 
         [BindProperty]
         public Chat Chat {get; set;}
@@ -50,64 +50,63 @@ namespace ConnectUs.Areas.Events.Pages
         public bool eventBooked {get; set;}
         public IEnumerable<Product> ProductList {get; set;}
         public Product ProductToDisplay {get; set;}
-        public List<Booking> checkBookings = new List<Booking>();
+    
         public int likeCount {get; set;}
         public DateTime today {get; set;}
         public Profile profile {get; set;}
-        public async Task OnGet(int id)
+        public async Task<IActionResult> OnGet(int id)
         {
-            
-            await InitEvent(id);      
+
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+            if(user !=null){
+              var roles = await _userManager.GetRolesAsync(user);
+
+              var role = roles[0];
+              if(role == "Admin" || role == "Creator"){
+                return RedirectToPage("/Events/CreatorShowroom",  new { area = "Creator", id = id  });
+              }
+            }
+              await InitPage(id);      
+              return Page();
+
         }
 
-        public async Task InitEvent(int id){
+        public async Task InitPage(int id){
+
             today = DateTime.Today;
-            eventEntry  = await _db.Event.FindAsync(id);
-            profile =  await _db.Profile.FirstOrDefaultAsync(x => x.HostId == eventEntry.HostId);
-            if(eventEntry is not null){
-              ProductList = await _db.Product.Where(x => x.EventId == eventEntry.EventId).ToListAsync();
+            EventEntry = _eventsService.InitEvent(id).Result;
+
+            if(EventEntry is not null){
+
+              profile =  await _db.Profile.FirstOrDefaultAsync(x => x.HostId == EventEntry.Event.HostId);
+              ProductList = await _db.Product.Where(x => x.EventId == EventEntry.Event.EventId).ToListAsync();
               ProductToDisplay = ProductList.FirstOrDefault(x => x.Selected == true);
-              categoryEntry = await _db.Category.FindAsync(eventEntry.CategoryId);
-              likeCount = eventEntry.TotalLikes;
+              likeCount = EventEntry.Event.TotalLikes;
+
+              if(!(await _chatService.CheckRoomExists(id))){
+                  if((EventEntry.Event.EventDate <= DateTime.Today) && User.Identity.IsAuthenticated){
+                      await _chatService.CreateRoom(id, _userManager.GetUserId(User));
+                  }
+                }else{
+                    if(User.Identity.IsAuthenticated)
+                      await _chatService.JoinRoom(id, _userManager.GetUserId(User));
+                }
             }
-            if(!(await _chatService.CheckRoomExists(id))){
-              if((eventEntry.EventDate.Date <= DateTime.Today) && User.Identity.IsAuthenticated){
-                  await _chatService.CreateRoom(id, _userManager.GetUserId(User));
-              }
+
+         if(today >= EventEntry.Event.EventDate.Date){
+
+          Chat = _chatService.GetChat(id);
+         }else{
+           Chat = null;
+         }
+          if(User.Identity.IsAuthenticated && User.IsInRole("Attendee")){
+              EventEntry.EventBooked= _eventsService.CheckBooking(id, _userManager.GetUserId(User)).Result;
             }else{
-                if(User.Identity.IsAuthenticated)
-                  await _chatService.JoinRoom(id, _userManager.GetUserId(User));
+              EventEntry.EventBooked = false;
             }
 
-            Chat = _chatService.GetChat(id);
-
-            if(User.Identity.IsAuthenticated && User.IsInRole("Attendee")){
-
-                var attendeeID = _userManager.GetUserId(User);
-                checkBookings = await _db.Booking.Where(x=>x.EventId == id && x.UserId == attendeeID).ToListAsync();
-                if(checkBookings.Count() > 0)
-                 eventBooked=true;
-                else
-                  eventBooked=false;
-
-            }
-           
         }
   
-
-        public async Task<IActionResult> OnPostDelete(int id)
-        {
-            var eventToDelete = await _db.Event.FindAsync(id);
-            //List<EventImage> eventImages = new List<EventImage>();
-            if(eventToDelete == null){
-                return NotFound();
-            }
-            _db.EventImage.RemoveRange(_db.EventImage.Where(x => x.EventId == eventToDelete.EventId));
-            _db.Event.Remove(eventToDelete);
-            await _db.SaveChangesAsync();
-            return RedirectToPage("/Index",  new { area = "Events" });
-        }
-
         public async Task<IActionResult> OnPostBookEvent(int eventId, string userId)
         {   
                             
@@ -115,7 +114,7 @@ namespace ConnectUs.Areas.Events.Pages
             if(userId !=null){
                Booking checkExistingBooking = _db.Booking.Where(x=>x.EventId == eventId).Where(x=>x.UserId == userId).FirstOrDefault();
                 if(checkExistingBooking != null){
-                  return RedirectToPage("/EventDescription", new {id = eventId});
+                  return RedirectToPage("/Showroom", new {id = eventId});
                 }
               DateTime newDateTime = DateTime.Now;
               booking.EventId = eventId;
@@ -142,7 +141,7 @@ namespace ConnectUs.Areas.Events.Pages
             if(userId !=null){
               booking = _db.Booking.Where(x=>x.EventId == eventId).Where(x=>x.UserId == userId).FirstOrDefault();
                 if(booking  == null){
-                  return RedirectToPage("/EventDescription", new {id = eventId});
+                  return RedirectToPage("/Showroom", new {id = eventId});
                 }
               _db.Booking.Remove(booking );
               await _db.SaveChangesAsync();
@@ -155,24 +154,24 @@ namespace ConnectUs.Areas.Events.Pages
 
         public async Task<IActionResult> OnPostDisplayProduct(int productId){
 
-               if(productId>0){
+            if(productId>0){
 
-                  var product = await _db.Product.FindAsync(productId);
-                  var productsToReset = await _db.Product.Where(x=>x.EventId==product.EventId).ToListAsync();
-                  foreach (var item in productsToReset){
-                    item.Selected=false;
-                  }
-                  product.Selected = true;
-                  
-                  await _db.SaveChangesAsync();
-            
-                  return new JsonResult(product);
-
-               }else{
-
-                  return new JsonResult("Category Name is null");
-               }        
+              var product = await _db.Product.FindAsync(productId);
+              var productsToReset = await _db.Product.Where(x=>x.EventId==product.EventId).ToListAsync();
+              foreach (var item in productsToReset){
+                item.Selected=false;
+              }
+              product.Selected = true;
+              
+              await _db.SaveChangesAsync();
         
+              return new JsonResult(product);
+
+            }else{
+
+              return new JsonResult("Failed");
+            }        
+    
         }
       
     }

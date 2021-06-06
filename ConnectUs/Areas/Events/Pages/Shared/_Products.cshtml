@@ -1,0 +1,28 @@
+@model IEnumerable<Product>
+<div class="col-lg-6 col-md-10 col-sm-12 product-container">
+<h3 class="text-center">Products</h3>
+
+<div class="d-flex row justify-content-center product-row">
+  @foreach (var item in Model)
+  {
+    <div class="col-lg-6 col-sm-6 col-md-10 product" data-id="@item.ProductId">
+      <div class="card product_item product-display">
+            <div class="body">
+                <div class="cp_img">
+                    <img src="@item.ImageBase64" alt="Product" class="img-fluid">
+                    <div class="hover">
+                        <a class="btn btn-primary btn-sm waves-effect product" data-id="@item.ProductId">Display Product</a>
+                    </div>
+                </div>
+                <div class="product_details">
+                    <h5>@item.Name</h5>
+                    <ul class="product_price list-unstyled">
+                        <li>$@item.Price</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    }
+</div> 
+</div>

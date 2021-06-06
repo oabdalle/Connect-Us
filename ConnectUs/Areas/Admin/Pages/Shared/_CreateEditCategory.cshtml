@@ -1,10 +1,11 @@
 
 @model CreateCategoryViewModel
 @Html.AntiForgeryToken()
-<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#categoryModalCenter">
+<div class="row justify-content-end">
+<button type="button" class="btn btn-primary mr-5" data-toggle="modal" data-target="#categoryModalCenter">
   Create Category
 </button>
-
+</div>
 <!-- Modal -->
 <div class="modal fade" id="categoryModalCenter" tabindex="-1" role="dialog" aria-labelledby="categoryModalCenterTitle" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
@@ -65,8 +66,8 @@
             <label>Edit Category</label>
           </div>
           <div class="col-6">
-              <input type="text" readonly name="categoryId" id="categoryId" value=""/>
-              <input type="text" readonly name="categoryName" id="categoryName" value=""/>
+              <input type="text" readonly hidden name="categoryId" id="categoryId" value=""/>
+              <input type="text" class="form-control" readonly name="categoryName" id="categoryName" value=""/>
           </div>
         </div>
     <form id="editForm" method="post">

@@ -3,32 +3,50 @@
 @{
     ViewData["Title"] = "Checkout";
 }
+@using Newtonsoft.Json
+@using Microsoft.AspNetCore.Http
 @using Microsoft.Extensions.Options
 @inject IOptions<StripeSettings> Stripe
 
-    <h3>Cart Page</h3>
-    <table cellpadding="2" cellspacing="2" border="1">
-        <tr>
-            <th>Option</th>
+<h1 class="p-5">@ViewData["Title"]</h1>
+
+
+<div class="row justify-content-end">
+      <button type="button" class="btn btn-primary mr-5" id="checkout-button">Checkout</button>
+</div>
+<div class="col-10 col-sm-12 px-5 mt-4">
+  <table class="table table-striped custab">
+      <tr class="table-active">
+  
             <th>Id</th>
             <th>Name</th>
             <th>Price</th>
             <th>Quantity</th>
             <th>Sub Total</th>
+            <th>Option</th>
         </tr>
     @if(ViewData["cart"]!=null){
         @foreach (var item in (List<ItemViewModel>)ViewData["cart"])
         {
             <tr data-id="@item.Product.ProductId">
-                @* <td><a class="btn remove-from-cart btn-danger" data-id="@item.Product.ProductId">Remove</a></td> *@
-               <td><a asp-controller="cart" asp-action="remove" asp-route-id="@item.Product.ProductId">Remove</a></td>
+              
+      
 
-                <td>@item.Product.ProductId</td>
+                <td class="product-to-buy" data-id="@item.Product.ProductId">@item.Product.ProductId</td>
                 <td>@item.Product.Name</td>
 
                 <td>@item.Product.Price</td>
-                <td>@item.Quantity</td>
+                <td class="d-flex justify-content-center"><input type="number" id="quantity" class="form-control w-25 m-0" value="@item.Quantity" min="0" step="1"></td>
+                
                 <td>@(item.Product.Price * item.Quantity)</td>
+
+
+                <td><a asp-controller="cart" asp-action="remove" class="btn btn-danger btn-sm" asp-route-id="@item.Product.ProductId">           
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-square" viewBox="0 0 16 16">
+                    <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/>
+                    <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+                  </svg>
+              Remove</a></td>
             </tr>
         }
         <tr>
@@ -39,15 +57,16 @@
         </tr>
     }
     </table>
+</div>
 
-
-      <button type="button" class="btn btn-primary" id="checkout-button">Checkout</button>
 
 
 @section Scripts { 
     <script src="https://polyfill.io/v3/polyfill.min.js?version=3.52.1&features=fetch"></script>
     <script src="https://js.stripe.com/v3/"></script>
+    <script src="~/js/Cart.js"></script>
   <script type="text/javascript">
+
     // Create an instance of the Stripe object with your publishable API key
     var stripe = Stripe('@Stripe.Value.PublishableKey');
     var checkoutButton = document.getElementById("checkout-button");

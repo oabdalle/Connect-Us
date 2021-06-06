@@ -16,21 +16,21 @@
       @foreach (var category in Model.Categories){
         @if(Model.Events.Any(x => x.CategoryId == (category.CategoryId))){
         <div class="netflix-slider">
-          <h2>@Html.DisplayFor(c=>category.CategoryName)</h2>
+          <h2 class="p-4">@Html.DisplayFor(c=>category.CategoryName)</h2>
           <div class="row d-flex justify-content-center pt-2 pb-6">
           <div class="swiper-container">
             <div class="swiper-wrapper">
               @foreach (var item in Model.Events.Where(x => x.CategoryId == (category.CategoryId)))
                   {    
                     
-                    <div class="swiper-slide col-xl-1 p-5 m-4 text-center border event-border">
+                    <div class="swiper-slide col-3 p-0 m-4 text-center border event-border ">
                       @if(userManager.GetUserId(User)!= ""){
                       @if(item.HostId == userManager.GetUserId(User)){<div class="featured fa fa-star"></div>}}
                       <a class="text-decoration-none" asp-area="Events" asp-page="/Showroom" asp-route-id="@item.EventId">
-                        <img class="event-image" src="data:image/png;base64, @Model.EventImages.Where(x=>x.EventId == item.EventId).SingleOrDefault(x => x.Cover == true).Content"/>
-                        <div class="event-date">
-                          <h5 class="with-eight"> @Html.DisplayFor(m=>item.Name) </h5>
-                          <p class="font-weight-bold with-eight"> @Html.DisplayFor(m=>item.EventDate) </p>
+                        @* <img class="event-image" src="data:image/png;base64, @Model.EventImages.Where(x=>x.EventId == item.EventId).SingleOrDefault(x => x.Cover == true).Content"/> *@
+                        <div style="background-image: url('data:image/png;base64, @Model.EventImages.Where(x=>x.EventId == item.EventId).SingleOrDefault(x => x.Cover == true).Content')" class="p-5 image-grid-cover">
+                          <h5 class="cover-text"> @Html.DisplayFor(m=>item.Name) </h5>
+                          <p class="cover-text"> @item.EventDate.ToString("d MMM \\'yy") </p>
                         </div> 
                       </a>
                     </div>
@@ -50,10 +50,33 @@
         <p>No Events available.</p>
     }
 </div>
+<style>
+  .image-grid-cover {
+    width: 100%;
+    background-size: cover;
+    height: 100%;
+    position: relative;
+    text-shadow: rgba(0,0,0,.8) 0 1px 0;
+    border-radius: 4px;
+}
+.cover-text {
+    font-size: 25px;
+    text-align: center;
+    display: block;
+    color: #fff !important;
+    text-shadow: rgba(0,0,0,.8) 0 1px 0;
+    z-index: 21;
+    position: relative;
+}
+a, a:focus, a:hover {
+    text-decoration: none;
+    outline: 0;
+}
+</style>
   <!-- Initialize Swiper -->
   <script>
     var swiper = new Swiper('.swiper-container', {
-      slidesPerView: 6,
+      slidesPerView: 3,
       spaceBetween: 10,
       slidesPerGroup: 2,
       pagination: {

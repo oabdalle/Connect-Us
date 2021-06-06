@@ -7279,6 +7279,7 @@ body, html {
 
 .form-input,
 .form-style-6 input[type="text"],
+.form-style-6 input[type="date"],
 .form-style-6 textarea,
 .form-style-6 select {
   -webkit-transition: all 0.30s ease-in-out;
@@ -7299,6 +7300,7 @@ body, html {
 
 .form-input,
 .form-style-6 input[type="text"]:focus,
+.form-style-6 input[type="date"],
 .form-style-6 textarea:focus,
 .form-style-6 select:focus {
   box-shadow: 0 0 5px #43D1AF;
@@ -7334,9 +7336,6 @@ body, html {
   display: flex;
   flex-direction: column;
   flex-wrap: wrap; }
-
-.checked {
-  background-color: gainsboro; }
 
 .product-row {
   width: 80%;
@@ -7619,4 +7618,12 @@ body {
   white-space: nowrap;
   line-height: 60px;
   /* Vertically center the text there */ }
+
+.showroom-img-slider {
+  opacity: 0.6;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100% !important;
+  height: auto !important; }
 

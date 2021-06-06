@@ -3,7 +3,7 @@
 <style>
 
   .carousel-item img{
-    object-fit: cover;
+    object-fit: contain;
     height: 400px;
   }
 </style>
@@ -55,12 +55,22 @@
     <div class="carousel-inner">
     @foreach(var image in Model.EventImages){
       @if(@Model.EventImages.IndexOf(image)==0){
-      <div class="carousel-item active">
-        <img class="d-block w-100" src="data:image/png;base64, @image.Content" alt="@Model.EventImages.IndexOf(image) slide">
+      <div class="carousel-item active overflow-hidden position-relative">
+        <div>
+          <img class="d-block w-100 showroom-img-slider" src="data:image/png;base64, @image.Content" alt="@Model.EventImages.IndexOf(image) slide">
+        </div>
+        <div class="position-relative">
+          <img class="d-block w-100 " src="data:image/png;base64, @image.Content" alt="@Model.EventImages.IndexOf(image) slide">
+        </div>
       </div>
       }else{
-      <div class="carousel-item">
-        <img class="d-block w-100" src="data:image/png;base64, @image.Content" alt="@Model.EventImages.IndexOf(image) slide">
+      <div class="carousel-item overflow-hidden position-relative">
+        <div>
+          <img class="d-block w-100  showroom-img-slider" src="data:image/png;base64, @image.Content" alt="@Model.EventImages.IndexOf(image) slide">
+        </div>
+        <div class="position-relative">
+          <img class="d-block w-100 " src="data:image/png;base64, @image.Content" alt="@Model.EventImages.IndexOf(image) slide">
+        </div>
       </div>
       }
     }

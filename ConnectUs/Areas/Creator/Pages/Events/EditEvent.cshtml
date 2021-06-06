@@ -12,7 +12,7 @@
 <div class="form-style-6">
 <h1>Edit Your Event!</h1>
 <form enctype = "multipart/form-data" method="post" id ="editEventInfo">
-    <div class="edit-images-view">
+    <div class="edit-images-view overflow-auto">
     @if(Model.eventsImages.Count()>0){
         @foreach (var item in Model.eventsImages)
         {

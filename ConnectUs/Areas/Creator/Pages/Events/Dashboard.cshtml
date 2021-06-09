@@ -1,5 +1,10 @@
 @page
 @model DashboardModel
+<link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.css" />
+<link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+
+<script src="https://unpkg.com/swiper/swiper-bundle.js"></script>
+<script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
 @{
     ViewData["Title"] = "Dashboard";
 }
@@ -11,7 +16,6 @@
       <div class="row justify-content-center"> 
     @foreach (var key in Model.EventsChat.Keys)
     {    
-           
                   <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 p-3">
                     <a asp-area="Events" asp-page="/Showroom" asp-route-id="@key.EventId" class="card card-stats mb-4 mb-xl-0">
                         <div class="card-body">
@@ -52,36 +56,40 @@
          </div>
     </div>
 
-<div class="w-100 my-5">
+<div>
   @if(Model.EventsDict.Count()>0){
 
       foreach(KeyValuePair<string, List<Event>> entry in Model.EventsDict)
       {
-
-        <h1 class="text-center"> @Html.DisplayFor(m=>entry.Key)</h1>
-        <div class="row d-flex justify-content-center py-5">
-         
-        @if(entry.Value.Count > 0){
-          @foreach (var item in entry.Value)
-          { 
-            <div class="swiper-slide col-xl-1 p-5 m-4 text-center border event-border">
-                      @if(userManager.GetUserId(User)!= ""){
-                      @if(item.HostId == userManager.GetUserId(User)){<div class="featured fa fa-star"></div>}}
+          <div class="netflix-slider">
+          <h1 class="p-4"> @Html.DisplayFor(m=>entry.Key)</h1>
+          <div class="row d-flex justify-content-center pt-2 pb-6">
+            <div class="swiper-container">
+              <div class="swiper-wrapper">
+              @if(entry.Value.Count > 0){
+                @foreach (var item in entry.Value)
+                { 
+                  <div class="swiper-slide col-3 p-0 m-4 text-center border event-border ">
                       <a class="text-decoration-none" asp-area="Events" asp-page="/Showroom" asp-route-id="@item.EventId">
-                        <img class="event-image" src="data:image/png;base64, @Model.EventImages.Where(x=>x.EventId == item.EventId).SingleOrDefault(x => x.Cover == true).Content"/>
-                        <div class="event-date">
-                          <h5 class="with-eight"> @Html.DisplayFor(m=>item.Name) </h5>
-                          <p class="font-weight-bold with-eight"> @Html.DisplayFor(m=>item.EventDate) </p>
+                        <div style="background-image: url('data:image/png;base64, @Model.EventImages.Where(x=>x.EventId == item.EventId).SingleOrDefault(x => x.Cover == true).Content')" class="p-5 image-grid-cover">
+                          <h5 class="cover-text"> @Html.DisplayFor(m=>item.Name) </h5>
+                          <p class="cover-text"> @item.EventDate.ToString("d MMM \\'yy") </p>
                         </div> 
                       </a>
+                    </div>
+                }
+          
+              }else{
+                <div>
+                  <p>No events available.</p>
+                </div>
+              }
               </div>
-          }
-        }else{
-          <div>
-            <p>No events available.</p>
+            <div class="swiper-button-next"></div>
+            <div class="swiper-button-prev"></div>
+            </div>
+           </div>  
           </div>
-        }
-        </div>
       }
   }else{
       <p>No Events available.</p>

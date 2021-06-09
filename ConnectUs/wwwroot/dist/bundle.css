@@ -7573,3 +7573,16 @@ body {
   width: 100% !important;
   height: auto !important; }
 
+.host-profile-img {
+  display: inline-block;
+  width: 150px !important;
+  height: 150px;
+  border-radius: 50%;
+  margin-left: 2rem;
+  top: 5px;
+  position: relative; }
+
+.host-profile-header {
+  margin-left: 70px;
+  margin-top: 20px; }
+

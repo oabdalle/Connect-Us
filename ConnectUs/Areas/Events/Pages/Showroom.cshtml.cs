@@ -27,7 +27,7 @@ using System.Collections.Generic;
 namespace ConnectUs.Areas.Events.Pages
 {
        public class Showroom : PageModel
-    {
+       {
         private readonly ApplicationDbContext _db;
         private readonly UserManager<IdentityUser> _userManager;
         private IEventsService _eventsService;
@@ -54,6 +54,7 @@ namespace ConnectUs.Areas.Events.Pages
         public int likeCount {get; set;}
         public DateTime today {get; set;}
         public Profile profile {get; set;}
+        
         public async Task<IActionResult> OnGet(int id)
         {
 

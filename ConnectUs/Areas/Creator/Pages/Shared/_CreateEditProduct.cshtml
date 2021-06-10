@@ -40,7 +40,7 @@
           
         <div class="form-group row">
           <div class="col-6">
-            <label asp-for="ImageBase64">
+            <label asp-for="ImagePath">
             </label> 
           </div>
           <div class="col-6">
@@ -75,18 +75,23 @@ async function CreateProduct(){
 
   var values = await GetFormValues();
 
-  values['ProductId']=0;
+  values.set('ProductId', 0);
+   for (var key of values.entries()) {
+        console.log(key[0] + ', ' + key[1]);
+  }
   if($("#productForm").valid()){
 
     $.ajax({
           type: "POST",
-          contentType: "application/json",
+          @* contentType: "application/json", *@
           url:'/creator/events/manage-products?handler=CreateProduct',          
           beforeSend: function (xhr) {
               xhr.setRequestHeader("XSRF-TOKEN",$('input:hidden[name="__RequestVerificationToken"]').val());
           },
-          data: JSON.stringify(values),
-          dataType: "json",
+          data: values,
+          @* dataType: "json", *@
+          processData: false,
+          contentType: false,
           success: function (result) {
               console.log(result)
               if(result=="Success"){
@@ -107,29 +112,39 @@ async function CreateProduct(){
 
 }
 
-const toBase64 = file => new Promise((resolve, reject) => {
+@* const toPath = file => new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onload = () => resolve(reader.result);
     reader.onerror = error => reject(error);
-});
+}); *@
 
 async function GetFormValues(){
   var inputs = $('#productForm :input[type=text]');
 
-  var values = {};
+  @* var values = {}; *@
+
+  var values = new FormData();
   inputs.each(function() {
-      values[this.name] = $(this).val();
+      values.append(this.name, $(this).val());
+      console.log(values)
+      console.log(this.name)
+      console.log($(this).val())
   });
+
   const file = document.querySelector('#imgs').files[0];
+ 
+
   if(file != null){
-    values['ImageBase64'] = await toBase64(file);
+     values.append("ImagePath", file);
   }
+  console.log('vcalues ')
+
   /*const video = document.querySelector('#fileupload').value;
   var fileList = document.querySelector('#fileupload').files[0];
    if(video != null){
      console.log("Hit", fileList);
-    values['VideoBase64'] = await toBase64(fileList);
+    values['VideoPath'] = await toPath(fileList);
     values['VideName'] = fileList;
   }*/
   return values;
@@ -141,13 +156,15 @@ async function EditProduct(){
     
     $.ajax({
           type: "POST",
-          contentType: "application/json",
+          @* contentType: "application/json", *@
           url:'/creator/events/manage-products?handler=EditProduct',          
           beforeSend: function (xhr) {
               xhr.setRequestHeader("XSRF-TOKEN",$('input:hidden[name="__RequestVerificationToken"]').val());
           },
-          data: JSON.stringify(values),
-          dataType: "json",
+          data: values,
+          @* dataType: "json", *@
+          processData: false,
+          contentType: false,
           success: function (result) {
               console.log(result)
               if(result=="Success"){

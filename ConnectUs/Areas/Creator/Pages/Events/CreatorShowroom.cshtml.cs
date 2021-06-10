@@ -32,12 +32,14 @@ namespace ConnectUs.Areas.Creator.Pages.Events
         private readonly UserManager<IdentityUser> _userManager;
         private IEventsService _eventsService;
         private IChatService _chatService;  
-        public CreatorShowroom(ApplicationDbContext db, UserManager<IdentityUser> userManager, IChatService chatService, IEventsService eventsService){
+        private readonly IImageService _is;
+        public CreatorShowroom(ApplicationDbContext db, UserManager<IdentityUser> userManager, IChatService chatService, IEventsService eventsService, IImageService iS){
 
             _userManager=userManager;
             _db = db;
             _chatService = chatService;
             _eventsService = eventsService;
+            _is = iS;
         } 
 
         [BindProperty]
@@ -90,6 +92,15 @@ namespace ConnectUs.Areas.Creator.Pages.Events
             var eventToDelete = await _db.Event.FindAsync(id);
             if(eventToDelete == null){
                 return NotFound();
+            }
+            List<EventImage> images = await _db.EventImage.Where(x => x.EventId == eventToDelete.EventId).ToListAsync();
+            List<Product> products = await _db.Product.Where(x => x.EventId == eventToDelete.EventId).ToListAsync();
+            foreach(var image in images){
+                _is.Delete(image.ImagePath);  
+            }
+            foreach(var product in products){
+                _is.Delete(product.ImagePath);  
+                _is.Delete(product.VideoPath);  
             }
             _db.EventImage.RemoveRange(_db.EventImage.Where(x => x.EventId == eventToDelete.EventId));
             _db.Event.Remove(eventToDelete);

@@ -15,6 +15,7 @@ using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Hosting;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Authorization;
+using ConnectUs.Services;
 
 namespace ConnectUs.Areas.Creator.Pages.Events
 {
@@ -25,8 +26,10 @@ namespace ConnectUs.Areas.Creator.Pages.Events
     public class EditEvent : PageModel
     {
         private readonly ApplicationDbContext _db;
-        public EditEvent(ApplicationDbContext db){
+        private readonly IImageService _is;
+        public EditEvent(ApplicationDbContext db, IImageService iS){
             _db = db;
+            _is = iS;
         } 
         
         public Event eventEntry {get; set;}
@@ -54,7 +57,7 @@ namespace ConnectUs.Areas.Creator.Pages.Events
 
         public async Task<IActionResult> OnPostRemoveImage(int imageid){
             var imageToDelete = await _db.EventImage.FindAsync(imageid);
-            
+            _is.Delete(imageToDelete.ImagePath);
             if(imageToDelete.Cover==true){
                var setCoverImage = await _db.EventImage.FindAsync(imageid+1);
                setCoverImage.Cover=true;
@@ -95,14 +98,13 @@ namespace ConnectUs.Areas.Creator.Pages.Events
                 if(EventViewModel.GalleryFiles != null){
                     foreach (var file in EventViewModel.GalleryFiles){
                     {
-                        using (var ms = new MemoryStream())
-                        {
-                            await file.CopyToAsync(ms);
-                            var fileBytes = ms.ToArray();
-                            string s = Convert.ToBase64String(fileBytes);
+
+                        var filename = _is.Create(file).Result;
+                        if(filename!=null){
+                        
                             eventToUpdate.EventGallery.Add(new EventImage()
                             {
-                                Content = s,
+                                ImagePath = filename,
                                 Event = eventToUpdate
                             });
                         }

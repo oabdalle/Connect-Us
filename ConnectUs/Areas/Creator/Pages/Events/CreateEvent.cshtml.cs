@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using ConnectUs.Model;
 using ConnectUs.Model.Entities;
+using ConnectUs.Services;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
@@ -24,6 +25,8 @@ namespace ConnectUs.Areas.Creator.Pages.Events
     {
         private readonly ILogger<CreateEventModel> _logger;
         private readonly ApplicationDbContext _db;
+
+        private readonly IImageService _is;
         private readonly IWebHostEnvironment _env;
         private readonly UserManager<IdentityUser> _userManager;
         [Required]
@@ -36,12 +39,13 @@ namespace ConnectUs.Areas.Creator.Pages.Events
 
         public string userId {get; set;}
 
-        public CreateEventModel(ILogger<CreateEventModel> logger, ApplicationDbContext db, IWebHostEnvironment env, UserManager<IdentityUser> um)
+        public CreateEventModel(ILogger<CreateEventModel> logger, ApplicationDbContext db, IWebHostEnvironment env, UserManager<IdentityUser> um, IImageService iS)
         {
             _logger = logger;
             _db = db;
             _env=env;
             _userManager = um;
+            _is = iS;
         }
 
         public async Task OnGet()
@@ -56,28 +60,27 @@ namespace ConnectUs.Areas.Creator.Pages.Events
             
             if(Event.GalleryFiles != null){
                 int index = 0;
-              foreach (var file in Event.GalleryFiles){
+              foreach (var file in Event.GalleryFiles)
               {   
-                    var isCover = false;
-                    if(index==0){
-                        isCover=true;
-                    }
-                    index++;
-                    using (var ms = new MemoryStream())
-                    {
-                        await file.CopyToAsync(ms);
-                        var fileBytes = ms.ToArray();
-                        string s = Convert.ToBase64String(fileBytes);
-                        Event.EventGallery.Add(new EventImage()
-                        {
-                            Content = s,
-                            Cover = isCover,
-                            Event = Event
-                        });
-                    }
+
+                var filename = _is.Create(file).Result;
+                if(filename!=null){
+                  var isCover = false;
+                  if(index==0){
+                      isCover=true;
+                  }
+                  index++;
+         
+                  Event.EventGallery.Add(new EventImage()
+                  {
+                      ImagePath = filename,
+                      Cover = isCover,
+                      Event = Event
+                  });
+          
+                }
                 
-                }
-                }
+              }
             }else{
                 await InitItems();
                 return Page();

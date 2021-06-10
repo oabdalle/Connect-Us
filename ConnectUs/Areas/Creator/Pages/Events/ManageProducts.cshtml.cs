@@ -15,7 +15,7 @@ using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Hosting;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Authorization;
-
+using ConnectUs.Services;
 namespace ConnectUs.Areas.Creator.Pages.Events
 {
     public class VideoUploadViewModel
@@ -31,10 +31,12 @@ namespace ConnectUs.Areas.Creator.Pages.Events
     {
         private readonly ApplicationDbContext _db;
         private readonly IWebHostEnvironment _env;
+        private readonly IImageService _is;
 
-        public ManageProducts(ApplicationDbContext db, IWebHostEnvironment env){
+        public ManageProducts(ApplicationDbContext db, IWebHostEnvironment env, IImageService iS){
             _db = db;
             _env = env;
+            _is = iS;
         } 
         [BindProperty]
         public Event eventEntry {get; set;}
@@ -62,26 +64,30 @@ namespace ConnectUs.Areas.Creator.Pages.Events
 
             ProductList = await _db.Product.Where(x => x.EventId == eventEntry.EventId).ToListAsync();
         }
-        public async Task<IActionResult> OnPostCreateProduct([FromBody]Product product){
+        public async Task<IActionResult> OnPostCreateProduct(){
+            var httpRequest = HttpContext.Request;
 
-               if(product!=null){
+            if(httpRequest != null){
+              var path = _is.Create(httpRequest.Form.Files["ImagePath"]).Result;
+              if(path != null){
 
-                  Product productToAdd = new Product(){
-                    Name=product.Name,
-                    Price=product.Price,
-                    EventId=product.EventId,
-                    ImageBase64=product.ImageBase64,
-                    VideoBase64=product.VideoBase64
-                    };
-                  await _db.Product.AddAsync(productToAdd);
-                  await _db.SaveChangesAsync();
-    
-                  return new JsonResult("Success");
+              Product productToAdd = new Product(){
+                Name=httpRequest.Form["Name"],
+                Price=decimal.Parse(httpRequest.Form["Price"]),
+                EventId=Int32.Parse(httpRequest.Form["EventId"]),
+                ImagePath=path
+                // VideoPath="0"
+                };
+              await _db.Product.AddAsync(productToAdd);
+              await _db.SaveChangesAsync();
 
-               }else{
+              return new JsonResult("Success");
+              }
+            }
 
-                  return new JsonResult(product);
-               }        
+              return new JsonResult("Fail");
+                  // return new JsonResult(product);
+                       
         
         }
         public async Task<IActionResult> OnPostUploadVideo()    
@@ -90,7 +96,7 @@ namespace ConnectUs.Areas.Creator.Pages.Events
             var fileupload =  UploadModel.fileupload;
             var productId =  UploadModel.productId;
             var eventId = UploadModel.eventId;
-            if ( fileupload != null)    
+            if (fileupload != null)    
             {   
                 var uploads = Path.Combine(_dir, "uploads");
                 var uniqueFileName = GetUniqueFileName(fileupload.FileName);
@@ -99,8 +105,13 @@ namespace ConnectUs.Areas.Creator.Pages.Events
                         fileupload.CopyTo(fileStream);
                     }
                 var productToEdit = await _db.Product.FindAsync(productId);
-                productToEdit.VideoBase64 = uniqueFileName;
+                if(productToEdit.VideoPath != null){
+                  _is.Delete(productToEdit.VideoPath);
+                }
+                productToEdit.VideoPath = uniqueFileName;
+                
                 await _db.SaveChangesAsync(); 
+                
             }  
             return RedirectToPage(new {id = eventId}); 
         }    
@@ -112,28 +123,29 @@ namespace ConnectUs.Areas.Creator.Pages.Events
                         + Guid.NewGuid().ToString().Substring(0, 4) 
                         + Path.GetExtension(fileName);
             }
-        public async Task<IActionResult> OnPostEditProduct([FromBody]Product product){
+        public async Task<IActionResult> OnPostEditProduct(){
+              var httpRequest = HttpContext.Request;
 
+              if(httpRequest != null){
+                var path = _is.Create(httpRequest.Form.Files["ImagePath"]).Result;
 
-              if (product != null)
-              {
-                var productToEdit = await _db.Product.FindAsync(product.ProductId);
-                productToEdit.Name = product.Name;
-                productToEdit.Price = product.Price;
-                if(product.ImageBase64 !=null)
-                  productToEdit.ImageBase64 = product.ImageBase64;
+                if(path != null){
+                  var productToEdit = await _db.Product.FindAsync(Int32.Parse(httpRequest.Form["ProductId"]));
+                  productToEdit.Name = httpRequest.Form["Name"];
+                  productToEdit.Price = decimal.Parse(httpRequest.Form["Price"]);
+                  _is.Delete(productToEdit.ImagePath);
+                  productToEdit.ImagePath = path;
 
-                await _db.SaveChangesAsync(); 
-                
-                return new JsonResult("Success");
+                  await _db.SaveChangesAsync(); 
+                  
+                  return new JsonResult("Success");
 
+                }
               }
-              else
-              {
-
+          
          
                 return new JsonResult("fail");
-              }
+              
                
         }
 
@@ -148,27 +160,14 @@ namespace ConnectUs.Areas.Creator.Pages.Events
           }
           
           _db.Product.Remove(product);
-          _dir =  _env.WebRootPath;
-          var vidPath = Path.Combine(_dir, "uploads", product.VideoBase64);
-          try    
-          {    
-          // Check if file exists with its full path    
-          if (System.IO.File.Exists(vidPath))    
-          {    
-          // If file found, delete it    
-             System.IO.File.Delete(vidPath);    
-            Console.WriteLine("File deleted.");    
-          }    
-          else Console.WriteLine("File not found");    
-          }    
-          catch (IOException ioExp)    
-          {    
-            Console.WriteLine(ioExp.Message);    
-          }    
-          await _db.SaveChangesAsync();
+
+          if(_is.Delete(product.ImagePath).Result && _is.Delete(product.VideoPath).Result){
+
+            await _db.SaveChangesAsync();
+          }
           return RedirectToPage(new {id = eventId});
-        }
-         public async Task<IActionResult> OnPostProductDetails(int id){
+        }         
+        public async Task<IActionResult> OnPostProductDetails(int id){
 
             if(id!=null){
               Product product = await _db.Product.FindAsync(id);

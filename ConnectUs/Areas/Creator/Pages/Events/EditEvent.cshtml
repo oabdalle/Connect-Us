@@ -6,7 +6,7 @@
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.7.6/dropzone.min.css" integrity="sha512-jU/7UFiaW5UBGODEopEqnbIAHOI8fO6T99m7Tsmqs2gkdujByJfkCbbfPSN4Wlqlb9TGnsuC0YgUgWkRBK7B9A==" crossorigin="anonymous" />
 
-<h1>@ViewData["Title"]</h1>
+<h1 class="p-5">@ViewData["Title"]</h1>
 
 
 <div class="form-style-6">
@@ -17,7 +17,7 @@
         @foreach (var item in Model.eventsImages)
         {
         <div>
-        <img class="edit-img"src="data:image/png;base64, @item.Content"/>
+        <img class="edit-img"src="/uploads/@item.ImagePath"/>
         @if(Model.eventsImages.Count()>1){
         <button type="submit" asp-page-handler="RemoveImage" asp-route-imageid="@item.ImageId" class="btn btn-danger btn-sm">Remove</button>
         }

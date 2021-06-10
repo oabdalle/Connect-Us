@@ -15,7 +15,7 @@ namespace ConnectUs.Model.Entities
 
     [MaxLength]
     [Display(Name = "Event Image")]
-    public string Content{ get; set; }
+    public string ImagePath{ get; set; }
 
     [ForeignKey("Event")]    
     public int EventId { get; set; }

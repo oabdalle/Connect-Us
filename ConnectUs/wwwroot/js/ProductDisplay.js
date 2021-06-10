@@ -47,14 +47,14 @@ function CreateProductDisplay(productId, page){
       success: function (result) {
         console.log(result)
         if(result !="Failed"){
-          document.querySelector('.product-display img').src = result.imageBase64;
+          document.querySelector('.product-display img').src = "/uploads/"+result.imagePath;
           document.querySelector('.product-name').innerHTML=result.name;
           document.querySelector('.product_price').innerHTML="$"+result.price.toFixed(2);
           var addToCart = document.querySelector('.product-display a.product-to-buy');
           addToCart.setAttribute('data-id', result.productId);
           document.getElementById('quantity').value=0;
           var video = document.querySelector('.video-display video');
-          video.src = "/uploads/"+result.videoBase64;
+          video.src = "/uploads/"+result.videoPath;
           video.setAttribute("controls","controls"); 
         }
       },

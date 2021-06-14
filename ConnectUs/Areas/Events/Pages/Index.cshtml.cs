@@ -36,7 +36,7 @@ namespace ConnectUs.Areas.Events.Pages
         
         public async Task OnGet()
         { 
-            EventListing = new EventListingViewModel{
+            EventListing = new EventListingViewModel{ //use event listing view mdoel to get relevent data needed to display event
                 EventImages= await _db.EventImage.ToListAsync(), 
                 Events=await _db.Event.ToListAsync(),
                 Categories= await _db.Category.ToListAsync()

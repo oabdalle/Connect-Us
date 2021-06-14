@@ -25,10 +25,10 @@ namespace ConnectUs.Areas.Events.Pages
 
         public void OnGet()
         {
-            var cart = CartSessionService.GetObjectFromJson<List<ItemViewModel>>(HttpContext.Session, "cart");
+            var cart = CartSessionService.GetObjectFromJson<List<ItemViewModel>>(HttpContext.Session, "cart"); //get the session cart data from a json object
             if(cart != null){
-              ViewData["cart"] = cart;
-              ViewData["total"] = cart.Sum(item => item.Product.Price * item.Quantity);
+              ViewData["cart"] = cart; //init the cart 
+              ViewData["total"] = cart.Sum(item => item.Product.Price * item.Quantity); //init the total sum $ of products in cart
             }
         }
     }

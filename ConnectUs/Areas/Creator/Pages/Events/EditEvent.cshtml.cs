@@ -40,10 +40,10 @@ namespace ConnectUs.Areas.Creator.Pages.Events
         public List<EventImage> eventsImages {get; set;}
 
 
-        public async Task OnGet(int id)
+        public async Task OnGet(int id) //init the event to edit 
         {
             eventEntry  = await _db.Event.FindAsync(id);
-            EventViewModel = new EditEventViewModel{
+            EventViewModel = new EditEventViewModel{ //init the edit event viewmodel from the db data 
               Name= eventEntry.Name,
               EventDate = eventEntry.EventDate,
               Description = eventEntry.Description,
@@ -55,24 +55,24 @@ namespace ConnectUs.Areas.Creator.Pages.Events
             }
         } 
 
-        public async Task<IActionResult> OnPostRemoveImage(int imageid){
+        public async Task<IActionResult> OnPostRemoveImage(int imageid){ //remove an image associated to an event
             var imageToDelete = await _db.EventImage.FindAsync(imageid);
-            _is.Delete(imageToDelete.ImagePath);
+            _is.Delete(imageToDelete.ImagePath); //delete from the file system
             if(imageToDelete.Cover==true){
-               var setCoverImage = await _db.EventImage.FindAsync(imageid+1);
-               setCoverImage.Cover=true;
+               var setCoverImage = await _db.EventImage.FindAsync(imageid+1); 
+               setCoverImage.Cover=true; //set a new image as a cover if the current one was the cover
             }
-            _db.EventImage.Remove(imageToDelete);
+            _db.EventImage.Remove(imageToDelete); //remove from db and save
             await _db.SaveChangesAsync();
             eventsImages = await _db.EventImage.Where(x => x.EventId == imageToDelete.EventId).ToListAsync();
             return RedirectToPage("/Events/EditEvent",  new { area = "Creator", id = imageToDelete.EventId});
         }
 
-          public async Task<IActionResult> OnPostSetCover(int imageid){
+          public async Task<IActionResult> OnPostSetCover(int imageid){ //find all images and set one as the cover
             
             var imageToCover = await _db.EventImage.FindAsync(imageid);
             var imageToReset = await _db.EventImage.FirstOrDefaultAsync(x => x.EventId == imageToCover.EventId && x.Cover == true);
-            imageToCover.Cover = true;
+            imageToCover.Cover = true; //reset old image cover and set this as cover
             imageToReset.Cover = false;
             await _db.SaveChangesAsync();
 
@@ -81,12 +81,12 @@ namespace ConnectUs.Areas.Creator.Pages.Events
             return RedirectToPage("/Events/EditEvent",  new { area = "Creator", id = imageToCover.EventId});
         }
 
-        public async Task<IActionResult> OnPostAlterEvent(int id)
+        public async Task<IActionResult> OnPostAlterEvent(int id) //submit the edit event form
         {
 
             if(ModelState.IsValid)
             {
-                eventEntry  = await _db.Event.FindAsync(id);
+                eventEntry  = await _db.Event.FindAsync(id); // find the event to edit and reinitialize event values from the edit event entry view model
                 var eventToUpdate = await _db.Event.FindAsync(eventEntry.EventId);
                 var categoryToUpdate =  await _db.Category.FindAsync(eventEntry.CategoryId);
                 eventToUpdate.Name = EventViewModel.Name;

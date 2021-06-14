@@ -64,15 +64,15 @@ namespace ConnectUs.Areas.Creator.Pages.Events
         public async Task InitPage(int id){
 
             today = DateTime.Today;
-            EventEntry = _eventsService.InitEvent(id).Result;
+            EventEntry = _eventsService.InitEvent(id).Result;//use events service to init event description, category, images
 
             if(EventEntry is not null){
 
-              ProductList = await _db.Product.Where(x => x.EventId == EventEntry.Event.EventId).ToListAsync();
-              ProductToDisplay = ProductList.FirstOrDefault(x => x.Selected == true);
+              ProductList = await _db.Product.Where(x => x.EventId == EventEntry.Event.EventId).ToListAsync(); //show all products of event
+              ProductToDisplay = ProductList.FirstOrDefault(x => x.Selected == true); //selected product on display
               likeCount = EventEntry.Event.TotalLikes;
 
-              if(!(await _chatService.CheckRoomExists(id)) && User.Identity.IsAuthenticated){
+              if(!(await _chatService.CheckRoomExists(id)) && User.Identity.IsAuthenticated){ //if the chat room doesn't exist, create chat
                     await _chatService.CreateRoom(id, _userManager.GetUserId(User));
                   
                 }else if(User.Identity.IsAuthenticated){
@@ -87,41 +87,41 @@ namespace ConnectUs.Areas.Creator.Pages.Events
         }
   
 
-        public async Task<IActionResult> OnPostDelete(int id)
+        public async Task<IActionResult> OnPostDelete(int id) //delete an event completely 
         {
             var eventToDelete = await _db.Event.FindAsync(id);
             if(eventToDelete == null){
                 return NotFound();
             }
-            List<EventImage> images = await _db.EventImage.Where(x => x.EventId == eventToDelete.EventId).ToListAsync();
+            List<EventImage> images = await _db.EventImage.Where(x => x.EventId == eventToDelete.EventId).ToListAsync();  //find all event images and product images
             List<Product> products = await _db.Product.Where(x => x.EventId == eventToDelete.EventId).ToListAsync();
             foreach(var image in images){
-                _is.Delete(image.ImagePath);  
+                _is.Delete(image.ImagePath);  //delete event images from file system
             }
             foreach(var product in products){
-                _is.Delete(product.ImagePath);  
+                _is.Delete(product.ImagePath);  //delete product images and videos from file system
                 _is.Delete(product.VideoPath);  
             }
             _db.EventImage.RemoveRange(_db.EventImage.Where(x => x.EventId == eventToDelete.EventId));
-            _db.Event.Remove(eventToDelete);
+            _db.Event.Remove(eventToDelete); //remove event from db
             await _db.SaveChangesAsync();
             return RedirectToPage("/Index",  new { area = "Events" });
         }
 
-        public async Task<IActionResult> OnPostDisplayProduct(int productId){
+        public async Task<IActionResult> OnPostDisplayProduct(int productId){ //allow creators to display a product to buy
 
                if(productId>0){
 
                   var product = await _db.Product.FindAsync(productId);
-                  var productsToReset = await _db.Product.Where(x=>x.EventId==product.EventId).ToListAsync();
+                  var productsToReset = await _db.Product.Where(x=>x.EventId==product.EventId).ToListAsync(); //find all products, reset the Selected field so product display is updated
                   foreach (var item in productsToReset){
                     item.Selected=false;
                   }
-                  product.Selected = true;
+                  product.Selected = true; //current product to display
                   
                   await _db.SaveChangesAsync();
             
-                  return new JsonResult(product);
+                  return new JsonResult(product); //return the product to display as json
 
                }else{
 

@@ -20,9 +20,7 @@ namespace ConnectUs.Areas.Creator.Pages.Events
 {
     public class VideoUploadViewModel
     {
-
         public IFormFile fileupload { get; set; }
-
         public int productId { get; set; }
         public int eventId { get; set; } 
     }
@@ -42,9 +40,7 @@ namespace ConnectUs.Areas.Creator.Pages.Events
         public Event eventEntry {get; set;}
         [BindProperty]
         public Category categoryEntry {get; set;}
-       
         public List<EventImage> eventsImages {get; set;}
-
         public IEnumerable<Product> ProductList {get; set;}
         public string _dir;
         [BindProperty]
@@ -62,23 +58,23 @@ namespace ConnectUs.Areas.Creator.Pages.Events
             categoryEntry = await _db.Category.FindAsync(eventEntry.CategoryId);
             }
 
-            ProductList = await _db.Product.Where(x => x.EventId == eventEntry.EventId).ToListAsync();
+            ProductList = await _db.Product.Where(x => x.EventId == eventEntry.EventId).ToListAsync(); //init the product list on get from the event id
         }
-        public async Task<IActionResult> OnPostCreateProduct(){
+        public async Task<IActionResult> OnPostCreateProduct(){ //create a new product for the event
             var httpRequest = HttpContext.Request;
 
             if(httpRequest != null){
-              var path = _is.Create(httpRequest.Form.Files["ImagePath"]).Result;
+              var path = _is.Create(httpRequest.Form.Files["ImagePath"]).Result; //get the path of the IFormFile passed
               if(path != null){
 
-              Product productToAdd = new Product(){
-                Name=httpRequest.Form["Name"],
+              Product productToAdd = new Product(){ //init a new product using values from the ajax form data
+                Name=httpRequest.Form["Name"], 
                 Price=decimal.Parse(httpRequest.Form["Price"]),
                 EventId=Int32.Parse(httpRequest.Form["EventId"]),
                 ImagePath=path
                 // VideoPath="0"
                 };
-              await _db.Product.AddAsync(productToAdd);
+              await _db.Product.AddAsync(productToAdd); //add product to db
               await _db.SaveChangesAsync();
 
               return new JsonResult("Success");
@@ -86,11 +82,10 @@ namespace ConnectUs.Areas.Creator.Pages.Events
             }
 
               return new JsonResult("Fail");
-                  // return new JsonResult(product);
                        
         
         }
-        public async Task<IActionResult> OnPostUploadVideo()    
+        public async Task<IActionResult> OnPostUploadVideo()    //upload a video of a product 
         {   
             _dir =  _env.WebRootPath;
             var fileupload =  UploadModel.fileupload;
@@ -102,20 +97,20 @@ namespace ConnectUs.Areas.Creator.Pages.Events
                 var uniqueFileName = GetUniqueFileName(fileupload.FileName);
                 using(var fileStream =
                     new FileStream(Path.Combine(uploads, uniqueFileName), FileMode.Create, FileAccess.Write)){
-                        fileupload.CopyTo(fileStream);
+                        fileupload.CopyTo(fileStream); //save the video to the server
                     }
                 var productToEdit = await _db.Product.FindAsync(productId);
                 if(productToEdit.VideoPath != null){
-                  _is.Delete(productToEdit.VideoPath);
+                  _is.Delete(productToEdit.VideoPath); //delete the previous video from the server
                 }
-                productToEdit.VideoPath = uniqueFileName;
+                productToEdit.VideoPath = uniqueFileName; //save the video path to the db
                 
                 await _db.SaveChangesAsync(); 
                 
             }  
             return RedirectToPage(new {id = eventId}); 
         }    
-        private string GetUniqueFileName(string fileName)
+        private string GetUniqueFileName(string fileName) //get a unique file name for the video
             {
                 fileName = Path.GetFileName(fileName);
                 return  Path.GetFileNameWithoutExtension(fileName)
@@ -127,16 +122,16 @@ namespace ConnectUs.Areas.Creator.Pages.Events
               var httpRequest = HttpContext.Request;
 
               if(httpRequest != null){
-                var path = _is.Create(httpRequest.Form.Files["ImagePath"]).Result;
+                var path = _is.Create(httpRequest.Form.Files["ImagePath"]).Result; //get the path from the IFormFile and save it to the server
 
                 if(path != null){
-                  var productToEdit = await _db.Product.FindAsync(Int32.Parse(httpRequest.Form["ProductId"]));
+                  var productToEdit = await _db.Product.FindAsync(Int32.Parse(httpRequest.Form["ProductId"])); //retrieve the product to edit form the db
                   productToEdit.Name = httpRequest.Form["Name"];
                   productToEdit.Price = decimal.Parse(httpRequest.Form["Price"]);
                   _is.Delete(productToEdit.ImagePath);
                   productToEdit.ImagePath = path;
 
-                  await _db.SaveChangesAsync(); 
+                  await _db.SaveChangesAsync(); //save the changes made to the existing product
                   
                   return new JsonResult("Success");
 
@@ -152,18 +147,15 @@ namespace ConnectUs.Areas.Creator.Pages.Events
         public async Task<IActionResult> OnPostDeleteProduct(int id, int eventId)
         {
 
-          var product = await _db.Product.FindAsync(id);
-
+          var product = await _db.Product.FindAsync(id); //find the product to delete
           if (product == null)
           {
               return NotFound();
           }
-          
-          _db.Product.Remove(product);
+          _db.Product.Remove(product); //remove product from db context
 
-          if(_is.Delete(product.ImagePath).Result && _is.Delete(product.VideoPath).Result){
-
-            await _db.SaveChangesAsync();
+          if(_is.Delete(product.ImagePath).Result && _is.Delete(product.VideoPath).Result){ //delete all images and videos of the product
+            await _db.SaveChangesAsync(); //save the changes to db
           }
           return RedirectToPage(new {id = eventId});
         }         
@@ -172,7 +164,7 @@ namespace ConnectUs.Areas.Creator.Pages.Events
             if(id!=null){
               Product product = await _db.Product.FindAsync(id);
 
-              return new JsonResult(product);
+              return new JsonResult(product); //pass the product details as a json
 
             }else{
 

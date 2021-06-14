@@ -54,13 +54,13 @@ namespace ConnectUs.Areas.Creator.Pages.Events
 
         }
 
-        public async Task<IActionResult> OnPost() //we use <IActionResult> to direct to new page
+        public async Task<IActionResult> OnPost() //create an event form on post
         { 
             Event.EventGallery = new List<EventImage>();
             
             if(Event.GalleryFiles != null){
                 int index = 0;
-              foreach (var file in Event.GalleryFiles)
+              foreach (var file in Event.GalleryFiles) //for each IFormFile from form, create file to filesystem and save path to event gallery 
               {   
 
                 var filename = _is.Create(file).Result;
@@ -90,7 +90,7 @@ namespace ConnectUs.Areas.Creator.Pages.Events
             {   
                 await _db.Event.AddAsync(Event);
                 foreach (EventImage img in Event.EventGallery){
-                    await _db.EventImage.AddAsync(img);
+                    await _db.EventImage.AddAsync(img); //add each image from the event to the db with the event id as a secondary key
                 }
                 await _db.SaveChangesAsync();
                 return RedirectToPage("/Index", new { area = "Events" });

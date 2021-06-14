@@ -39,8 +39,8 @@ namespace ConnectUs.Areas.Admin.Pages
             await InitRoles();
         } 
 
-        public async Task InitUsers(){
-            Users = new Dictionary<IdentityUser, IdentityRole>(){};
+        public async Task InitUsers(){ //get all users from the db and their role
+            Users = new Dictionary<IdentityUser, IdentityRole>(){}; //store user as the key and role as the value in a dict
             var users = await _userManager.Users.ToListAsync();
             foreach (var user in users){
                 IList <string> roles =await _userManager.GetRolesAsync(user);
@@ -57,7 +57,7 @@ namespace ConnectUs.Areas.Admin.Pages
 
         }
 
-        public async Task InitRoles(){
+        public async Task InitRoles(){ //get all roles from the db to display in a select list
          
             
             List<SelectListItem> roleList =  _roleManager.Roles.Select(x => new SelectListItem { Text = x.Name, Value = x.NormalizedName }).ToList();
@@ -69,12 +69,12 @@ namespace ConnectUs.Areas.Admin.Pages
             
         }
 
-        public async Task<IActionResult> OnPostActivateUser(string email){
+        public async Task<IActionResult> OnPostActivateUser(string email){ //if the email has not been confirmed, activate the user
           
             if(email != null){
               var user = await _userManager.FindByEmailAsync(email);
               var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-              var result = await _userManager.ConfirmEmailAsync(user, code);
+              var result = await _userManager.ConfirmEmailAsync(user, code); //confirm email after email confirmation token generated
 
               if(result.Succeeded){
                   await InitUsers();
@@ -87,17 +87,17 @@ namespace ConnectUs.Areas.Admin.Pages
               return Page();
             
         }
-        public async Task<IActionResult> OnPostEditUserRole(string roleName, string userId){
+        public async Task<IActionResult> OnPostEditUserRole(string roleName, string userId){ //edit the role of a user 
           
             if(roleName != null){
     
               var user = await _userManager.FindByIdAsync(userId);
               var role = await _roleManager.FindByNameAsync(roleName);
-              var currentRoles= await _userManager.GetRolesAsync(user);
+              var currentRoles= await _userManager.GetRolesAsync(user); //find the current role of the user
               if(user!=null && role!=null && currentRoles!=null){
                 
-                   await _userManager.RemoveFromRolesAsync(user, currentRoles.ToList());
-                  var result = await _userManager.AddToRoleAsync(user, role.Name);
+                   await _userManager.RemoveFromRolesAsync(user, currentRoles.ToList()); //remove the current role 
+                  var result = await _userManager.AddToRoleAsync(user, role.Name); //add the new role to the user
 
                   if(result.Succeeded){
                      return new JsonResult("Success");
@@ -113,14 +113,14 @@ namespace ConnectUs.Areas.Admin.Pages
             
         }
         
-        public async Task<IActionResult> OnPostDeleteUser(string id){
+        public async Task<IActionResult> OnPostDeleteUser(string id){ //delete a specific user
             var user = await _userManager.FindByIdAsync(id);
             if(user == null){
               await InitUsers();
               await InitRoles();
               return Page();
             }else{
-              var chatUser = _db.ChatUser.Where(x => x.UserId == user.Id).FirstOrDefault();
+              var chatUser = _db.ChatUser.Where(x => x.UserId == user.Id).FirstOrDefault(); //delete the user from the Chat User table
               _db.ChatUser.Remove(chatUser);
               
               var result = await _userManager.DeleteAsync(user);

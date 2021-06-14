@@ -63,7 +63,7 @@ namespace ConnectUs.Areas.Events.Pages
 
               var role = roles[0];
               if(role == "Admin" || role == "Creator"){
-                return RedirectToPage("/Events/CreatorShowroom",  new { area = "Creator", id = id  });
+                return RedirectToPage("/Events/CreatorShowroom",  new { area = "Creator", id = id  }); //on get, redirect creators to the creator showroom
               }
             }
               await InitPage(id);      
@@ -74,16 +74,16 @@ namespace ConnectUs.Areas.Events.Pages
         public async Task InitPage(int id){
 
             today = DateTime.Today;
-            EventEntry = _eventsService.InitEvent(id).Result;
+            EventEntry = _eventsService.InitEvent(id).Result; //use events service to init event description, category, images
 
             if(EventEntry is not null){
 
-              profile =  await _db.Profile.FirstOrDefaultAsync(x => x.HostId == EventEntry.Event.HostId);
-              ProductList = await _db.Product.Where(x => x.EventId == EventEntry.Event.EventId).ToListAsync();
-              ProductToDisplay = ProductList.FirstOrDefault(x => x.Selected == true);
+              profile =  await _db.Profile.FirstOrDefaultAsync(x => x.HostId == EventEntry.Event.HostId); //display profile of host
+              ProductList = await _db.Product.Where(x => x.EventId == EventEntry.Event.EventId).ToListAsync(); //show all products of event
+              ProductToDisplay = ProductList.FirstOrDefault(x => x.Selected == true); //selected product on display
               likeCount = EventEntry.Event.TotalLikes;
 
-              if(!(await _chatService.CheckRoomExists(id))){
+              if(!(await _chatService.CheckRoomExists(id))){ //if the chat room doesn't exist and the event has started, create chat
                   if((EventEntry.Event.EventDate <= DateTime.Today) && User.Identity.IsAuthenticated){
                       await _chatService.CreateRoom(id, _userManager.GetUserId(User));
                   }
@@ -93,13 +93,13 @@ namespace ConnectUs.Areas.Events.Pages
                 }
             }
 
-         if(today >= EventEntry.Event.EventDate.Date){
+         if(today >= EventEntry.Event.EventDate.Date){ //if the event has started, get the chat needed to join
 
           Chat = _chatService.GetChat(id);
          }else{
            Chat = null;
          }
-          if(User.Identity.IsAuthenticated && User.IsInRole("Attendee")){
+          if(User.Identity.IsAuthenticated && User.IsInRole("Attendee")){ //check if attendee has booked this event
               EventEntry.EventBooked= _eventsService.CheckBooking(id, _userManager.GetUserId(User)).Result;
             }else{
               EventEntry.EventBooked = false;
@@ -107,22 +107,23 @@ namespace ConnectUs.Areas.Events.Pages
 
         }
   
-        public async Task<IActionResult> OnPostBookEvent(int eventId, string userId)
+        public async Task<IActionResult> OnPostBookEvent(int eventId, string userId) //Allow attendees to book events they would like to attend
         {   
                             
             Booking booking = new Booking();
             if(userId !=null){
-               Booking checkExistingBooking = _db.Booking.Where(x=>x.EventId == eventId).Where(x=>x.UserId == userId).FirstOrDefault();
+               Booking checkExistingBooking = _db.Booking.Where(x=>x.EventId == eventId).Where(x=>x.UserId == userId).FirstOrDefault(); //check if the booking exists
                 if(checkExistingBooking != null){
                   return RedirectToPage("/Showroom", new {id = eventId});
                 }
               DateTime newDateTime = DateTime.Now;
               booking.EventId = eventId;
               booking.UserId= userId;
-              booking.DateBooked=newDateTime;
+              booking.DateBooked=newDateTime; //set booking date 
               await _db.Booking.AddAsync(booking);
               await _db.SaveChangesAsync();
-              if(User.Identity.IsAuthenticated && User.IsInRole("Attendee")){
+
+              if(User.Identity.IsAuthenticated && User.IsInRole("Attendee")){ //redirect to correct page
                 return RedirectToPage("/Index",  new { area = "Attendee" });
               }
               return RedirectToPage("/Index",  new { area = "Events" });
@@ -134,16 +135,16 @@ namespace ConnectUs.Areas.Events.Pages
               return RedirectToPage("/Index",  new { area = "Events" });
             }
         }
-        public async Task<IActionResult> OnPostDeleteBooking(int eventId, string userId)
+        public async Task<IActionResult> OnPostDeleteBooking(int eventId, string userId) //Allow attendee to delete booking 
         {   
                             
             Booking booking = new Booking();
             if(userId !=null){
-              booking = _db.Booking.Where(x=>x.EventId == eventId).Where(x=>x.UserId == userId).FirstOrDefault();
+              booking = _db.Booking.Where(x=>x.EventId == eventId).Where(x=>x.UserId == userId).FirstOrDefault(); //check if the booking exists
                 if(booking  == null){
                   return RedirectToPage("/Showroom", new {id = eventId});
                 }
-              _db.Booking.Remove(booking );
+              _db.Booking.Remove(booking); //if the booking exists, remove it from the booking table
               await _db.SaveChangesAsync();
               return RedirectToPage("/Index",  new { area = "Attendee" });
 
@@ -152,20 +153,20 @@ namespace ConnectUs.Areas.Events.Pages
             }
         }
 
-        public async Task<IActionResult> OnPostDisplayProduct(int productId){
+        public async Task<IActionResult> OnPostDisplayProduct(int productId){ //allow attendees after an event has passed to display a product to buy
 
             if(productId>0){
 
               var product = await _db.Product.FindAsync(productId);
-              var productsToReset = await _db.Product.Where(x=>x.EventId==product.EventId).ToListAsync();
+              var productsToReset = await _db.Product.Where(x=>x.EventId==product.EventId).ToListAsync(); //find all products, reset the Selected field so product display is updated
               foreach (var item in productsToReset){
                 item.Selected=false;
               }
-              product.Selected = true;
+              product.Selected = true; //current product to display
               
               await _db.SaveChangesAsync();
         
-              return new JsonResult(product);
+              return new JsonResult(product); //return the product to display as json
 
             }else{
 

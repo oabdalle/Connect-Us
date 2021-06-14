@@ -19,7 +19,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 
 namespace ConnectUs.Areas.Creator.Pages.Events
 {
-
+    [Authorize(Roles = "Admin, Creator")]
     public class CreateEventModel : PageModel
     {
         private readonly ILogger<CreateEventModel> _logger;

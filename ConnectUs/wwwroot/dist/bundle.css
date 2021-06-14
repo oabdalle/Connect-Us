@@ -7203,7 +7203,7 @@ a.text-dark:hover, a.text-dark:focus {
 .netflix-slider .swiper-slide:hover {
   -webkit-transform: scale(1.2);
   transform: scale(1.2);
-  z-index: 1; }
+  z-index: 4; }
 
 .netflix-slider .swiper-slide:first-child:hover {
   margin: 0 40px; }

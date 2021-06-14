@@ -8,7 +8,7 @@
 @inject UserManager<IdentityUser> userManager;
 
 <div>
-  <h1 class="text-center pt-4">Events</h1>
+  <h1 class="text-center pt-4">@ViewData["Title"]</h1>
 </div>
 <div>
   @if(Model.Events.Count()>0){
@@ -27,7 +27,6 @@
                       @if(userManager.GetUserId(User)!= ""){
                       @if(item.HostId == userManager.GetUserId(User)){<div class="featured fa fa-star"></div>}}
                       <a class="text-decoration-none" asp-area="Events" asp-page="/Showroom" asp-route-id="@item.EventId">
-                        @* <img class="event-image" src="data:image/png;base64, @Model.EventImages.Where(x=>x.EventId == item.EventId).SingleOrDefault(x => x.Cover == true).Content"/> *@
                         <div style="background-image: url('data:image/png;base64, @Model.EventImages.Where(x=>x.EventId == item.EventId).SingleOrDefault(x => x.Cover == true).Content')" class="p-5 image-grid-cover">
                           <h5 class="cover-text"> @Html.DisplayFor(m=>item.Name) </h5>
                           <p class="cover-text"> @item.EventDate.ToString("d MMM \\'yy") </p>

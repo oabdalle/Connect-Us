@@ -15,18 +15,22 @@ using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Hosting;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 namespace ConnectUs.Areas.Creator.Pages.Events
 {
+    [Authorize(Roles = "Admin, Creator")]
     public class PostData
     {
         public string Result {get; set;}
     }
     public class EditEvent : PageModel
     {
+        private readonly UserManager<IdentityUser> _userManager;
         private readonly ApplicationDbContext _db;
-        public EditEvent(ApplicationDbContext db){
+        public EditEvent(ApplicationDbContext db, UserManager<IdentityUser> userManager){
             _db = db;
+            _userManager = userManager;
         } 
         
         public Event eventEntry {get; set;}
@@ -37,9 +41,14 @@ namespace ConnectUs.Areas.Creator.Pages.Events
         public List<EventImage> eventsImages {get; set;}
 
 
-        public async Task OnGet(int id)
+        public async Task<IActionResult>  OnGet(int id)
         {
+            var user = await _userManager.GetUserAsync(User);
+            var roles = await _userManager.GetRolesAsync(user);
             eventEntry  = await _db.Event.FindAsync(id);
+            if(roles[0] != "Creator" && user.Id != eventEntry.HostId ){
+               return RedirectToPage("/AccessDenied",  new { area = "Account" });
+            }
             EventViewModel = new EditEventViewModel{
               Name= eventEntry.Name,
               EventDate = eventEntry.EventDate,
@@ -49,7 +58,9 @@ namespace ConnectUs.Areas.Creator.Pages.Events
             eventsImages = await _db.EventImage.Where(x => x.EventId == id).ToListAsync();
             if(eventEntry is not null){
             categoryEntry = await _db.Category.FindAsync(eventEntry.CategoryId);
+            
             }
+            return Page();
         } 
 
         public async Task<IActionResult> OnPostRemoveImage(int imageid){

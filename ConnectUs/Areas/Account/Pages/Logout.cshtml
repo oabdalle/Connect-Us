@@ -1,7 +1,7 @@
 ﻿@page
 @model LogoutModel
 @{
-    ViewData["Title"] = "Log out";
+    ViewData["Title"] = "Logged out";
 }
 
 <header>
@@ -16,6 +16,7 @@
         else
         {
             <p>You have successfully logged out of the application.</p>
+            <a asp-area="Account" asp-page="/Login" class="btn btn-primary">Log back in</a>
         }
     }
 </header>

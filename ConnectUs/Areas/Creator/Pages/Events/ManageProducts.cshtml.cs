@@ -15,6 +15,7 @@ using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Hosting;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 namespace ConnectUs.Areas.Creator.Pages.Events
 {
@@ -31,10 +32,11 @@ namespace ConnectUs.Areas.Creator.Pages.Events
     {
         private readonly ApplicationDbContext _db;
         private readonly IWebHostEnvironment _env;
-
-        public ManageProducts(ApplicationDbContext db, IWebHostEnvironment env){
+        private readonly UserManager<IdentityUser> _userManager;
+        public ManageProducts(ApplicationDbContext db, IWebHostEnvironment env, UserManager<IdentityUser> userManager){
             _db = db;
             _env = env;
+            _userManager = userManager;
         } 
         [BindProperty]
         public Event eventEntry {get; set;}
@@ -47,21 +49,24 @@ namespace ConnectUs.Areas.Creator.Pages.Events
         public string _dir;
         [BindProperty]
         public VideoUploadViewModel UploadModel { get; set; }
-        public async Task OnGet(int id)
+        public async Task<IActionResult> OnGet(int id)
         {
-          await InitProducts(id);
+          eventEntry  = await _db.Event.FindAsync(id);
+          var user = await _userManager.GetUserAsync(User);
+          var roles = await _userManager.GetRolesAsync(user);
+          eventEntry  = await _db.Event.FindAsync(id);
+          if(roles[0] != "Creator" && user.Id != eventEntry.HostId ){
+            return RedirectToPage("/AccessDenied",  new { area = "Account" });
+          }
+          eventsImages = await _db.EventImage.Where(x => x.EventId == id).ToListAsync();
+          if(eventEntry is not null){
+            categoryEntry = await _db.Category.FindAsync(eventEntry.CategoryId);
+          }
+
+          ProductList = await _db.Product.Where(x => x.EventId == eventEntry.EventId).ToListAsync();
+          return Page();
         } 
         
-        public async Task InitProducts(int id){
-
-            eventEntry  = await _db.Event.FindAsync(id);
-            eventsImages = await _db.EventImage.Where(x => x.EventId == id).ToListAsync();
-            if(eventEntry is not null){
-            categoryEntry = await _db.Category.FindAsync(eventEntry.CategoryId);
-            }
-
-            ProductList = await _db.Product.Where(x => x.EventId == eventEntry.EventId).ToListAsync();
-        }
         public async Task<IActionResult> OnPostCreateProduct([FromBody]Product product){
 
                if(product!=null){

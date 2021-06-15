@@ -1,7 +1,7 @@
 FROM mcr.microsoft.com/dotnet/sdk:5.0 as build
-RUN cd ../..
-RUN cp -R . /app
-WORKDIR /app
+COPY . /app
+RUN cd ConnectUs
+WORKDIR /app/ConnectUs
 RUN cd app
 RUN dotnet tool install --global dotnet-ef
 ENV PATH="${PATH}:/root/.dotnet/tools"

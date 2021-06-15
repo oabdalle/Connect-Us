@@ -1,5 +1,6 @@
 FROM node:lts AS node
 COPY . /src
+RUN cd src
 RUN cd ConnectUs
 WORKDIR /src/ConnectUs
 RUN npm install

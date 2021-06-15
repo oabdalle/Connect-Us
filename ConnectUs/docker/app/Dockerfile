@@ -1,5 +1,6 @@
 FROM mcr.microsoft.com/dotnet/sdk:5.0 as build
 COPY . /app
+RUN cd app
 RUN cd ConnectUs
 WORKDIR /app/ConnectUs
 RUN cd app

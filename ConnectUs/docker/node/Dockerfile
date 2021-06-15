@@ -3,6 +3,6 @@ COPY . /src
 WORKDIR /src/ConnectUs
 RUN npm install
 RUN apt-get update && apt-get install dos2unix
-RUN chmod +x docker/node/entrypoint.sh
-RUN dos2unix docker/node/entrypoint.sh
-ENTRYPOINT ["sh", "docker/node/entrypoint.sh"]
+RUN chmod +x entrypoint.sh
+RUN dos2unix entrypoint.sh
+ENTRYPOINT ["sh", "entrypoint.sh"]

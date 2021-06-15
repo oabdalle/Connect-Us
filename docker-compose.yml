@@ -31,7 +31,7 @@ services:
     node:
         build:
             context: .
-            dockerfile: ./ConnectUs/docker/node/Dockerfile
+            dockerfile: ./ConnectUs/docker/node/dev.Dockerfile
         volumes:
             - node_modules:/src/ConnectUs/node_modules
             - ./ConnectUs/wwwroot:/src/ConnectUs/wwwroot      

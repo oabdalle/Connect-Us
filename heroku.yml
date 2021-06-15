@@ -1,5 +1,5 @@
 build:
   docker:
-    app: ConnectUs/docker/app/dev.Dockerfile
+    app: ConnectUs/docker/app/Dockerfile
     reverseproxy: ConnectUs/docker/nginx/Dockerfile
     node: ConnectUs/docker/node/Dockerfile

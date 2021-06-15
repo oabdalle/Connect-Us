@@ -3,6 +3,7 @@ COPY . /app
 WORKDIR /app/ConnectUs
 RUN dotnet tool install --global dotnet-ef
 ENV PATH="${PATH}:/root/.dotnet/tools"
+RUN file="$(ls)" && echo $file
 RUN cd ../.. && dotnet publish "ConnectUs.csproj" --configuration Release
 RUN chmod +x entrypoint.sh
 CMD /bin/sh entrypoint.sh

@@ -3,6 +3,7 @@ COPY . /app
 WORKDIR /app/ConnectUs
 RUN dotnet tool install --global dotnet-ef
 ENV PATH="${PATH}:/root/.dotnet/tools"
+WORKDIR /app/ConnectUs
 RUN dotnet publish "ConnectUs.csproj" --configuration Release
 ENV DOTNET_USE_POLLING_FILE_WATCHER 1
 RUN apt-get update && apt-get install dos2unix \

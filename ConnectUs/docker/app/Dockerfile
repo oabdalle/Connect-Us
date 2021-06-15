@@ -1,5 +1,6 @@
 FROM mcr.microsoft.com/dotnet/sdk:5.0 as build
-RUN cd docker
+ARG CACHE_DATE=2016-01-01
+RUN ls
 COPY . /app
 RUN cd app
 RUN cd ConnectUs

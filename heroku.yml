@@ -1,6 +1,3 @@
-# Resources to provision on app creation
-setup:
-# Reference the Dockerfiles to build into Docker images 
 build:
   docker:
     app: ConnectUs/docker/app/dev.Dockerfile

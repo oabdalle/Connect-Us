@@ -1,6 +1,6 @@
 FROM mcr.microsoft.com/dotnet/sdk:5.0 as build
 RUN cd ../..
-COPY . /app
+RUN cp -R . /app
 WORKDIR /app
 RUN cd app
 RUN dotnet tool install --global dotnet-ef

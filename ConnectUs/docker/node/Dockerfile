@@ -1,5 +1,5 @@
 FROM node:lts AS node
-RUN cd Connect-Us
+RUN cd docker
 COPY . /src
 RUN cd src
 RUN cd ConnectUs

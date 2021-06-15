@@ -1,5 +1,5 @@
 FROM mcr.microsoft.com/dotnet/sdk:5.0 as build
-RUN cd Connect-Us
+RUN cd docker
 COPY . /app
 RUN cd app
 RUN cd ConnectUs

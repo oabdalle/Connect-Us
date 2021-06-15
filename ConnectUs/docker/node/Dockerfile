@@ -1,4 +1,5 @@
 FROM node:lts AS node
+RUN cd test
 COPY . /src
 RUN cd src
 RUN cd ConnectUs

@@ -46,7 +46,7 @@ namespace ConnectUs.Services
             return null;
         }
 
-        public async Task<bool> Delete(string path)
+        public bool Delete(string path)
         {
 
           var _dir =  _hostEnvironment.WebRootPath;
@@ -61,9 +61,7 @@ namespace ConnectUs.Services
                 }  
               }
             }catch (IOException ioExp)  {
-
-
-            return false;
+               Console.WriteLine("IOException source: {0}", ioExp.Source);
             }
             return false;
         }

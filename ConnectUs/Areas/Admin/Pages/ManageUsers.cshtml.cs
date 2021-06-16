@@ -37,7 +37,7 @@ namespace ConnectUs.Areas.Admin.Pages
         public async Task OnGet()
         {
             await InitUsers();
-            await InitRoles();
+            InitRoles();
         } 
 
         public async Task InitUsers(){ //get all users from the db and their role
@@ -58,7 +58,7 @@ namespace ConnectUs.Areas.Admin.Pages
 
         }
 
-        public async Task InitRoles(){ //get all roles from the db to display in a select list
+        public void InitRoles(){ //get all roles from the db to display in a select list
          
             
             List<SelectListItem> roleList =  _roleManager.Roles.Select(x => new SelectListItem { Text = x.Name, Value = x.NormalizedName }).ToList();
@@ -79,12 +79,12 @@ namespace ConnectUs.Areas.Admin.Pages
 
               if(result.Succeeded){
                   await InitUsers();
-                  await InitRoles();
+                  InitRoles();
                   return Page();
               }
             }
               await InitUsers();
-              await InitRoles();
+              InitRoles();
               return Page();
             
         }
@@ -118,7 +118,7 @@ namespace ConnectUs.Areas.Admin.Pages
             var user = await _userManager.FindByIdAsync(id);
             if(user == null){
               await InitUsers();
-              await InitRoles();
+              InitRoles();
               return Page();
             }else{
               var chatUser = _db.ChatUser.Where(x => x.UserId == user.Id).FirstOrDefault(); //delete the user from the Chat User table
@@ -128,7 +128,7 @@ namespace ConnectUs.Areas.Admin.Pages
               if (result.Succeeded)
               {      
                   await InitUsers();
-                  await InitRoles();
+                  InitRoles();
                   return RedirectToPage();
               }else{
                   foreach (var error in result.Errors)
@@ -138,7 +138,7 @@ namespace ConnectUs.Areas.Admin.Pages
               }
           }
               await InitUsers();
-              await InitRoles();
+              InitRoles();
               return Page();
         }
 

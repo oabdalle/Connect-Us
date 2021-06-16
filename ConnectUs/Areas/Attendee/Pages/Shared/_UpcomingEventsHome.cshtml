@@ -10,7 +10,7 @@
             {    
                 <div class="swiper-slide col-3 p-0 m-4 text-center border event-border ">
                  <a class="text-decoration-none" asp-area="Events" asp-page="/Showroom" asp-route-id="@item.EventId">
-                        <div style="background-image: url('data:image/png;base64, @Model.EventImages.Where(x=>x.EventId == item.EventId).SingleOrDefault(x => x.Cover == true).Content')" class="p-5 image-grid-cover">
+                        <div style="background-image: url('/uploads/@Model.EventImages.Where(x=>x.EventId == item.EventId).SingleOrDefault(x => x.Cover == true).ImagePath')" class="p-5 image-grid-cover">
                           <h5 class="cover-text"> @Html.DisplayFor(m=>item.Name) </h5>
                           <p class="cover-text"> @item.EventDate.ToString("d MMM \\'yy") </p>
                         </div> 

@@ -22,7 +22,6 @@ using ConnectUs.Hubs;
 using Microsoft.AspNetCore.SignalR;
 using System.Configuration;
 using System.Data.SqlClient;
-using System.Collections.Generic;
 
 namespace ConnectUs.Areas.Creator.Pages.Events
 {
@@ -72,7 +71,7 @@ namespace ConnectUs.Areas.Creator.Pages.Events
               ProductToDisplay = ProductList.FirstOrDefault(x => x.Selected == true); //selected product on display
               likeCount = EventEntry.Event.TotalLikes;
 
-              if(!(await _chatService.CheckRoomExists(id)) && User.Identity.IsAuthenticated){ //if the chat room doesn't exist, create chat
+              if(!(_chatService.CheckRoomExists(id)) && User.Identity.IsAuthenticated){ //if the chat room doesn't exist, create chat
                     await _chatService.CreateRoom(id, _userManager.GetUserId(User));
                   
                 }else if(User.Identity.IsAuthenticated){

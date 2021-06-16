@@ -34,7 +34,7 @@ namespace ConnectUs.Services
             await _db.SaveChangesAsync();
         }
         
-        public async Task<bool> CheckRoomExists(int eventId)
+        public bool CheckRoomExists(int eventId)
         {
             var room =  _db.Chat.FirstOrDefault(x => x.EventId == eventId);
 

@@ -8,7 +8,7 @@ namespace ConnectUs.Services
     public interface IImageService
     {
         Task<string> Create(IFormFile ImageFile);
-        Task<bool> Delete(string path);
+        bool Delete(string path);
 
     }
 }

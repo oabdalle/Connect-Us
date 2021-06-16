@@ -46,7 +46,8 @@ namespace ConnectUs.Areas.Creator.Pages.Events
         {
             await InitItems(id);
         }
-        public async Task InitItems(string hostId = null){
+
+        public async Task InitItems(string hostId = null){ //init the events hosted by the creater, and the sentiment from the chat associated with each event
             EventsDict = new Dictionary<string, List<Event>>(){};
             if(hostId == null)
                 hostId = _userManager.GetUserId(User);
@@ -56,7 +57,7 @@ namespace ConnectUs.Areas.Creator.Pages.Events
             List<Event> pastEvents = new List<Event>();
             List<Event> upcomingEvents = new List<Event>();
             List<Event> currentEvents = new List<Event>();
-            foreach (var item in events) { 
+            foreach (var item in events) { //sort events out by upcoming, current and past, and add to a list
                 if(item.EventDate > DateTime.Today)
                     upcomingEvents.Add(item);
                 else if(item.EventDate == DateTime.Today)
@@ -64,7 +65,7 @@ namespace ConnectUs.Areas.Creator.Pages.Events
                 else
                     pastEvents.Add(item);
             }
-            EventsDict.Add("Past Events", pastEvents);
+            EventsDict.Add("Past Events", pastEvents); //add lists to a dict
             EventsDict.Add("Future Events", upcomingEvents);
             EventsDict.Add("Ongoing Events", currentEvents);
             EventsChat = new Dictionary<Event, Chat> (){};
@@ -72,7 +73,7 @@ namespace ConnectUs.Areas.Creator.Pages.Events
             foreach (var item in events) { 
               var chat = _chatService.GetChat(item.EventId);
               if(chat != null){
-                  EventsChat.Add(item, chat);
+                  EventsChat.Add(item, chat); //init event chat dict with the event info as key and the chat as the value
               }
               LikeTotal = item.TotalLikes;
             }

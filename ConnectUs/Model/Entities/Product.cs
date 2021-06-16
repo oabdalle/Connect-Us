@@ -26,13 +26,13 @@ namespace ConnectUs.Model.Entities
 
     [MaxLength]
     [Display(Name = "Product Image")]
-    public string ImageBase64{ get; set; }
+    public string ImagePath{ get; set; }
 
     [ForeignKey("Event")]    
     public int EventId { get; set; }
     public Event Event { get; set; }
 
-    public string VideoBase64{get; set;}
+    public string VideoPath{get; set;}
 
     public bool Selected { get; set; }
 

@@ -39,7 +39,7 @@ namespace ConnectUs.Areas.Attendee.Pages
             _userManager=userManager;
         }
 
-        public async Task OnGet()
+        public async Task OnGet() //get all events and the booked events by the attendee
         { 
 
           var user = await _userManager.GetUserAsync(User);
@@ -47,10 +47,10 @@ namespace ConnectUs.Areas.Attendee.Pages
             var userBookings = await _db.Booking.Where(x => x.UserId == user.Id).ToListAsync();
             for(int i = 0; i < userBookings.Count; i++){
               var eventToAdd = await _db.Event.FindAsync(userBookings[i].EventId);
-              BookedEvents.Add(eventToAdd);
+              BookedEvents.Add(eventToAdd); //show booked events from the attendee on the home page
             }
           }
-          EventListing = new EventListingViewModel{
+          EventListing = new EventListingViewModel{  //use event listing view mdoel to get relevent data needed to display event
                 EventImages= await _db.EventImage.ToListAsync(), 
                 Events=await _db.Event.ToListAsync(),
                 Categories= await _db.Category.ToListAsync(),

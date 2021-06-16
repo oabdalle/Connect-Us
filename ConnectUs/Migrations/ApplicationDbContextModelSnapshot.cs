@@ -135,14 +135,14 @@ namespace ConnectUs.Migrations
                         .HasColumnType("int")
                         .UseIdentityColumn();
 
-                    b.Property<string>("Content")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<bool>("Cover")
                         .HasColumnType("bit");
 
                     b.Property<int>("EventId")
                         .HasColumnType("int");
+
+                    b.Property<string>("ImagePath")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ImageId");
 
@@ -208,7 +208,7 @@ namespace ConnectUs.Migrations
                     b.Property<int>("EventId")
                         .HasColumnType("int");
 
-                    b.Property<string>("ImageBase64")
+                    b.Property<string>("ImagePath")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
@@ -221,7 +221,7 @@ namespace ConnectUs.Migrations
                     b.Property<bool>("Selected")
                         .HasColumnType("bit");
 
-                    b.Property<string>("VideoBase64")
+                    b.Property<string>("VideoPath")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ProductId");

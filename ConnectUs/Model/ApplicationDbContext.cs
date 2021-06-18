@@ -12,7 +12,7 @@ namespace ConnectUs.Model
             : base(options)
         {
             Database.SetCommandTimeout(1000);
-
+                      
         }
         public DbSet<Event> Event { get; set; }
         public DbSet<EventImage> EventImage { get; set; }

@@ -33,7 +33,7 @@ namespace ConnectUs.Controllers
         [HttpPost]
         public ActionResult CreateCheckoutSession()
         {
-            var domain = "http://localhost";
+            var domain = "http://" + HttpContext.Request.Host;
 
             var cart = CartSessionService.GetObjectFromJson<List<ItemViewModel>>(HttpContext.Session, "cart");
             List<SessionLineItemOptions> LineItemsToAdd = new List<SessionLineItemOptions>();

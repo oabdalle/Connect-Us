@@ -75,7 +75,7 @@ namespace ConnectUs.Areas.Events.Pages
 
             today = DateTime.Today;
             EventEntry = _eventsService.InitEvent(id).Result; //use events service to init event description, category, images
-
+            
             if(EventEntry is not null){
 
               profile =  await _db.Profile.FirstOrDefaultAsync(x => x.HostId == EventEntry.Event.HostId); //display profile of host

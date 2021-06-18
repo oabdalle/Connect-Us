@@ -4,14 +4,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Extensions.Logging;
 using ConnectUs.Model;
 using ConnectUs.Model.Entities;
 using ConnectUs.Services;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
-using System.IO;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Authorization;
@@ -23,14 +21,13 @@ namespace ConnectUs.Areas.Creator.Pages.Events
     [Authorize(Roles = "Admin, Creator")]
     public class CreateEventModel : PageModel
     {
-        private readonly ILogger<CreateEventModel> _logger;
         private readonly ApplicationDbContext _db;
 
         private readonly IImageService _is;
         private readonly IWebHostEnvironment _env;
         private readonly UserManager<IdentityUser> _userManager;
         [Required]
-        [BindProperty] //this assumes then onPost you will be getting this event here that the user modified so no need for onPost(Event eventObj)
+        [BindProperty]
         public Event Event { get; set; }
 
         public IEnumerable<Category> Categories { get; set; }
@@ -39,9 +36,8 @@ namespace ConnectUs.Areas.Creator.Pages.Events
 
         public string userId {get; set;}
 
-        public CreateEventModel(ILogger<CreateEventModel> logger, ApplicationDbContext db, IWebHostEnvironment env, UserManager<IdentityUser> um, IImageService iS)
+        public CreateEventModel(ApplicationDbContext db, IWebHostEnvironment env, UserManager<IdentityUser> um, IImageService iS)
         {
-            _logger = logger;
             _db = db;
             _env=env;
             _userManager = um;

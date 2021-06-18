@@ -4,13 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Extensions.Logging;
 using ConnectUs.Model;
 using ConnectUs.Model.Entities;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
-using System.IO;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Authentication;
@@ -20,8 +18,6 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using ConnectUs.Services;
 using ConnectUs.Hubs;
 using Microsoft.AspNetCore.SignalR;
-using System.Configuration;
-using System.Data.SqlClient;
 
 namespace ConnectUs.Areas.Creator.Pages.Events
 {
@@ -98,7 +94,9 @@ namespace ConnectUs.Areas.Creator.Pages.Events
                 _is.Delete(image.ImagePath);  //delete event images from file system
             }
             foreach(var product in products){
-                _is.Delete(product.ImagePath);  //delete product images and videos from file system
+                if(product.ImagePath != null)
+                    _is.Delete(product.ImagePath);  //delete product images and videos from file system
+                if(product.VideoPath != null)
                 _is.Delete(product.VideoPath);  
             }
             _db.EventImage.RemoveRange(_db.EventImage.Where(x => x.EventId == eventToDelete.EventId));

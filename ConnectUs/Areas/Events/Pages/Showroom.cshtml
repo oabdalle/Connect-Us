@@ -34,7 +34,9 @@
 <div class="row justify-content-center h-100">
 
 @if(Model.Chat != null && Model.today >= Model.EventEntry.Event.EventDate.Date){
+  if(User.Identity.IsAuthenticated){
   <partial name="_Chat" model="@Model.Chat"/>
+    }
   }
 @if(Model.ProductList.Count()>0){
   <partial name="_Products" model="@Model.ProductList"/>

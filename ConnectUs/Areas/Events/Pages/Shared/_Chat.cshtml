@@ -13,27 +13,29 @@
 						<div class="card-body msg_card_body">
               
               @foreach(var message in Model.Messages){
-                if(message.Name != (await UserManager.GetUserAsync(User)).ToString()){ 
-                  <div class="d-flex justify-content-start mb-3">
+                @if(User != null){
+                  if(message.Name != (await UserManager.GetUserAsync(User)).ToString()){ 
+                    <div class="d-flex justify-content-start mb-3">
+                      <div class="d-flex flex-column">
+                        <span class="text-white">@message.Name</span>
+                        <div class="msg_cotainer">
+                            @message.Text
+                          <span class="msg_time">@message.Timestamp</span>
+                        </div>
+                      </div>
+                    </div>
+                  }else{
+                  <div class="d-flex justify-content-end mb-3">
+          
                     <div class="d-flex flex-column">
-                      <span class="text-white">@message.Name</span>
+                      <span class="text-white text-right">@message.Name</span>
                       <div class="msg_cotainer">
-                          @message.Text
+                            @message.Text             
                         <span class="msg_time">@message.Timestamp</span>
                       </div>
                     </div>
                   </div>
-                }else{
-                <div class="d-flex justify-content-end mb-3">
-        
-                  <div class="d-flex flex-column">
-                    <span class="text-white text-right">@message.Name</span>
-                    <div class="msg_cotainer">
-                          @message.Text             
-                      <span class="msg_time">@message.Timestamp</span>
-                    </div>
-                  </div>
-                </div>
+                  }
                 }
             }
 

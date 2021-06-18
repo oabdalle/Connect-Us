@@ -27,7 +27,7 @@ services:
         ports:
             - "1433:1433" 
         volumes:
-            - mysqldata
+            - mysqldata:/var/opt/mssql
     node:
         build:
             context: .

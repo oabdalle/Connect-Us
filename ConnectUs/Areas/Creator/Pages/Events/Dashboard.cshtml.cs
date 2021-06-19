@@ -4,13 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Extensions.Logging;
 using ConnectUs.Model;
 using ConnectUs.Model.Entities;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
-using System.IO;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Authorization;
@@ -23,7 +21,6 @@ namespace ConnectUs.Areas.Creator.Pages.Events
 
     public class DashboardModel : PageModel
     {
-        private readonly ILogger<DashboardModel> _logger;
         private readonly ApplicationDbContext _db;
         private readonly IWebHostEnvironment _env;
         private readonly UserManager<IdentityUser> _userManager;
@@ -33,9 +30,8 @@ namespace ConnectUs.Areas.Creator.Pages.Events
         public List<Chat> Chats {get; set;}
         public int LikeTotal {get; set;}
         public IEnumerable<EventImage> EventImages { get; set; }
-        public DashboardModel(ILogger<DashboardModel> logger, ApplicationDbContext db, IWebHostEnvironment env, UserManager<IdentityUser> um, IChatService chatService)
+        public DashboardModel(ApplicationDbContext db, IWebHostEnvironment env, UserManager<IdentityUser> um, IChatService chatService)
         {
-            _logger = logger;
             _db = db;
             _env=env;
             _userManager = um;

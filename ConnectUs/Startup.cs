@@ -102,7 +102,7 @@ namespace ConnectUs
                 ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
             });
 
-            StripeConfiguration.SetApiKey(Configuration.GetSection("Stripe")["SecretKey"]);
+            StripeConfiguration.ApiKey = (Configuration.GetSection("Stripe")["SecretKey"]);
 
             if (env.IsDevelopment())
             {

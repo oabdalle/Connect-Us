@@ -23,14 +23,15 @@ namespace ConnectUs.Areas.Account.Pages.Manage
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly ApplicationDbContext _db;
-
+        private readonly IWebHostEnvironment _env;
         public IndexModel(
             UserManager<IdentityUser> userManager,
-            SignInManager<IdentityUser> signInManager, ApplicationDbContext db)
+            SignInManager<IdentityUser> signInManager, ApplicationDbContext db, IWebHostEnvironment env)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _db = db;
+            _env = env;
         }
 
         public string Username { get; set; }
@@ -57,6 +58,17 @@ namespace ConnectUs.Areas.Account.Pages.Manage
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
             var profileToRetrieve = await _db.Profile.Where(x => x.HostId == user.Id).ToListAsync();
             Profile = profileToRetrieve.FirstOrDefault();
+            if(Profile == null){ // The profile is empty, set a new profile for the user
+                string _dir =  _env.WebRootPath;
+                var imagePath = Path.Combine(_dir, "images/Defualt image.jpg");
+                string s = Convert.ToBase64String(System.IO.File.ReadAllBytes(imagePath));
+                Profile profile= new Profile(){
+                    HostId = user.Id,
+                    Content = s
+                };
+                Profile = profile;
+                await _db.Profile.AddAsync(profile);
+            }           
             ProfileViewModel = new EditProfileViewModel{
               Content= Profile.Content,
               GalleryFiles = Profile.GalleryFiles

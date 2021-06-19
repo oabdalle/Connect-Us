@@ -24,7 +24,7 @@
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav mr-auto">
       <li class="nav-item active">
-        <a class="nav-link" href="#">Home<span class="sr-only">(current)</span></a>
+        <a class="nav-link" asp-area="Events" asp-page="/Index">Home - Admin<span class="sr-only">(current)</span></a>
       </li>
       <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -33,6 +33,16 @@
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
           <a class="dropdown-item" asp-area="Admin" asp-page="/ManageCategories">Categories</a>
           <a class="dropdown-item" asp-area="Admin" asp-page="/ManageUsers">Users</a>
+        </div>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Events
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <a class="dropdown-item" asp-area="Events" asp-page="/PastEvents">Past Events</a>
+          <a class="dropdown-item" asp-area="Creator" asp-page="/Events/CreateEvent">Create Event</a>
+          <a class="dropdown-item" asp-area="Creator" asp-page="/Events/Dashboard">My Dashboard</a>
         </div>
       </li>
     </ul>

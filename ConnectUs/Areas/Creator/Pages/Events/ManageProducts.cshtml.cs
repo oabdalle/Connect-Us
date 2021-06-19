@@ -15,6 +15,7 @@ using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Hosting;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using ConnectUs.Services;
 namespace ConnectUs.Areas.Creator.Pages.Events
 {
@@ -29,11 +30,12 @@ namespace ConnectUs.Areas.Creator.Pages.Events
     {
         private readonly ApplicationDbContext _db;
         private readonly IWebHostEnvironment _env;
+        private readonly UserManager<IdentityUser> _userManager;
         private readonly IImageService _is;
-
-        public ManageProducts(ApplicationDbContext db, IWebHostEnvironment env, IImageService iS){
+        public ManageProducts(ApplicationDbContext db, IWebHostEnvironment env, UserManager<IdentityUser> userManager, IImageService iS){
             _db = db;
             _env = env;
+            _userManager = userManager;
             _is = iS;
         } 
         [BindProperty]
@@ -45,21 +47,24 @@ namespace ConnectUs.Areas.Creator.Pages.Events
         public string _dir;
         [BindProperty]
         public VideoUploadViewModel UploadModel { get; set; }
-        public async Task OnGet(int id)
+        public async Task<IActionResult> OnGet(int id)
         {
-          await InitProducts(id);
+          eventEntry  = await _db.Event.FindAsync(id);
+          var user = await _userManager.GetUserAsync(User);
+          var roles = await _userManager.GetRolesAsync(user);
+          eventEntry  = await _db.Event.FindAsync(id);
+          if(roles[0] != "Creator" && user.Id != eventEntry.HostId ){
+            return RedirectToPage("/AccessDenied",  new { area = "Account" });
+          }
+          eventsImages = await _db.EventImage.Where(x => x.EventId == id).ToListAsync();
+          if(eventEntry is not null){
+            categoryEntry = await _db.Category.FindAsync(eventEntry.CategoryId);
+          }
+
+          ProductList = await _db.Product.Where(x => x.EventId == eventEntry.EventId).ToListAsync();
+          return Page();
         } 
         
-        public async Task InitProducts(int id){
-
-            eventEntry  = await _db.Event.FindAsync(id);
-            eventsImages = await _db.EventImage.Where(x => x.EventId == id).ToListAsync();
-            if(eventEntry is not null){
-            categoryEntry = await _db.Category.FindAsync(eventEntry.CategoryId);
-            }
-
-            ProductList = await _db.Product.Where(x => x.EventId == eventEntry.EventId).ToListAsync(); //init the product list on get from the event id
-        }
         public async Task<IActionResult> OnPostCreateProduct(){ //create a new product for the event
             var httpRequest = HttpContext.Request;
 
@@ -154,12 +159,12 @@ namespace ConnectUs.Areas.Creator.Pages.Events
           }
           _db.Product.Remove(product); //remove product from db context
 
-          if(_is.Delete(product.ImagePath).Result && _is.Delete(product.VideoPath).Result){ //delete all images and videos of the product
+          if(_is.Delete(product.ImagePath) && _is.Delete(product.VideoPath)){ //delete all images and videos of the product
             await _db.SaveChangesAsync(); //save the changes to db
           }
           return RedirectToPage(new {id = eventId});
         }         
-        public async Task<IActionResult> OnPostProductDetails(int id){
+        public async Task<IActionResult> OnPostProductDetails(int? id){
 
             if(id!=null){
               Product product = await _db.Product.FindAsync(id);

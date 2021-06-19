@@ -22,12 +22,11 @@ using ConnectUs.Hubs;
 using Microsoft.AspNetCore.SignalR;
 using System.Configuration;
 using System.Data.SqlClient;
-using System.Collections.Generic;
 
 namespace ConnectUs.Areas.Events.Pages
 {
        public class Showroom : PageModel
-    {
+       {
         private readonly ApplicationDbContext _db;
         private readonly UserManager<IdentityUser> _userManager;
         private IEventsService _eventsService;
@@ -54,6 +53,7 @@ namespace ConnectUs.Areas.Events.Pages
         public int likeCount {get; set;}
         public DateTime today {get; set;}
         public Profile profile {get; set;}
+        
         public async Task<IActionResult> OnGet(int id)
         {
 
@@ -75,7 +75,7 @@ namespace ConnectUs.Areas.Events.Pages
 
             today = DateTime.Today;
             EventEntry = _eventsService.InitEvent(id).Result; //use events service to init event description, category, images
-
+            
             if(EventEntry is not null){
 
               profile =  await _db.Profile.FirstOrDefaultAsync(x => x.HostId == EventEntry.Event.HostId); //display profile of host
@@ -83,7 +83,7 @@ namespace ConnectUs.Areas.Events.Pages
               ProductToDisplay = ProductList.FirstOrDefault(x => x.Selected == true); //selected product on display
               likeCount = EventEntry.Event.TotalLikes;
 
-              if(!(await _chatService.CheckRoomExists(id))){ //if the chat room doesn't exist and the event has started, create chat
+              if(!(_chatService.CheckRoomExists(id))){ //if the chat room doesn't exist and the event has started, create chat
                   if((EventEntry.Event.EventDate <= DateTime.Today) && User.Identity.IsAuthenticated){
                       await _chatService.CreateRoom(id, _userManager.GetUserId(User));
                   }

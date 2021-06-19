@@ -22,8 +22,8 @@ using ConnectUs.Hubs;
 using Microsoft.AspNetCore.SignalR;
 using System.Configuration;
 using System.Data.SqlClient;
-using System.Collections.Generic;
 using System.Web;
+
 namespace ConnectUs.Services
 {
     public class EventsService : IEventsService

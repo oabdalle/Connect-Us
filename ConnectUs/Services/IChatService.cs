@@ -9,7 +9,7 @@ namespace ConnectUs.Services
     {
       
         Task CreateRoom(int eventId, string userId);
-        Task<bool> CheckRoomExists(int eventId);
+        bool CheckRoomExists(int eventId);
         Task JoinRoom(int eventId, string userId);
         Chat GetChat(int eventId);
         Task<Message> CreateMessage(int chatId, string message, string username);

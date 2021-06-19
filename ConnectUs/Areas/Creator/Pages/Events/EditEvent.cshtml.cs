@@ -4,31 +4,30 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Extensions.Logging;
 using ConnectUs.Model;
 using ConnectUs.Model.Entities;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
-using System.IO;
 using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNetCore.Hosting;
-using Newtonsoft.Json;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using ConnectUs.Services;
 
 namespace ConnectUs.Areas.Creator.Pages.Events
 {
+    [Authorize(Roles = "Admin, Creator")]
     public class PostData
     {
         public string Result {get; set;}
     }
     public class EditEvent : PageModel
     {
+        private readonly UserManager<IdentityUser> _userManager;
         private readonly ApplicationDbContext _db;
         private readonly IImageService _is;
-        public EditEvent(ApplicationDbContext db, IImageService iS){
+        public EditEvent(ApplicationDbContext db, UserManager<IdentityUser> userManager, IImageService iS){
             _db = db;
+            _userManager = userManager;
             _is = iS;
         } 
         
@@ -40,10 +39,16 @@ namespace ConnectUs.Areas.Creator.Pages.Events
         public List<EventImage> eventsImages {get; set;}
 
 
-        public async Task OnGet(int id) //init the event to edit 
+        public async Task<IActionResult>  OnGet(int id) //init the event to edit 
+
         {
+            var user = await _userManager.GetUserAsync(User);
+            var roles = await _userManager.GetRolesAsync(user);
             eventEntry  = await _db.Event.FindAsync(id);
-            EventViewModel = new EditEventViewModel{ //init the edit event viewmodel from the db data 
+            if(roles[0] != "Creator" && user.Id != eventEntry.HostId ){
+               return RedirectToPage("/AccessDenied",  new { area = "Account" });
+            }
+            EventViewModel = new EditEventViewModel{ //init the edit event viewmodel from the db data
               Name= eventEntry.Name,
               EventDate = eventEntry.EventDate,
               Description = eventEntry.Description,
@@ -52,7 +57,9 @@ namespace ConnectUs.Areas.Creator.Pages.Events
             eventsImages = await _db.EventImage.Where(x => x.EventId == id).ToListAsync();
             if(eventEntry is not null){
             categoryEntry = await _db.Category.FindAsync(eventEntry.CategoryId);
+            
             }
+            return Page();
         } 
 
         public async Task<IActionResult> OnPostRemoveImage(int imageid){ //remove an image associated to an event

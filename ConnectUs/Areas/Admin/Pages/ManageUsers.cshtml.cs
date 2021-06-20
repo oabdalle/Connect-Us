@@ -89,7 +89,11 @@ namespace ConnectUs.Areas.Admin.Pages
             
         }
         public async Task<IActionResult> OnPostEditUserRole(string roleName, string userId){ //edit the role of a user 
-          
+
+            if(userId==_userManager.GetUserId(User)){
+                return new JsonResult("Same user");
+
+            }
             if(roleName != null){
     
               var user = await _userManager.FindByIdAsync(userId);
@@ -109,6 +113,7 @@ namespace ConnectUs.Areas.Admin.Pages
               }
               
             }
+
             
             return new JsonResult("Fail");
             
@@ -116,10 +121,18 @@ namespace ConnectUs.Areas.Admin.Pages
         
         public async Task<IActionResult> OnPostDeleteUser(string id){ //delete a specific user
             var user = await _userManager.FindByIdAsync(id);
+          
             if(user == null){
               await InitUsers();
               InitRoles();
               return Page();
+            }else if(id==_userManager.GetUserId(User)){
+                  
+              await InitUsers();
+              InitRoles();
+              ViewData["DeleteFail"]=true;
+              return Page();
+            
             }else{
               var chatUser = _db.ChatUser.Where(x => x.UserId == user.Id).FirstOrDefault(); //delete the user from the Chat User table
               _db.ChatUser.Remove(chatUser);

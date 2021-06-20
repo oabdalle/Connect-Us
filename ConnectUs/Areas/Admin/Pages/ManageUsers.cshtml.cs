@@ -120,9 +120,14 @@ namespace ConnectUs.Areas.Admin.Pages
         }
         
         public async Task<IActionResult> OnPostDeleteUser(string id){ //delete a specific user
+	    if(id==null){
+   	      await InitUsers();
+              InitRoles();
+              return Page();
+	    }
             var user = await _userManager.FindByIdAsync(id);
-          
-            if(user == null){
+  	    	        
+           if(user == null){
               await InitUsers();
               InitRoles();
               return Page();
@@ -135,8 +140,10 @@ namespace ConnectUs.Areas.Admin.Pages
             
             }else{
               var chatUser = _db.ChatUser.Where(x => x.UserId == user.Id).FirstOrDefault(); //delete the user from the Chat User table
-              _db.ChatUser.Remove(chatUser);
               
+	      if(chatUser != null){
+	      	_db.ChatUser.Remove(chatUser);
+	      }
               var result = await _userManager.DeleteAsync(user);
               if (result.Succeeded)
               {      

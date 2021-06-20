@@ -31,6 +31,7 @@
             <button asp-page-handler="DeleteBooking" asp-route-eventId="@Model.Event.EventId"  asp-route-userId="@userManager.GetUserId(User)" class="btn btn-warning btn-sm">Cancel Booking</button>
           }
         }
+        <a asp-area="Events" asp-page="/Checkout"  type="button" class="btn btn-sm btn-dark">Checkout</a>
         @if(User.Identity.IsAuthenticated && User.IsInRole("Attendee")){
             <a asp-area="Attendee" asp-page="/Index" class="btn btn-sm btn-secondary">Return</a>
         }else{   

@@ -7499,8 +7499,7 @@ td, tr, th {
 
 .chat {
   margin-top: auto;
-  margin-bottom: auto;
-  margin-left: 16%; }
+  margin-bottom: auto; }
 
 .card-chat {
   height: 500px;
@@ -7747,6 +7746,10 @@ html {
 @media (min-width: 768px) {
   html {
     font-size: 16px; } }
+
+@media only screen and (max-width: 992px) {
+  .chat-products {
+    justify-content: center !important; } }
 
 .border-top {
   border-top: 1px solid #e5e5e5; }

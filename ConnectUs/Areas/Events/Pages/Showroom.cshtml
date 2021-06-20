@@ -31,7 +31,7 @@
   <partial name="_ProductShowcase" model="@Model.ProductToDisplay"/>
 }
 
-<div class="row justify-content-center h-100">
+<div class="row justify-content-end chat-products h-100">
 
 @if(Model.Chat != null && Model.today >= Model.EventEntry.Event.EventDate.Date){
   if(User.Identity.IsAuthenticated){

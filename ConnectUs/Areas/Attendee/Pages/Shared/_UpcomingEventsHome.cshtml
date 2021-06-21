@@ -1,6 +1,7 @@
 @model EventListingViewModel
 
-@if(Model.BookedEvents != null){
+@if(Model.BookedEvents != null || Model.BookedEvents.Count > 0){
+  <div class="pt-1">
   <h1 class="text-center">Upcoming</h1>
     <div class="netflix-slider">
           <div class="row d-flex justify-content-center pt-2 pb-6">
@@ -23,4 +24,5 @@
           </div>
           </div>  
       </div>
+  </div>
 }

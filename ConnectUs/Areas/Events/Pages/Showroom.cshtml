@@ -6,7 +6,7 @@
     ViewData["Title"] = "Event Description";
 }
 @Html.AntiForgeryToken()
-<div class="col-sm-1 float-right">
+<div class="float-right">
     <h2 class="host-profile-header">Host</h2>
     <a asp-area="Creator" asp-page="/Events/Dashboard" asp-route-id="@Model.profile.HostId">
       <img src="data:image/jpeg;base64,@Model.profile.Content" class="host-profile-img">

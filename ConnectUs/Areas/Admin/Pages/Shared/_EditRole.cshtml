@@ -68,9 +68,14 @@ function EditUserRole(oldRoleName, newRoleName, userId){
           },
           data: {roleName: newRoleName, userId: userId},
           success: function (result) {
+            console.log(result)
               if(result=="Success"){
                 sessionStorage.setItem('reloadAfterEditRole', "true");
                 window.location.reload(true);
+              }
+              if(result=="Same user"){
+                toastr.error("Cannot edit own user")
+
               }
           },
           failure: function () {
@@ -86,6 +91,11 @@ function EditUserRole(oldRoleName, newRoleName, userId){
 </script>
 <script>
 window.addEventListener('load', function () {
+    var check='@ViewData["DeleteFail"]';
+    console.log(check)
+    if(check=='True'){
+        toastr.error("Cannot edit own user");
+    }
 
     $(".edit-role").click(function(){
         var roleId = $(this).data('id');

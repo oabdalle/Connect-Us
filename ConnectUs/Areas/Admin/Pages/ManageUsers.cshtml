@@ -6,8 +6,9 @@
 
 
 <h1 class="p-5">@ViewData["Title"]</h1>
-<partial name="_EditRole" model="@Model.RoleViewModel"/>
-
+@if(Model.Users != null){
+  <partial name="_EditRole" model="@Model.RoleViewModel"/>
+}
 <div class="col-10 col-sm-12 px-5">
     <form method="post">
     @if(Model.Users != null){
@@ -61,7 +62,7 @@
         }
       </table>
       }else{
-      <p>No Categories available.</p>
+      <p>No Users available.</p>
       }
     </form>
   </div> 

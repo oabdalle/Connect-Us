@@ -158,8 +158,10 @@ namespace ConnectUs.Areas.Creator.Pages.Events
               return NotFound();
           }
           _db.Product.Remove(product); //remove product from db context
-
-          if(_is.Delete(product.ImagePath) && _is.Delete(product.VideoPath)){ //delete all images and videos of the product
+          if(product.VideoPath!=null){
+            _is.Delete(product.VideoPath);
+          }
+          if(_is.Delete(product.ImagePath)){ //delete all images and videos of the product
             await _db.SaveChangesAsync(); //save the changes to db
           }
           return RedirectToPage(new {id = eventId});

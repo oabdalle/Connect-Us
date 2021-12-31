@@ -16,6 +16,9 @@
 }
 
 .product_item .cp_img {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   position: absolute;
   top: 0px;
   left: 50%;
@@ -33,6 +36,7 @@
 .product_item .cp_img img {
   transition: all 0.2s ease-in-out;
   border-radius: 6px
+  width: 80%;
 }
 
 .product_item .cp_img .hover {

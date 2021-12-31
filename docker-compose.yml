@@ -14,7 +14,7 @@ services:
             context: .
             dockerfile: ./ConnectUs/docker/app/dev.Dockerfile
         ports:
-            - "5000:5000"
+            - "4000:4000"
         depends_on:
             - db
         volumes:
@@ -27,7 +27,7 @@ services:
         ports:
             - "1433:1433" 
         volumes:
-            - mysqldata
+            - mysqldata:/var/opt/mssql
     node:
         build:
             context: .

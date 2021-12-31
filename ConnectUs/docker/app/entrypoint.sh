@@ -1,7 +1,7 @@
 #!/bin/sh
 
 set -e
-run_cmd="dotnet run --server.urls http://*:5000"
+run_cmd="dotnet run --server.urls http://*:4000"
 
 until dotnet ef database update; do
 >&2 echo "SQL Server is starting up"

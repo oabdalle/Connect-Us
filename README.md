@@ -23,11 +23,11 @@ Home         |  Event   |    Checkout      |     Dashboard
 <img src="ConnectUs/wwwroot/images/screenshot4.png" title="Home" width="100%"> |<img src="ConnectUs/wwwroot/images/screenshot3.png" title="Event" width="100%">|<img src="ConnectUs/wwwroot/images/screenshot2.png" title="Checkout" width="100%"> |<img src="ConnectUs/wwwroot/images/screenshot1.png" title="Dashboard" width="100%">
 
 
-## 🔨MVVM Architecture
+## 🔨 MVVM Architecture
 <p align="center">
-<img src="ConnectUs/wwwroot/images/mvvm.png" title="mvvm" width="70%"> 
+<img src="ConnectUs/wwwroot/images/mvvm.png" title="mvvm" width="65%"> 
 </p>
-The Model–view–viewmodel (MVVM) was used in .NET Core through Razor pages. It separates the user-interface (view) from the business logic (model) through use of the viewmodel. The viewmodel is responsible for converting the data objects from the model's entities to in a way that is easily presentable for the view, allowing the view to not have to manage its own display logic. 
+The Model–view–viewmodel (MVVM) architecture was used in .NET Core through Razor pages. It separates the user-interface (view) from the business logic (model) through use of the viewmodel. The viewmodel is responsible for converting the data objects from the model's entities to in a way that is easily presentable for the view, allowing the view to not have to manage its own display logic. 
 
 ## 📤 Docker Containers
 | Container | Description |

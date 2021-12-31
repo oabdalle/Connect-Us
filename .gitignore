@@ -35,3 +35,8 @@ msbuild.wrn
 .vs/
 # Ignore mp4 files
 *.mp4
+
+# Dependency directories
+ConnectUs/node_modules/
+ConnectUs/wwwroot/uploads/
+

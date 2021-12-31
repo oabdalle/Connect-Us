@@ -24,7 +24,9 @@ Home         |  Event   |    Checkout      |     Dashboard
 
 
 ## 🔨MVVM Architecture
-<img src="ConnectUs/wwwroot/images/mvvm.png" title="mvvm" width="80%"> 
+<p align="center">
+<img src="ConnectUs/wwwroot/images/mvvm.png" title="mvvm" width="70%"> 
+</p>
 The Model–view–viewmodel (MVVM) was used in .NET Core through Razor pages. It separates the user-interface (view) from the business logic (model) through use of the viewmodel. The viewmodel is responsible for converting the data objects from the model's entities to in a way that is easily presentable for the view, allowing the view to not have to manage its own display logic. 
 
 ## 📤 Docker Containers

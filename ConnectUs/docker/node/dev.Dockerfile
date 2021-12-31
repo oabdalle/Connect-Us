@@ -1,4 +1,4 @@
-FROM node:lts AS node
+FROM node:17.3.0 AS node
 COPY . /src
 WORKDIR /src/ConnectUs
 RUN npm install

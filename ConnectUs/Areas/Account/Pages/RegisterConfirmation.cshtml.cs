@@ -1,11 +1,13 @@
 using Microsoft.AspNetCore.Authorization;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Extensions.Hosting;
 
 namespace ConnectUs.Areas.Account.Pages
 {
@@ -14,11 +16,13 @@ namespace ConnectUs.Areas.Account.Pages
     {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly IEmailSender _sender;
+        private readonly IWebHostEnvironment _environment;
 
-        public RegisterConfirmationModel(UserManager<IdentityUser> userManager, IEmailSender sender)
+        public RegisterConfirmationModel(UserManager<IdentityUser> userManager, IEmailSender sender, IWebHostEnvironment environment)
         {
             _userManager = userManager;
             _sender = sender;
+            _environment = environment;
         }
 
         public string Email { get; set; }
@@ -41,8 +45,8 @@ namespace ConnectUs.Areas.Account.Pages
             }
 
             Email = email;
-            // Once you add a real email sender, you should remove this code that lets you confirm the account
-            DisplayConfirmAccountLink = false;
+            // Show email confirmation links only during local development.
+            DisplayConfirmAccountLink = _environment.IsDevelopment();
             if (DisplayConfirmAccountLink)
             {
                 var userId = await _userManager.GetUserIdAsync(user);

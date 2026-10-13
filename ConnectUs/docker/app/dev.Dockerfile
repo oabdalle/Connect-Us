@@ -1,7 +1,7 @@
 FROM mcr.microsoft.com/dotnet/sdk:5.0-focal as build
 COPY . /app
 WORKDIR /app/ConnectUs
-RUN dotnet tool install --global dotnet-ef
+RUN dotnet tool install --global dotnet-ef --version 5.0.17
 ENV PATH="${PATH}:/root/.dotnet/tools"
 RUN dotnet publish "ConnectUs.csproj" --configuration Release
 ENV DOTNET_USE_POLLING_FILE_WATCHER 1

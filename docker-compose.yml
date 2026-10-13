@@ -6,7 +6,7 @@ services:
             context: ./ConnectUs/docker/nginx
             dockerfile: Dockerfile
         ports:
-            - "80:80"
+            - "127.0.0.1:80:80"
         depends_on:
             - app
     app:
@@ -14,7 +14,12 @@ services:
             context: .
             dockerfile: ./ConnectUs/docker/app/dev.Dockerfile
         ports:
-            - "4000:4000"
+            - "127.0.0.1:4000:4000"
+        environment:
+            ASPNETCORE_ENVIRONMENT: Development
+            ConnectionStrings__DefaultConnection: ${DB_CONNECTION_STRING}
+            Stripe__SecretKey: ${STRIPE_SECRET_KEY}
+            Stripe__PublishableKey: ${STRIPE_PUBLISHABLE_KEY}
         depends_on:
             - db
         volumes:
@@ -22,10 +27,10 @@ services:
     db:
         image: "mcr.microsoft.com/azure-sql-edge"
         environment:
-            MSSQL_SA_PASSWORD: u1t0at3FlQi60nt6j6BJTc
+            MSSQL_SA_PASSWORD: ${DB_PASSWORD}
             ACCEPT_EULA: Y
         ports:
-            - "1433:1433" 
+            - "127.0.0.1:1433:1433"
         volumes:
             - mysqldata:/var/opt/mssql
     node:
@@ -34,7 +39,7 @@ services:
             dockerfile: ./ConnectUs/docker/node/Dockerfile
         volumes:
             - node_modules:/src/ConnectUs/node_modules
-            - ./ConnectUs/wwwroot:/src/ConnectUs/wwwroot      
+            - ./ConnectUs/wwwroot:/src/ConnectUs/wwwroot
 volumes:
   node_modules:
     driver: "local"

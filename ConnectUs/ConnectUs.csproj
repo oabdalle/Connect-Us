@@ -5,9 +5,6 @@
     <UserSecretsId>aspnet-ConnectUs-026F32FF-C1E1-46FC-B60D-198691A52FB2</UserSecretsId>
   </PropertyGroup>
   <ItemGroup>
-    <None Update="app.db" CopyToOutputDirectory="PreserveNewest" ExcludeFromSingleFile="true" />
-  </ItemGroup>
-  <ItemGroup>
 
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="5.0.0" />

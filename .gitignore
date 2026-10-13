@@ -40,3 +40,9 @@ msbuild.wrn
 ConnectUs/node_modules/
 ConnectUs/wwwroot/uploads/
 
+.env
+.env.*
+!.env.example
+
+# Legacy local SQLite database
+app.db

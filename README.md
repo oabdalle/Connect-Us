@@ -5,15 +5,17 @@
 <p align="center">
   <a href="#-basic-overview">Basic Overview</a> •
   <a href="#-app-screenshots">App Screenshots</a> •
-  <a href="#-mvvm-architecture">MVVM Architecture</a> •
-  <a href="#-docker-containers">Docker Containers</a> •
+  <a href="#architecture">Architecture</a> •
+  <a href="#-docker-services">Docker Services</a> •
+  <a href="#development-notes">Development Notes</a> •
   <a href="#-usage">Usage</a> •
-  <a href="#-folder-structure">Folder Structure</a>
+  <a href="#-folder-structure">Folder Structure</a> •
+  <a href="#limitations">Limitations</a> •
 </p>  
 
 ## 📌 Basic Overview 
 
-Connect-Us is an e-commerce social media platform for influencers to put their products on display while staying engaged with shoppers. The features include managing events, products, tracking social media sentiment through chat-rooms, and providing a Stripe checkout. Shoppers can attend these events when they begin and view the display of products that event creators have to offer.
+Connect-Us is an e-commerce social media platform that allows creators to showcase products through events, view chat room sentiment of their displayed products, and engage with attendees of events. Shoppers can browse products while participating in events and initiate purchases through Stripe.
 
 
 ## 📷 App Screenshots
@@ -23,50 +25,57 @@ Home         |  Event   |    Checkout      |     Dashboard
 <img src="ConnectUs/wwwroot/images/screenshot4.png" title="Home" width="100%"> |<img src="ConnectUs/wwwroot/images/screenshot3.png" title="Event" width="100%">|<img src="ConnectUs/wwwroot/images/screenshot2.png" title="Checkout" width="100%"> |<img src="ConnectUs/wwwroot/images/screenshot1.png" title="Dashboard" width="100%">
 
 
-## 🔨 MVVM Architecture
-<p align="center">
-<img src="ConnectUs/wwwroot/images/mvvm.png" title="mvvm" width="65%"> 
-</p>
-The Model–view–viewmodel (MVVM) architecture was used in .NET Core through Razor pages. It separates the user-interface (view) from the business logic (model) through use of the viewmodel. The viewmodel is responsible for converting the data objects from the model's entities to in a way that is easily presentable for the view, allowing the view to not have to manage its own display logic. 
+## Architecture
+Connect-Us uses ASP.NET Core Razor Pages, following an MVC-based separation of concerns. Razor views (.cshtml) handle the user interface, while PageModels (.cshtml.cs) process requests and prepare data for display. Entity Framework Core manages database access through the application's data models.
 
-## 📤 Docker Containers
-| Container | Description |
+## 📤 Docker Services
+| Service | Description |
 | --- | --- |
-| app | Uses the dotnet sdk image to compile the app and install the runtime for the .NET application |
-| reverse proxy | Uses the nginx image to serve as an intermediary proxy service. The container retrieves a client request, passes it upstream to the app container which is hosting the application's server, and subsequently delivers the server's response back to the client |
-| database | Uses the azure-sql image to provide an mssql database for the app to read and write in. |
-| node | Uses the node image to compile Sass and provide node modules to be used for the future. |
+| app | Uses the .NET SDK to build and run the ASP.NET Core application in development mode.|
+| reverseproxy | Uses Nginx as a reverse proxy, forwarding client requests to the application container and returning its responses. |
+| db | Uses Azure SQL Edge to provide a persistent SQL Server database for the application.|
+| node | Uses Node.js to provide frontend tooling for compiling Sass and managing Node modules. |
+
+## Development Notes
+
+### Database and migrations
+When the development container starts, the startup script automatically runs:
+    $ dotnet build
+    $ dotnet ef database update
+
+### Environment Variables & Security
+
+- .env stores local database credentials and Stripe API keys
+
+- .env.example provides placeholder values for the required environment variables
+
+- Sensitive config values are passed to the application through Docker Compose environment variables
 
 ## 🔎 Usage
 
 ### To run on a development environment:
-#### On First Start 
-    $ docker-compose build
+#### On First Start
+##### Create .env
+    $ cp .env.example .env
+##### Configure the required variables in .env, then start the containers
+    $ docker compose up -d --build
 #### After First Start
-    $ docker-compose up 
+##### In subsequent launches, start the existing containers:
+    $ docker compose up -d
 ---
 
 ### Useful commands for developers:
-#### To add a Database Migration (note - replace MyTest with useful migration name)
-    $ docker-compose stop && docker run -v ${PWD}:/app --rm --entrypoint /bin/sh connect-us_app -c 'dotnet ef migrations add MyTest' && docker-compose up
-#### To compile SASS after running containers
-    $ docker start connect-us_node_1
+#### Start the Node.js Service for Sass Tooling
+    $ docker compose up -d node
 #### To stop containers
-     $ docker-compose stop
+    $ docker compose stop
 #### To remove containers
-     $ docker-compose down
-#### To remove Database to start from scratch
-     $ docker rm connect-us_db_1 -f && docker volume rm connect-us_mysqldata -f
-
----
-### To run on staging environment:
-#### On First Start 
-    $ docker-compose -f docker-compose.staging.yml build
-#### After First Start
-    $ docker-compose -f docker-compose.staging.yml up 
-#### To add a Database Migration 
-    $ docker-compose stop && docker run -v ${PWD}:/app --rm --entrypoint /bin/sh connect-us_app -c 'dotnet ef migrations add MyTest' && docker-compose -f docker-compose.staging.yml up
-
+    $ docker compose down
+#### To reset the local database
+    $ docker compose down -v
+    $ docker compose up -d --build
+#### If the browser displays **502 Bad Gateway** immediately after the app container is recreated, restart the proxy
+    $ docker compose restart reverseproxy
 
 ## 📂 Folder Structure
 
@@ -108,9 +117,14 @@ Key pieces of the application are shown below.
 │   ├── package.json
 │   ├── webpack.config.js
 ├── README.md
+├── .env.example
+├── .gitignore
 ├── docker-compose.staging.yml
 └── docker-compose.yml
 ```
 
+## Limitations
+Connect-Us targets .NET 5, which is no longer supported, and uses a legacy Azure SQL Edge database image. Production deployment would require a supported .NET and database stack, along with updated dependencies.
 
+This repository is maintained as a demonstration of the original architecture and functionality.
 
